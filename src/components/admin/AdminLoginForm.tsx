@@ -1,0 +1,109 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { Button } from "@/components/ui/Button";
+
+export function AdminLoginForm() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const supabase = createSupabaseBrowserClient();
+    
+    // 1. Iniciar sesión en Supabase
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError || !authData.user) {
+      setError("Credenciales incorrectas. Verificá tu email y contraseña.");
+      setLoading(false);
+      return;
+    }
+
+    // 2. Verificar si el usuario está en la tabla admin_users y está activo
+    const { data: adminUser, error: adminError } = await supabase
+      .from("admin_users")
+      .select("is_active")
+      .eq("user_id", authData.user.id)
+      .single();
+
+    if (adminError || !adminUser || !adminUser.is_active) {
+      // Si no es admin, cerrar su sesión inmediatamente
+      await supabase.auth.signOut();
+      setError("No tenés permisos para acceder al panel de administrador.");
+      setLoading(false);
+      return;
+    }
+
+    // 3. Todo OK, redirigir al dashboard
+    router.push("/admin-FiveSaint/dashboard");
+    router.refresh();
+  };
+
+  return (
+    <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-stone-200">
+      <div className="text-center mb-8">
+        <h1 className="text-2xl font-bold text-stone-900 tracking-wide uppercase">Five Saint</h1>
+        <p className="text-stone-500 text-sm mt-2">Acceso Administrativo Privado</p>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-600 border border-red-200 p-4 rounded-md text-sm mb-6">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleLogin} className="flex flex-col gap-5">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-semibold text-stone-700" htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-deep focus:border-transparent text-stone-800"
+            placeholder="admin@fivesaint.com"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-semibold text-stone-700" htmlFor="password">
+            Contraseña
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-deep focus:border-transparent text-stone-800"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <Button 
+          type="submit" 
+          variant="primary" 
+          className="w-full mt-4 h-12"
+          disabled={loading}
+        >
+          {loading ? "Autenticando..." : "Ingresar al Panel"}
+        </Button>
+      </form>
+    </div>
+  );
+}
