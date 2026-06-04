@@ -8,13 +8,13 @@ import { ArrowRight, Check } from "lucide-react";
 
 // Mapeo de imágenes generadas para cada categoría
 const categoryImages: Record<string, string> = {
-  "baneras": "/images/cat_baneras.png",
-  "hidromasajes": "/images/cat_hidro.png",
-  "spas": "/images/cat_spas.png",
-  "platos-de-ducha": "/images/cat_baneras.png",
-  "columnas": "/images/cat_columnas.png",
-  "saunas": "/images/cat_saunas.png",
-  "duchas-escocesas": "/images/cat_hidro.png"
+  "spas-y-minipiscinas": "/images/cat_spas_new.jpg",
+  "baneras": "/images/cat_baneras_new.jpg",
+  "platos-de-duchas": "/images/cat_platos_new.jpg",
+  "columnas-de-ducha": "/images/cat_columnas.png",
+  "ducha-escocesa": "/images/cat_hidro.png",
+  "sauna": "/images/cat_saunas.png",
+  "adicionales": "/images/cat_hidro.png"
 };
 
 /**

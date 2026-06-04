@@ -28,6 +28,8 @@ export const revalidate = 3600;
  * Compone secuencialmente los tres bloques fundamentales del catálogo:
  * cabecera descriptiva, cuadrícula interactiva con filtros, y banner comercial de cierre.
  */
+import { Suspense } from "react";
+
 export default async function ProductsPage() {
   const [products, categories] = await Promise.all([
     getProducts(),
@@ -40,7 +42,9 @@ export default async function ProductsPage() {
       <ProductCatalogHeader />
 
       {/* 2. Catálogo Interactivo con Rejilla y Filtros */}
-      <ProductCatalog products={products} categories={categories} />
+      <Suspense fallback={<div className="py-20 text-center">Cargando catálogo...</div>}>
+        <ProductCatalog products={products} categories={categories} />
+      </Suspense>
 
       {/* 3. Banner CTA de Asesoramiento Final */}
       <ProductInquiryCTA />

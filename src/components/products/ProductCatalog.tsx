@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Product, ProductCategory } from "@/types/product";
 import { Container } from "@/components/ui/Container";
 import ProductCategoryFilter from "./ProductCategoryFilter";
@@ -18,7 +19,16 @@ interface ProductCatalogProps {
  * y los renderiza en una rejilla responsiva.
  */
 export function ProductCatalog({ products, categories }: ProductCatalogProps) {
-  const [selectedCategory, setSelectedCategory] = React.useState("all");
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("categoria");
+  
+  const [selectedCategory, setSelectedCategory] = React.useState(categoryParam || "all");
+
+  React.useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [categoryParam]);
 
   // Filtra los productos de acuerdo con la categoría seleccionada (usando slug)
   const filteredProducts = React.useMemo(() => {
