@@ -26,11 +26,11 @@ export function AboutProcessSection() {
           {aboutProcessSteps.map((step, idx) => (
             <Card
               key={idx}
-              className="bg-white border-stone-200 shadow-xs flex flex-col gap-4 relative overflow-hidden group"
+              className="bg-white border border-stone-100/50 shadow-lg shadow-stone-200/40 flex flex-col gap-4 relative overflow-hidden group rounded-3xl hover:-translate-y-1 hover:shadow-xl hover:border-accent-soft/30 transition-all duration-300 p-8"
             >
               {/* Número del paso en gran tamaño difuso de fondo */}
               <div 
-                className="absolute right-4 top-4 text-5xl font-extrabold text-stone-100/80 group-hover:text-accent-soft/40 transition-colors select-none"
+                className="absolute -right-2 -bottom-4 text-8xl font-black text-stone-50 group-hover:text-accent-soft/30 transition-colors select-none"
                 aria-hidden="true"
               >
                 {step.stepNumber}

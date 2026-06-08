@@ -15,8 +15,11 @@ interface ProductDetailSidebarProps {
  */
 export function ProductDetailSidebar({ product }: ProductDetailSidebarProps) {
   return (
-    <aside className="w-full lg:sticky lg:top-24 h-fit">
-      <Card className="bg-white border border-stone-200/60 shadow-sm p-6 sm:p-8 flex flex-col gap-6 text-left">
+    <aside className="w-full lg:sticky lg:top-24 h-fit z-10">
+      <Card className="bg-white/80 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] p-6 sm:p-8 flex flex-col gap-6 text-left rounded-3xl relative overflow-hidden group hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-shadow duration-500">
+        
+        {/* Línea superior decorativa en hover */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-soft via-accent-deep to-accent-soft opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Título de Consulta */}
         <div className="flex flex-col gap-1">
@@ -33,7 +36,7 @@ export function ProductDetailSidebar({ product }: ProductDetailSidebarProps) {
         <Button
           variant="primary"
           size="md"
-          className="w-full uppercase tracking-wider font-semibold group cursor-pointer flex items-center justify-center gap-2"
+          className="w-full uppercase tracking-wider font-semibold group cursor-pointer flex items-center justify-center gap-2 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
           asChild
         >
           <Link href={`/contacto?ref=${product.slug}`}>

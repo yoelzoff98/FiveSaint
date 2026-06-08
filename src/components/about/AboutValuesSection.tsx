@@ -37,10 +37,13 @@ export function AboutValuesSection() {
             return (
               <Card
                 key={val.title}
-                className="bg-stone-50/50 border-stone-200/40 p-6 flex flex-col gap-4 items-start hover:bg-stone-50 transition-colors duration-200"
+                className="bg-white shadow-sm border border-stone-100/80 p-6 flex flex-col gap-4 items-start hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl group relative overflow-hidden"
               >
+                {/* Fondo sutil hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-accent-soft/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
                 {/* Contenedor del Icono con Acento */}
-                <div className="rounded-sm bg-accent-soft text-accent-deep p-3 shrink-0">
+                <div className="rounded-2xl bg-accent-soft/30 text-accent-deep p-3.5 shrink-0 group-hover:bg-accent-deep group-hover:text-white transition-colors duration-300 relative z-10 shadow-sm">
                   <IconComponent className="h-5 w-5" aria-hidden="true" />
                 </div>
                 

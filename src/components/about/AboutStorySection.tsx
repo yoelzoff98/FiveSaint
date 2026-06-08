@@ -32,7 +32,7 @@ export function AboutStorySection() {
 
         {/* Columna Derecha: Tarjeta con Cita Destacada */}
         <div className="lg:col-span-5 w-full flex items-center justify-center">
-          <Card className="bg-gradient-to-br from-stone-900 to-stone-950 text-stone-100 border-none shadow-md p-8 sm:p-10 relative overflow-hidden w-full max-w-sm rounded-sm">
+          <Card className="bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900 text-stone-100 border border-white/10 shadow-2xl shadow-stone-300/60 p-8 sm:p-10 relative overflow-hidden w-full max-w-sm rounded-3xl transform hover:-translate-y-1 transition-transform duration-500">
             {/* Elemento decorativo de agua al fondo de la card */}
             <div className="absolute inset-0 bg-[radial-gradient(15rem_15rem_at_bottom_right,theme(colors.accent-deep/20%),transparent)]" aria-hidden="true" />
             

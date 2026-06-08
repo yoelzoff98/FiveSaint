@@ -98,23 +98,29 @@ export function ProductDetailHero({ product }: ProductDetailHeroProps) {
             </div>
 
             {/* Detalles rápidos e insignias */}
-            <div className="mt-8 pt-8 border-t border-stone-100 flex flex-wrap gap-6 sm:gap-12 w-full text-stone-600">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-accent-deep" />
+            <div className="mt-8 pt-8 border-t border-stone-100 flex flex-wrap gap-4 sm:gap-6 w-full text-stone-600">
+              <div className="flex items-center gap-3 bg-stone-50/80 p-3.5 pr-6 rounded-2xl border border-stone-100/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-white p-2 rounded-full shadow-sm">
+                  <ShieldCheck className="h-5 w-5 text-accent-deep" />
+                </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[9px] uppercase tracking-wider font-semibold text-stone-400">Garantía</span>
                   <span className="text-xs font-semibold text-stone-900">Escrita de Fábrica</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-accent-deep" />
+              <div className="flex items-center gap-3 bg-stone-50/80 p-3.5 pr-6 rounded-2xl border border-stone-100/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-white p-2 rounded-full shadow-sm">
+                  <MapPin className="h-5 w-5 text-accent-deep" />
+                </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[9px] uppercase tracking-wider font-semibold text-stone-400">Origen</span>
                   <span className="text-xs font-semibold text-stone-900">100% Argentina</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Waves className="h-5 w-5 text-accent-deep" />
+              <div className="flex items-center gap-3 bg-stone-50/80 p-3.5 pr-6 rounded-2xl border border-stone-100/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-white p-2 rounded-full shadow-sm">
+                  <Waves className="h-5 w-5 text-accent-deep" />
+                </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[9px] uppercase tracking-wider font-semibold text-stone-400">Soporte</span>
                   <span className="text-xs font-semibold text-stone-900">Asesoramiento Disponible</span>
@@ -124,7 +130,7 @@ export function ProductDetailHero({ product }: ProductDetailHeroProps) {
           </div>
 
           {/* Columna Derecha: Imagen Real o Placeholder Visual Elevado en Gradiente */}
-          <div className="lg:col-span-5 relative w-full h-[280px] sm:h-[340px] lg:h-[400px] rounded-lg overflow-hidden border border-stone-200/50 shadow-md bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 flex items-center justify-center">
+          <div className="lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[460px] rounded-[2rem] overflow-hidden border-[6px] border-white/80 shadow-2xl shadow-stone-300/40 bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 flex items-center justify-center group transform transition-transform duration-500 hover:scale-[1.01]">
             {product.image ? (
               <img
                 src={product.image.url}

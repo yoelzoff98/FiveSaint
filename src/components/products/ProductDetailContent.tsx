@@ -39,10 +39,10 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
             {product.features.map((feature, idx) => (
               <Card
                 key={idx}
-                className="bg-stone-50/50 border-stone-200/40 p-4 flex items-start gap-3 hover:bg-stone-50/20 transition-colors"
+                className="bg-white shadow-sm border border-stone-100/80 p-4 rounded-xl flex items-start gap-3 hover:shadow-md hover:border-stone-200/60 hover:-translate-y-0.5 transition-all duration-300 group"
                 padding="none"
               >
-                <div className="rounded-full bg-accent-soft p-1 text-accent-deep shrink-0 mt-0.5">
+                <div className="rounded-full bg-accent-soft/40 p-1.5 text-accent-deep shrink-0 mt-0.5 group-hover:bg-accent-deep group-hover:text-white transition-colors duration-300">
                   <Check className="h-3.5 w-3.5" aria-hidden="true" />
                 </div>
                 <span className="text-sm font-light text-stone-700 leading-tight">
