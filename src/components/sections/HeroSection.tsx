@@ -108,58 +108,23 @@ export function HeroSection() {
           </div>
         </div>
  
-        {/* Columna Derecha: Showcase Visual Premium Flotante con Glassmorphism */}
-        <div className="lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[420px] rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-white/5 backdrop-blur-md flex items-center justify-center animate-float-slow">
+        {/* Columna Derecha: Imagen Destacada del Producto */}
+        <div className="lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[420px] rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-white/5 flex items-center justify-center animate-float-slow group">
           
-          {/* Círculo decorativo difuso en el interior */}
+          {/* Círculo decorativo difuso en el interior de fondo */}
           <div className="absolute top-1/4 left-1/4 w-56 h-56 rounded-full bg-[#087d9f]/20 filter blur-3xl -z-10" />
-          
-          {/* Ilustración de Grilla Arquitectónica y Platos Abstractos */}
-          <div className="relative w-4/5 h-4/5 flex flex-col justify-between p-6">
-            
-            {/* Tarjeta Flotante 1: Hidromasaje Concept */}
-            <div className="self-start bg-[#01161d]/85 backdrop-blur-md rounded-xl border border-white/10 p-4 shadow-lg w-4/5 flex items-center gap-3.5 transform -rotate-1 hover:rotate-0 transition-all duration-300 hover:scale-[1.02]">
-              <div className="bg-[#087d9f] text-white p-2.5 rounded-lg shrink-0 shadow-xs">
-                <Sparkles className="h-4.5 w-4.5 text-[#9de6f2]" />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[9px] uppercase tracking-widest font-bold text-[#9de6f2]">
-                  Línea Hidro
-                </span>
-                <span className="text-sm font-semibold text-white">
-                  Premium Jet System
-                </span>
-              </div>
-            </div>
 
-            {/* Bloque Central de Grilla/Materiales */}
-            <div className="w-full flex items-center justify-center my-4 opacity-75">
-              <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#087d9f]/40 to-transparent relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#01161d] px-3 py-1 rounded-full border border-white/10 text-[8px] uppercase tracking-widest text-[#9de6f2] font-bold">
-                  Acrílico Sanitario
-                </div>
-              </div>
-            </div>
-
-            {/* Tarjeta Flotante 2: Calidad Certificada */}
-            <div className="self-end bg-white/95 text-stone-900 rounded-xl p-4 shadow-xl w-4/5 flex items-center gap-3.5 border border-white/50 transform rotate-1 hover:rotate-0 transition-all duration-300 hover:scale-[1.02]">
-              <div className="bg-[#087d9f]/10 text-[#087d9f] p-2.5 rounded-lg shrink-0 shadow-sm">
-                <Shield className="h-4.5 w-4.5" />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[9px] uppercase tracking-widest font-bold text-[#087d9f]">
-                  Calidad Certificada
-                </span>
-                <span className="text-sm font-bold text-stone-900">
-                  Garantía Escrita
-                </span>
-              </div>
-            </div>
-            
-          </div>
+          {/* Imagen Romana */}
+          <Image
+            src="/romana.png"
+            alt="Bañera Romana Five Saint"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+          />
           
           {/* Micro-insignia flotante de Bienestar */}
-          <div className="absolute bottom-4 left-4 bg-[#01161d]/85 border border-white/10 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+          <div className="absolute bottom-4 left-4 bg-[#01161d]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-sm z-10">
             <Compass className="h-3.5 w-3.5 text-[#9de6f2] animate-spin-slow" />
             <span className="text-[9px] uppercase tracking-widest font-bold text-stone-300">
               Wellness Design

@@ -23,9 +23,9 @@ export function ProductCategoryFilter({
   const filterOptions = [{ slug: "all", name: "Todos" }, ...categories];
 
   return (
-    <div className="w-full py-4 border-y border-stone-200/50 my-6">
+    <div className="w-full py-2 my-2 sm:my-4">
       <div 
-        className="flex flex-wrap items-center justify-start gap-2.5 sm:justify-center"
+        className="flex flex-wrap items-center justify-start gap-2 sm:justify-center bg-stone-100/80 p-2 rounded-3xl sm:rounded-full border border-stone-200/60 shadow-inner"
         role="tablist"
         aria-label="Filtrar catálogo de productos por categoría"
       >
@@ -38,10 +38,10 @@ export function ProductCategoryFilter({
               role="tab"
               aria-selected={isActive}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer border",
+                "px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 cursor-pointer",
                 isActive
-                  ? "bg-stone-900 text-white border-stone-900 shadow-xs"
-                  : "bg-white text-stone-600 border-stone-200 hover:text-stone-950 hover:bg-stone-50 hover:border-stone-300"
+                  ? "bg-white text-accent-deep shadow-md border border-white"
+                  : "bg-transparent text-stone-500 border border-transparent hover:text-stone-900 hover:bg-white/60 hover:shadow-sm"
               )}
             >
               {opt.name}

@@ -23,7 +23,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 overflow-hidden rounded-lg shadow-md border border-stone-800 bg-[#007299] shrink-0 group-hover:scale-105 transition-all duration-300">
                 <Image
-                  src="/logo.svg"
+                  src="/logo.png"
                   alt="Five Saint Logo"
                   fill
                   className="object-cover"
@@ -34,7 +34,7 @@ export default function Footer() {
                   {siteConfig.name}
                 </span>
                 <span className="block text-[9px] font-semibold uppercase tracking-[0.25em] text-[#9de6f2] mt-0.5 leading-none">
-                  Premium Wellness
+                  Equipamientos para Spa
                 </span>
               </div>
             </div>

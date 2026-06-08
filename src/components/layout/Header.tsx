@@ -55,7 +55,7 @@ export default function Header() {
           >
             <div className="relative w-10 h-10 overflow-hidden rounded-lg shadow-sm border border-stone-200/40 bg-[#007299] shrink-0 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
               <Image
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Five Saint Logo"
                 fill
                 className="object-cover"
@@ -67,7 +67,7 @@ export default function Header() {
                 {siteConfig.name}
               </span>
               <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-stone-400 mt-0.5 leading-none">
-                Desde {siteConfig.foundedYear} | Premium Wellness
+                Equipamientos para Spa
               </span>
             </div>
           </Link>

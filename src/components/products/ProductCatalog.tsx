@@ -39,7 +39,7 @@ export function ProductCatalog({ products, categories }: ProductCatalogProps) {
   }, [selectedCategory, products]);
 
   return (
-    <section className="py-12 sm:py-16 bg-stone-50/30">
+    <section className="pt-6 pb-16 sm:pt-10 sm:pb-24 bg-gradient-to-b from-stone-50/80 to-white">
       <Container className="flex flex-col gap-8">
         
         {/* Filtro de Categorías Pills */}
@@ -50,10 +50,11 @@ export function ProductCatalog({ products, categories }: ProductCatalogProps) {
         />
 
         {/* Contador Dinámico de Productos Encontrados */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-stone-400">
+        <div className="flex items-center gap-4 w-full">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-accent-deep/80 bg-accent-soft/30 px-4 py-2 rounded-full border border-accent-soft/50 shadow-sm">
             Mostrando {filteredProducts.length} {filteredProducts.length === 1 ? "artículo" : "artículos"}
           </span>
+          <div className="flex-1 h-px bg-gradient-to-r from-stone-200/80 to-transparent"></div>
         </div>
 
         {/* Estado Vacío / Sin Resultados */}

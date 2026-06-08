@@ -18,11 +18,11 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card
       hoverable
-      className="flex flex-col justify-between h-full bg-white p-0 overflow-hidden group border border-stone-200/60"
+      className="flex flex-col justify-between h-full bg-white p-0 overflow-hidden group border border-stone-100/50 shadow-[0_2px_10px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] rounded-[1.5rem] hover:-translate-y-1 transition-all duration-500"
       padding="none"
     >
       {/* 1. Contenedor de la Imagen Placeholder o Real con Gradiente */}
-      <div className="relative w-full h-44 bg-gradient-to-br from-stone-50 via-white to-accent-soft/25 border-b border-stone-100 flex items-center justify-center transition-colors duration-300 group-hover:from-accent-soft/10 overflow-hidden">
+      <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-stone-100 via-white to-stone-50 flex items-center justify-center overflow-hidden">
         
         {/* Imagen real si existe */}
         {product.image ? (
@@ -78,19 +78,19 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* 3. Pie de la Tarjeta con CTA de Detalles */}
-        <div className="pt-4 border-t border-stone-100/60 flex items-center justify-between mt-auto">
+        <div className="pt-5 border-t border-stone-100/60 flex items-center justify-between mt-auto">
           <span className="text-[9.5px] uppercase tracking-wider font-semibold text-stone-400">
             Medidas a Pedido
           </span>
           <Button
             variant="ghost"
             size="sm"
-            className="text-xs uppercase tracking-wider font-semibold group-hover:text-accent-deep cursor-pointer"
+            className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold group-hover:text-white group-hover:bg-accent-deep/90 transition-all duration-300 cursor-pointer rounded-xl px-4 hover:shadow-md"
             asChild
           >
             <Link href={product.href} className="flex items-center gap-1">
               Ver detalle
-              <ArrowRight className="h-3.5 w-3.5 ml-1 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="h-3.5 w-3.5 ml-1 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
