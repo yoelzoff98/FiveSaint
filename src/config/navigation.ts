@@ -43,13 +43,13 @@ export const footerNavigation = {
   ] as FooterNavItem[],
   
   categories: [
-    { title: "Bañeras", href: "/productos/baneras" },
-    { title: "Hidromasajes", href: "/productos/hidromasajes" },
-    { title: "Spas", href: "/productos/spas" },
-    { title: "Platos de Ducha", href: "/productos/platos-de-ducha" },
-    { title: "Columnas de Ducha", href: "/productos/columnas" },
-    { title: "Saunas", href: "/productos/saunas" },
-    { title: "Duchas Escocesas", href: "/productos/duchas-escocesas" },
+    { title: "Bañeras", href: "/productos?categoria=baneras" },
+    { title: "Spa y Minipiscinas", href: "/productos?categoria=spa-y-minipiscinas" },
+    { title: "Platos de Duchas", href: "/productos?categoria=platos-de-duchas" },
+    { title: "Columnas de Ducha", href: "/productos?categoria=columnas-de-ducha" },
+    { title: "Ducha Escocesa", href: "/productos?categoria=ducha-escocesa" },
+    { title: "Sauna", href: "/productos?categoria=sauna" },
+    { title: "Adicionales", href: "/productos?categoria=adicionales" },
   ] as FooterNavItem[],
 
   legal: [
