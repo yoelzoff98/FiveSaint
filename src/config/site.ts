@@ -16,10 +16,10 @@ export const siteConfig = {
   
   contact: {
     address: "Buenos Aires, Argentina",
-    phone: "A definir",
+    phone: "+54 11 3816-1492",
     email: "info@fivesaint.com",
     workingHours: "A definir",
-    whatsapp: "A definir",
+    whatsapp: "+541138161492",
     location: "Buenos Aires, Argentina",
     businessHours: "A definir",
   },

@@ -7,7 +7,7 @@ import React from "react";
  */
 export function WhatsAppButton() {
   // Enlace directo configurable con mensaje predeterminado
-  const whatsappUrl = "https://wa.me/5491111111111?text=Hola!%20Me%20interesa%20recibir%20asesoramiento%20sobre%20los%20productos%20de%20Five%20Saint.";
+  const whatsappUrl = "https://wa.me/541138161492?text=Hola!%20Me%20interesa%20recibir%20asesoramiento%20sobre%20los%20productos%20de%20Five%20Saint.";
 
   return (
     <a
