@@ -72,3 +72,22 @@ body {
   outline: 2px solid var(--accent-deep);
   outline-offset: 2px;
 }
+
+/* Print Specific Styles for PDF Generator */
+@media print {
+  @page {
+    size: A4;
+    margin: 0; /* Let the component handle margins */
+  }
+  
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: white;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+}
+
