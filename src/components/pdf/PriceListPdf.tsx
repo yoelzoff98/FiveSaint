@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { banerasData, equipamientosData, ofertasData, spaDataPage1, spaDataPage2, spaOpcionalesData, platosDuchaData, columnasDuchaData, duchaEscocesaData, vaporData } from '@/config/price-list-data';
+import { banerasData, equipamientosData, ofertasData, spaDataPage1, spaDataPage2, spaOpcionalesData, platosDuchaData, columnasDuchaData, duchaEscocesaData, vaporData, banerasPremiumData, banerasPremiumInfo, saunaData } from '@/config/price-list-data';
 import Image from 'next/image';
 
 export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
@@ -48,7 +48,93 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       </div>
 
       {/* 
-        PÁGINA 1: Bañeras
+        PÁGINAS DE BAÑERAS PREMIUM
+      */}
+      {Array.from({ length: 2 }).map((_, pageIndex) => {
+        const chunk = banerasPremiumData.slice(pageIndex * 9, (pageIndex + 1) * 9);
+        
+        return (
+          <div key={`baneras-premium-page-${pageIndex}`} className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
+            {/* Banner Superior */}
+            <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0">
+              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+              
+              <div className="absolute inset-0 flex flex-col justify-center px-10">
+                <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
+                  Bañeras Premium {pageIndex > 0 && <span className="text-xl text-white/70 ml-2">(Cont.)</span>}
+                </h1>
+              </div>
+            </div>
+
+            {/* Descripciones de Equipamiento (solo en pág 1) */}
+            {pageIndex === 0 && (
+              <div className="px-10 pt-4 shrink-0">
+                <div className="flex gap-4">
+                  <div className="w-1/2 bg-slate-50 border border-slate-200 rounded-lg p-3 shadow-sm">
+                    <h3 className="text-[10px] font-bold text-accent-deep uppercase mb-1">Equipamiento CONFORT</h3>
+                    <p className="text-[8px] text-slate-600 leading-tight">{banerasPremiumInfo.confortDesc}</p>
+                  </div>
+                  <div className="w-1/2 bg-slate-50 border border-slate-200 rounded-lg p-3 shadow-sm">
+                    <h3 className="text-[10px] font-bold text-accent-gold uppercase mb-1">Equipamiento CONFORT PLUS</h3>
+                    <p className="text-[8px] text-slate-600 leading-tight">{banerasPremiumInfo.confortPlusDesc}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Listado de Bañeras Premium */}
+            <div className={`px-10 flex-grow flex flex-col gap-2 ${pageIndex === 0 ? 'pt-4' : 'pt-6'}`}>
+              {chunk.map((item, idx) => (
+                <div key={idx} className="flex gap-4 border border-slate-200 rounded-xl p-2 shadow-sm items-center hover:bg-slate-50 transition-colors">
+                  {/* Imagen */}
+                  <div className="w-24 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center shrink-0 shadow-inner">
+                     <span className="text-[8px] text-slate-300 font-bold uppercase">Falta Foto</span>
+                  </div>
+                  
+                  {/* Detalles y Precios */}
+                  <div className="flex-grow flex justify-between items-center">
+                    {/* Info */}
+                    <div className="w-1/3">
+                      <h3 className="text-sm font-black text-accent-deep uppercase leading-tight">{item.name}</h3>
+                      <p className="text-[10px] font-mono text-slate-500 mt-1">Medidas: {item.medidas}</p>
+                    </div>
+
+                    {/* Tabla de precios */}
+                    <div className="w-2/3 flex gap-4">
+                      {/* Confort */}
+                      <div className="w-1/2 flex flex-col items-end justify-center">
+                        <span className="text-[9px] font-bold text-slate-600 uppercase mb-1">Confort</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[9px] font-mono text-slate-400">{item.confortCode}</span>
+                          <span className="text-xs font-black text-accent-deep">{item.confortPrice}</span>
+                        </div>
+                      </div>
+                      {/* Confort Plus */}
+                      <div className="w-1/2 flex flex-col items-end justify-center border-l border-slate-200 pl-4">
+                        <span className="text-[9px] font-bold text-accent-gold uppercase mb-1">Confort Plus</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[9px] font-mono text-slate-400">{item.confortPlusCode}</span>
+                          <span className="text-xs font-black text-accent-deep">{item.confortPlusPrice}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer info */}
+            <div className="px-10 pb-8 mt-auto flex justify-end items-end shrink-0 pt-4">
+              <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded shadow-sm text-xs uppercase tracking-wider">
+                LOS PRECIOS NO INCLUYEN IVA
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* 
+        PÁGINAS DE BAÑERAS
       */}
       {/* 
         PÁGINAS DE BAÑERAS
@@ -310,7 +396,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           {spaDataPage1.map((spa, idx) => (
             <div key={idx} className="w-1/2 flex flex-col">
               {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
-              <div className="mb-1 flex items-end justify-between gap-4">
+              <div className="mb-6 flex items-end justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
                   <p className="text-[9px] text-slate-500 font-mono mt-1 whitespace-pre-line leading-tight">{spa.dimensions}</p>
@@ -413,7 +499,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           {spaDataPage2.map((spa, idx) => (
             <div key={idx} className="w-1/2 flex flex-col">
               {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
-              <div className="mb-2 flex items-end justify-between gap-4">
+              <div className="mb-8 flex items-end justify-between gap-4">
                 <div>
                   <h2 className="text-3xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
                   <p className="text-[9px] text-slate-500 font-mono mt-2 whitespace-pre-line leading-tight">{spa.dimensions}</p>
@@ -492,26 +578,34 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       </div>
 
       {/* 
-        PÁGINA DE PLATOS DE DUCHA
+        PÁGINAS DE PLATOS DE DUCHA
       */}
-      <div className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
-        {/* Banner Superior Premium */}
-        <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-          <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
-          
-          <div className="absolute inset-0 flex items-center justify-between px-10">
-            <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
-              Platos de Ducha <span className="text-xl text-white/70 ml-2">Acrílico</span>
-            </h1>
-          </div>
-        </div>
+      {Array.from({ length: 2 }).map((_, pageIndex) => {
+        // Page 1: 0, 1 (left) | 2 (right)
+        // Page 2: 3 (left) | 4 (right)
+        const leftColCats = pageIndex === 0 ? platosDuchaData.slice(0, 2) : platosDuchaData.slice(3, 4);
+        const rightColCats = pageIndex === 0 ? platosDuchaData.slice(2, 3) : platosDuchaData.slice(4, 5);
+        
+        return (
+          <div key={`platos-page-${pageIndex}`} className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
+            {/* Banner Superior Premium */}
+            <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0">
+              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+              <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
+              
+              <div className="absolute inset-0 flex items-center justify-between px-10">
+                <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
+                  Platos de Ducha <span className="text-xl text-white/70 ml-2">Acrílico</span>
+                  {pageIndex > 0 && <span className="text-xl text-white/70 ml-2">(Cont.)</span>}
+                </h1>
+              </div>
+            </div>
 
         {/* Contenido Platos de Ducha (2 Columnas) */}
-        <div className="flex-grow px-10 pt-6 flex gap-8">
-          {/* Columna Izquierda (Rectos y Curvos) */}
+        <div className="flex-grow px-10 pt-8 flex gap-8">
+          {/* Columna Izquierda */}
           <div className="w-1/2 flex flex-col gap-6">
-            {platosDuchaData.slice(0, 2).map((cat, idx) => (
+            {leftColCats.map((cat, idx) => (
               <div key={idx} className="flex flex-col">
                 <div className="flex justify-between items-end border-b-2 border-accent-deep pb-2 mb-4">
                   <h3 className="text-2xl font-black text-accent-deep uppercase tracking-wide">{cat.title}</h3>
@@ -519,7 +613,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 
                 <div className="flex flex-col gap-4">
                   {/* Imagen de la Categoría */}
-                  <div className="w-full h-40 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 shadow-inner relative">
+                  <div className="w-full h-32 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 shadow-inner relative">
                     {cat.image ? (
                       <img src={cat.image} alt={cat.title} className="w-full h-full object-contain mix-blend-multiply drop-shadow-md p-2" />
                     ) : (
@@ -577,9 +671,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             ))}
           </div>
 
-          {/* Columna Derecha (Rectangulares y Línea de Luxe) */}
+          {/* Columna Derecha */}
           <div className="w-1/2 flex flex-col gap-6">
-            {platosDuchaData.slice(2, 4).map((cat, idx) => (
+            {rightColCats.map((cat, idx) => (
               <div key={idx} className="flex flex-col">
                 <div className="flex justify-between items-end border-b-2 border-accent-deep pb-2 mb-4">
                   <h3 className="text-2xl font-black text-accent-deep uppercase tracking-wide">{cat.title}</h3>
@@ -587,7 +681,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 
                 <div className="flex flex-col gap-4">
                   {/* Imagen de la Categoría */}
-                  <div className="w-full h-40 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 shadow-inner relative">
+                  <div className="w-full h-32 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200 shadow-inner relative">
                     {cat.image ? (
                       <img src={cat.image} alt={cat.title} className="w-full h-full object-contain mix-blend-multiply drop-shadow-md p-2" />
                     ) : (
@@ -654,6 +748,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
         </div>
       </div>
+      );
+      })}
 
       {/* 
         PÁGINA DE COLUMNAS DE DUCHA
@@ -794,7 +890,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           
           {/* Textos Vapor */}
           <div className="w-[55%] flex flex-col justify-center">
-            <h2 className="text-5xl font-black text-slate-900 italic tracking-tighter mb-4">
+            <h2 className="text-5xl font-bold text-accent-deep uppercase tracking-widest mb-4">
               {vaporData.title}
             </h2>
             <p className="text-[11px] text-slate-700 font-medium leading-relaxed mb-6 pr-10">
@@ -808,6 +904,116 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         {/* Footer info */}
         <div className="px-10 pb-8 mt-auto flex justify-end items-end shrink-0 text-[10px] text-slate-500 border-t border-slate-200 pt-4 mx-10">
+          <div className="bg-slate-200 text-slate-600 font-bold px-3 py-1 text-xs">
+            LOS PRECIOS NO INCLUYEN IVA
+          </div>
+        </div>
+      </div>
+
+      {/* 
+        PÁGINA DE SAUNA
+      */}
+      <div className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
+        {/* Banner Superior */}
+        <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+          
+          <div className="absolute inset-0 flex flex-col justify-center px-10">
+            <h1 className="text-5xl font-bold text-white tracking-widest drop-shadow-md uppercase">
+              {saunaData.title}
+            </h1>
+          </div>
+        </div>
+
+        {/* Imágenes Superiores */}
+        <div className="flex gap-4 px-10 pt-8 shrink-0 h-[280px]">
+          <div className="w-1/2 bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
+            <img src={saunaData.images.main} alt="Sauna 1" className="w-full h-full object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <span className="absolute text-[8px] text-slate-400 font-bold uppercase">Falta Foto</span>
+          </div>
+          <div className="w-1/2 bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
+            <img src={saunaData.images.secondary} alt="Sauna 2" className="w-full h-full object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <span className="absolute text-[8px] text-slate-400 font-bold uppercase">Falta Foto</span>
+          </div>
+        </div>
+
+        {/* Tabla Modelos */}
+        <div className="px-10 pt-8 flex-grow flex flex-col">
+          {/* Cabecera Tabla */}
+          <div className="flex font-bold text-slate-800 text-[12px] mb-2 px-4 border-b-2 border-accent-deep pb-2">
+            <div className="w-[25%]">Capacidad</div>
+            <div className="w-[20%]">Consumo</div>
+            <div className="w-[25%]">Línea</div>
+            <div className="w-[30%]"></div>
+          </div>
+          
+          {/* Filas */}
+          <div className="flex flex-col gap-4 mt-2">
+            {saunaData.models.map((model, idx) => (
+              <div key={idx} className="flex bg-slate-50 border border-slate-200 rounded-xl p-4 items-center shadow-sm relative overflow-hidden">
+                <div className="w-[25%] flex flex-col gap-3 text-[11px] text-slate-700 font-medium z-10">
+                  <span className="text-[12px] font-bold text-slate-800">{model.capacidad}</span>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-slate-600">{model.cabinaCode}</span>
+                    <span className="font-mono text-slate-600">{model.revestimientoCode}</span>
+                  </div>
+                </div>
+                
+                <div className="w-[20%] flex flex-col gap-3 text-[11px] text-slate-700 z-10">
+                  <span className="font-bold">{model.consumo}</span>
+                  <div className="flex flex-col leading-tight">
+                    <span>Cabina</span>
+                    <span>Revestimiento</span>
+                    <span>Interior</span>
+                  </div>
+                </div>
+                
+                <div className="w-[25%] text-[11px] text-slate-700 flex flex-col gap-1 z-10">
+                  {model.linea.map((l, i) => (
+                    <span key={i}>{l}</span>
+                  ))}
+                </div>
+                
+                <div className="w-[30%] flex justify-end z-10">
+                  {/* Placeholder for diagram */}
+                  <div className="w-24 h-14 bg-white border border-slate-300 rounded shadow-inner flex items-center justify-center relative overflow-hidden">
+                    <img src={model.image} alt="Diagrama" className="w-full h-full object-contain p-1 mix-blend-multiply" onError={(e) => e.currentTarget.style.display = 'none'} />
+                    <span className="absolute text-[6px] text-slate-300">Esquema</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Opcionales y Notas */}
+          <div className="flex justify-between items-end mt-12 mb-4">
+            {/* Opcionales */}
+            <div className="w-1/2">
+              <h3 className="text-lg font-bold text-slate-800 border-b-2 border-accent-deep pb-1 mb-4 inline-block">Opcionales</h3>
+              <div className="flex flex-col gap-2">
+                {saunaData.opcionales.map((opc, idx) => (
+                  <div key={idx} className="flex gap-6 text-[11px] text-slate-700">
+                    <span className="font-mono font-bold w-16">{opc.code}</span>
+                    <span>{opc.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Nota */}
+            <div className="w-[45%] border border-slate-300 rounded-md p-4 text-[10px] text-slate-600 bg-white leading-relaxed text-center shadow-sm">
+              {saunaData.note.split('\n').map((line, i) => (
+                <div key={i}>{line}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer info */}
+        <div className="px-10 pb-8 mt-auto flex justify-between items-center shrink-0 border-t border-slate-200 pt-4 mx-10">
+          <div className="text-[10px] text-slate-600 flex items-center gap-2">
+            Solicitar cotización a: <span className="border border-slate-300 px-2 py-1 bg-white font-mono">{saunaData.contact.split(': ')[1]}</span>
+          </div>
           <div className="bg-slate-200 text-slate-600 font-bold px-3 py-1 text-xs">
             LOS PRECIOS NO INCLUYEN IVA
           </div>
