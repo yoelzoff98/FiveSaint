@@ -35,18 +35,18 @@ export const banerasPremiumData: BaneraPremium[] = [
   { name: "Romana", medidas: "180x90", confortCode: "FS212C", confortPrice: "$ 3 199 000", confortPlusCode: "FS212CP", confortPlusPrice: "$ 4 016 000" },
   { name: "Romana", medidas: "180x120", confortCode: "FS630C", confortPrice: "$ 3 758 000", confortPlusCode: "FS630CP", confortPlusPrice: "$ 4 574 500" },
   { name: "Romana", medidas: "180x150", confortCode: "FS730C", confortPrice: "$ 4 174 300", confortPlusCode: "FS730CP", confortPlusPrice: "$ 4 652 800" },
-  { name: "Agustar", medidas: "180x150", confortCode: "FS10378C", confortPrice: "$ 3 916 900", confortPlusCode: "FS10378CP", confortPlusPrice: "$ 4 733 500" },
+  { name: "Agustar", medidas: "180x150", confortCode: "FS10378C", confortPrice: "$ 3 916 900", confortPlusCode: "FS10378CP", confortPlusPrice: "$ 4 733 500", image: "/images/Beñeras/Agustar.jpg" },
   { name: "Quadra", medidas: "150x150", confortCode: "FS10601C", confortPrice: "$ 4 237 600", confortPlusCode: "FS10601CP", confortPlusPrice: "$ 5 055 000" },
-  { name: "Modena", medidas: "200x144", confortCode: "FS10562C", confortPrice: "$ 4 106 000", confortPlusCode: "FS10562CP", confortPlusPrice: "$ 5 123 000" },
-  { name: "Veneto", medidas: "184x100", confortCode: "FS10547C", confortPrice: "$ 3 716 800", confortPlusCode: "FS10547CP", confortPlusPrice: "$ 4 533 300" },
-  { name: "Parma", medidas: "180x80", confortCode: "FS10532C", confortPrice: "$ 3 199 000", confortPlusCode: "FS10532CP", confortPlusPrice: "$ 4 016 000" },
-  { name: "Laguna", medidas: "180x106", confortCode: "FS10412C", confortPrice: "$ 3 336 300", confortPlusCode: "FS10412CP", confortPlusPrice: "$ 4 152 000" },
+  { name: "Modena", medidas: "200x144", confortCode: "FS10562C", confortPrice: "$ 4 106 000", confortPlusCode: "FS10562CP", confortPlusPrice: "$ 5 123 000", image: "/images/Beñeras/Modena.jpg" },
+  { name: "Veneto", medidas: "184x100", confortCode: "FS10547C", confortPrice: "$ 3 716 800", confortPlusCode: "FS10547CP", confortPlusPrice: "$ 4 533 300", image: "/images/Beñeras/Veneto.jpg" },
+  { name: "Parma", medidas: "180x80", confortCode: "FS10532C", confortPrice: "$ 3 199 000", confortPlusCode: "FS10532CP", confortPlusPrice: "$ 4 016 000", image: "/images/Beñeras/Parma.jpg" },
+  { name: "Laguna", medidas: "180x106", confortCode: "FS10412C", confortPrice: "$ 3 336 300", confortPlusCode: "FS10412CP", confortPlusPrice: "$ 4 152 000", image: "/images/Beñeras/Laguna.jpg" },
   { name: "Circular", medidas: "150", confortCode: "FS10455C", confortPrice: "$ 3 671 000", confortPlusCode: "FS10455CP", confortPlusPrice: "$ 4 487 500" },
-  { name: "Esquinera", medidas: "150x150", confortCode: "FS10517C", confortPrice: "$ 3 671 000", confortPlusCode: "FS10517CP", confortPlusPrice: "$ 4 487 500" },
-  { name: "Perla", medidas: "165x90", confortCode: "FS10057C", confortPrice: "$ 2 991 000", confortPlusCode: "FS10057CP", confortPlusPrice: "$ 3 807 500" },
-  { name: "Perla", medidas: "190x90", confortCode: "FS10072C", confortPrice: "$ 3 010 500", confortPlusCode: "FS10072CP", confortPlusPrice: "$ 3 826 900" },
-  { name: "Perla", medidas: "180x120", confortCode: "FS10087C", confortPrice: "$ 3 536 300", confortPlusCode: "FS10087CP", confortPlusPrice: "$ 4 352 600" },
-  { name: "Quarzo", medidas: "170x83", confortCode: "FS10175C", confortPrice: "$ 2 827 600", confortPlusCode: "FS10175CP", confortPlusPrice: "$ 3 835 000" },
+  { name: "Esquinera", medidas: "150x150", confortCode: "FS10517C", confortPrice: "$ 3 671 000", confortPlusCode: "FS10517CP", confortPlusPrice: "$ 4 487 500", image: "/images/Beñeras/Esquinera.jpg" },
+  { name: "Perla", medidas: "165x90", confortCode: "FS10057C", confortPrice: "$ 2 991 000", confortPlusCode: "FS10057CP", confortPlusPrice: "$ 3 807 500", image: "/images/Beñeras/Perla.jpg" },
+  { name: "Perla", medidas: "190x90", confortCode: "FS10072C", confortPrice: "$ 3 010 500", confortPlusCode: "FS10072CP", confortPlusPrice: "$ 3 826 900", image: "/images/Beñeras/Perla.jpg" },
+  { name: "Perla", medidas: "180x120", confortCode: "FS10087C", confortPrice: "$ 3 536 300", confortPlusCode: "FS10087CP", confortPlusPrice: "$ 4 352 600", image: "/images/Beñeras/Perla.jpg" },
+  { name: "Quarzo", medidas: "170x83", confortCode: "FS10175C", confortPrice: "$ 2 827 600", confortPlusCode: "FS10175CP", confortPlusPrice: "$ 3 835 000", image: "/images/Beñeras/Quarzo.jpg" },
   { name: "Yaquelin", medidas: "165x120", confortCode: "FS10233C", confortPrice: "$ 2 327 400", confortPlusCode: "FS10233CP", confortPlusPrice: "$ 4 154 000" },
   { name: "Yaquelin", medidas: "181x91", confortCode: "FS10248C", confortPrice: "$ 3 010 500", confortPlusCode: "FS10248CP", confortPlusPrice: "$ 3 827 000" }
 ];
@@ -56,35 +56,35 @@ export const banerasData: PriceCategory = {
   subtitle: "Sistemas Hidroterapéuticos",
   products: [
     { name: "Quadra", medidas: "150x150", jet8: "$ 2 916 000" },
-    { name: "Parma", medidas: "180x080", cascos: "$ 726 000", jet4: "$ 1 768 000", jet6: "$ 1 920 000", jet8: "$ 2 078 000" },
-    { name: "Veneto", medidas: "184x100", cascos: "$ 968 000", jet4: "$ 2 286 000", jet6: "$ 2 481 000", jet8: "$ 2 596 000" },
-    { name: "Modena", medidas: "200x144", cascos: "$ 1 038 000", jet4: "$ 2 629 000", jet6: "$ 2 805 000", jet8: "$ 2 985 000" },
+    { name: "Parma", medidas: "180x080", cascos: "$ 726 000", jet4: "$ 1 768 000", jet6: "$ 1 920 000", jet8: "$ 2 078 000", image: "/images/Beñeras/Parma.jpg" },
+    { name: "Veneto", medidas: "184x100", cascos: "$ 968 000", jet4: "$ 2 286 000", jet6: "$ 2 481 000", jet8: "$ 2 596 000", image: "/images/Beñeras/Veneto.jpg" },
+    { name: "Modena", medidas: "200x144", cascos: "$ 1 038 000", jet4: "$ 2 629 000", jet6: "$ 2 805 000", jet8: "$ 2 985 000", image: "/images/Beñeras/Modena.jpg" },
     { name: "Romana", medidas: "150x0.70", cascos: "$ 614 000", jet4: "$ 1 450 000", jet6: "$ 1 588 000", jet8: "$ 1 729 000" },
     { name: "Romana", medidas: "160x0.75", cascos: "$ 799 000", jet4: "$ 1 468 000", jet6: "$ 1 606 000", jet8: "$ 1 747 000" },
     { name: "Romana", medidas: "170x080", cascos: "$ 799 000", jet4: "$ 1 768 000", jet6: "$ 1 920 000", jet8: "$ 2 078 000" },
     { name: "Romana", medidas: "180x090", cascos: "$ 799 000", jet4: "$ 1 768 000", jet6: "$ 1 920 000", jet8: "$ 2 078 000" },
     { name: "Romana", medidas: "180x120", cascos: "$ 1 007 000", jet4: "$ 2 095 000", jet6: "$ 2 264 000", jet8: "$ 2 437 000" },
-    { name: "Perla", medidas: "140x077", cascos: "$ 520 000", jet4: "$ 1 198 000", jet6: "$ 1 324 000", jet8: "$ 1 453 000" },
-    { name: "Perla", medidas: "165x090", cascos: "$ 726 000", jet4: "$ 1 588 000", jet6: "OFERTA", jet8: "$ 1 870 000" },
-    { name: "Perla", medidas: "190x090", cascos: "$ 759 000", jet4: "$ 1 607 000", jet6: "$ 1 747 000", jet8: "$ 1 889 000" },
-    { name: "Perla", medidas: "180x120", cascos: "$ 915 000", jet4: "$ 1 905 000", jet6: "$ 2 069 000", jet8: "$ 2 215 000" },
-    { name: "Lady", medidas: "150x070", cascos: "$ 533 000", jet4: "OFERTA", jet6: "$ 1 392 000", jet8: "$ 1 520 000" },
-    { name: "Lady", medidas: "160x070", cascos: "$ 558 000", jet4: "$ 1 318 000", jet6: "$ 1 443 000", jet8: "$ 1 572 000" },
-    { name: "Lady", medidas: "170x070", cascos: "$ 595 000", jet4: "$ 1 409 000", jet6: "$ 1 534 000", jet8: "$ 1 663 000" },
-    { name: "Quarzo", medidas: "170x083", cascos: "$ 776 000", jet4: "$ 1 588 000", jet6: "OFERTA", jet8: "$ 1 897 000" },
+    { name: "Perla", medidas: "140x077", cascos: "$ 520 000", jet4: "$ 1 198 000", jet6: "$ 1 324 000", jet8: "$ 1 453 000", image: "/images/Beñeras/Perla.jpg" },
+    { name: "Perla", medidas: "165x090", cascos: "$ 726 000", jet4: "$ 1 588 000", jet6: "OFERTA", jet8: "$ 1 870 000", image: "/images/Beñeras/Perla.jpg" },
+    { name: "Perla", medidas: "190x090", cascos: "$ 759 000", jet4: "$ 1 607 000", jet6: "$ 1 747 000", jet8: "$ 1 889 000", image: "/images/Beñeras/Perla.jpg" },
+    { name: "Perla", medidas: "180x120", cascos: "$ 915 000", jet4: "$ 1 905 000", jet6: "$ 2 069 000", jet8: "$ 2 215 000", image: "/images/Beñeras/Perla.jpg" },
+    { name: "Lady", medidas: "150x070", cascos: "$ 533 000", jet4: "OFERTA", jet6: "$ 1 392 000", jet8: "$ 1 520 000", image: "/images/Beñeras/Lady.jpg" },
+    { name: "Lady", medidas: "160x070", cascos: "$ 558 000", jet4: "$ 1 318 000", jet6: "$ 1 443 000", jet8: "$ 1 572 000", image: "/images/Beñeras/Lady.jpg" },
+    { name: "Lady", medidas: "170x070", cascos: "$ 595 000", jet4: "$ 1 409 000", jet6: "$ 1 534 000", jet8: "$ 1 663 000", image: "/images/Beñeras/Lady.jpg" },
+    { name: "Quarzo", medidas: "170x083", cascos: "$ 776 000", jet4: "$ 1 588 000", jet6: "OFERTA", jet8: "$ 1 897 000", image: "/images/Beñeras/Quarzo.jpg" },
     { name: "Yaquelin", medidas: "165x120", cascos: "$ 886 000", jet4: "$ 1 706 000", jet6: "$ 1 860 000", jet8: "$ 2 016 000" },
     { name: "Yaquelin", medidas: "181x091", cascos: "$ 726 000", jet4: "$ 1 608 000", jet6: "$ 1 747 000", jet8: "$ 1 889 000" },
     { name: "Valeria", medidas: "140x0.70", cascos: "$ 520 000", jet4: "$ 1 198 000", jet6: "$ 1 324 000", jet8: "$ 1 453 000" },
-    { name: "Joya", medidas: "150x075", cascos: "$ 558 000", jet4: "$ 1 334 000", jet6: "$ 1 459 000", jet8: "$ 1 588 000" },
-    { name: "Joya", medidas: "160x0.75", cascos: "$ 726 000", jet4: "$ 1 534 000", jet6: "$ 1 677 000", jet8: "$ 1 820 000" },
-    { name: "Agustar", medidas: "180x150", cascos: "$ 1 026 000", jet4: "$ 2 286 000", jet6: "$ 2 439 000", jet8: "$ 2 596 000" },
-    { name: "Martina (con frente y estructura)", medidas: "180x120", cascos: "$ 1 221 000", jet4: "$ 2 858 000", jet6: "$ 3 011 000", jet8: "$ 3 167 000" },
-    { name: "Martina (sin frente)", medidas: "180x120", cascos: "$ 968 000", jet4: "$ 2 644 000", jet6: "$ 2 796 000", jet8: "$ 2 954 000" },
-    { name: "Unica", medidas: "180x150", cascos: "$ 1 038 000", jet4: "$ 2 287 000", jet6: "$ 2 482 000", jet8: "$ 2 596 000" },
-    { name: "Laguna", medidas: "180x106", cascos: "$ 915 000", jet4: "$ 1 905 000", jet6: "$ 2 059 000", jet8: "$ 2 215 000" },
+    { name: "Joya", medidas: "150x075", cascos: "$ 558 000", jet4: "$ 1 334 000", jet6: "$ 1 459 000", jet8: "$ 1 588 000", image: "/images/Beñeras/Joya.jpg" },
+    { name: "Joya", medidas: "160x0.75", cascos: "$ 726 000", jet4: "$ 1 534 000", jet6: "$ 1 677 000", jet8: "$ 1 820 000", image: "/images/Beñeras/Joya.jpg" },
+    { name: "Agustar", medidas: "180x150", cascos: "$ 1 026 000", jet4: "$ 2 286 000", jet6: "$ 2 439 000", jet8: "$ 2 596 000", image: "/images/Beñeras/Agustar.jpg" },
+    { name: "Martina (con frente y estructura)", medidas: "180x120", cascos: "$ 1 221 000", jet4: "$ 2 858 000", jet6: "$ 3 011 000", jet8: "$ 3 167 000", image: "/images/Beñeras/martina.jpg" },
+    { name: "Martina (sin frente)", medidas: "180x120", cascos: "$ 968 000", jet4: "$ 2 644 000", jet6: "$ 2 796 000", jet8: "$ 2 954 000", image: "/images/Beñeras/martina.jpg" },
+    { name: "Unica", medidas: "180x150", cascos: "$ 1 038 000", jet4: "$ 2 287 000", jet6: "$ 2 482 000", jet8: "$ 2 596 000", image: "/images/Beñeras/Unica.jpg" },
+    { name: "Laguna", medidas: "180x106", cascos: "$ 915 000", jet4: "$ 1 905 000", jet6: "$ 2 059 000", jet8: "$ 2 215 000", image: "/images/Beñeras/Laguna.jpg" },
     { name: "Circular", medidas: "150 diam.", cascos: "$ 1 008 000", jet4: "$ 2 191 000", jet6: "$ 2 344 000", jet8: "OFERTA" },
-    { name: "Esquinera (frente curvo)", medidas: "140x140", cascos: "$ 1 008 000", jet4: "$ 2 191 000", jet6: "$ 2 344 000", jet8: "$ 2 380 000" },
-    { name: "Esquinero (frente recto)", medidas: "150x150", cascos: "$ 1 008 000", jet4: "$ 2 191 000", jet6: "$ 2 344 000", jet8: "OFERTA" }
+    { name: "Esquinera (frente curvo)", medidas: "140x140", cascos: "$ 1 008 000", jet4: "$ 2 191 000", jet6: "$ 2 344 000", jet8: "$ 2 380 000", image: "/images/Beñeras/Esquinera.jpg" },
+    { name: "Esquinero (frente recto)", medidas: "150x150", cascos: "$ 1 008 000", jet4: "$ 2 191 000", jet6: "$ 2 344 000", jet8: "OFERTA", image: "/images/Beñeras/Esquinero.jpg" }
   ]
 };
 
@@ -443,9 +443,9 @@ export const columnasDuchaData: ColumnaDucha[] = [
 export const duchaEscocesaData = {
   title: "Ducha Escocesa",
   images: {
-    jet: "/images/ducha-jet.png",
-    head: "/images/ducha-head.png",
-    full: "/images/ducha-full.png"
+    jet: "/images/Ducha Escocesa/Jet Ducha Escocesa.png",
+    head: "/images/Ducha Escocesa/Duchon Ducha Escocesa.png",
+    full: "/images/Ducha Escocesa/Ducha Escocesa.png"
   },
   models: [
     {
@@ -465,7 +465,7 @@ export const duchaEscocesaData = {
 
 export const vaporData = {
   title: "Vapor",
-  image: "/images/vapor.png",
+  image: "/images/Ducha Escocesa/Vapor.png",
   description: "Generador de vapor para cabinas automático con encendido digital monofásico y trifásico.",
   contact: "Solicitar cotización a comercial@fivesaint.com"
 };

@@ -89,8 +89,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               {chunk.map((item, idx) => (
                 <div key={idx} className="flex gap-4 border border-slate-200 rounded-xl p-2 shadow-sm items-center hover:bg-slate-50 transition-colors">
                   {/* Imagen */}
-                  <div className="w-24 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center shrink-0 shadow-inner">
-                    <span className="text-[8px] text-slate-300 font-bold uppercase">Falta Foto</span>
+                  <div className="w-24 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative">
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="w-full h-full object-contain mix-blend-multiply p-1" />
+                    ) : (
+                      <span className="text-[8px] text-slate-300 font-bold uppercase">Falta Foto</span>
+                    )}
                   </div>
 
                   {/* Detalles y Precios */}
@@ -172,40 +176,40 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <table className="w-full text-left border-collapse bg-white">
                   <thead className="bg-accent-deep text-white">
                     <tr>
-                      <th className="py-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Modelo</th>
-                      <th className="py-3 px-2 font-semibold uppercase tracking-wider text-[11px]">Medidas</th>
-                      <th className="py-3 px-2 font-semibold uppercase tracking-wider text-[11px]">Cascos</th>
-                      <th className="py-3 px-2 font-semibold uppercase tracking-wider text-[11px]">4 Jet</th>
-                      <th className="py-3 px-2 font-semibold uppercase tracking-wider text-[11px]">6 Jet</th>
-                      <th className="py-3 px-2 font-semibold uppercase tracking-wider text-[11px] text-accent-gold">8 Jet</th>
+                      <th className="py-3.5 px-4 font-semibold uppercase tracking-wider text-[12px]">Modelo</th>
+                      <th className="py-3.5 px-2 font-semibold uppercase tracking-wider text-[12px]">Medidas</th>
+                      <th className="py-3.5 px-2 font-semibold uppercase tracking-wider text-[12px]">Cascos</th>
+                      <th className="py-3.5 px-2 font-semibold uppercase tracking-wider text-[12px]">4 Jet</th>
+                      <th className="py-3.5 px-2 font-semibold uppercase tracking-wider text-[12px]">6 Jet</th>
+                      <th className="py-3.5 px-2 font-semibold uppercase tracking-wider text-[12px] text-accent-gold">8 Jet</th>
                     </tr>
                   </thead>
                   <tbody>
                     {chunk.map((p, idx) => (
                       <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td className="py-2 px-4 font-bold text-slate-700 w-1/4">
+                        <td className="py-1.5 px-4 font-bold text-slate-700 w-1/4">
                           <div className="flex items-center gap-3">
                             {p.image ? (
-                              <img src={p.image} alt={p.name} className="w-10 h-10 object-contain drop-shadow-sm mix-blend-multiply" />
+                              <img src={p.image} alt={p.name} className="w-16 h-16 object-contain drop-shadow-sm mix-blend-multiply" />
                             ) : (
-                              <div className="w-10 h-10 bg-accent-soft/30 rounded flex items-center justify-center shrink-0 border border-slate-100">
-                                <span className="text-accent-gold/40 font-bold text-[10px]">FS</span>
+                              <div className="w-16 h-16 bg-accent-soft/30 rounded flex items-center justify-center shrink-0 border border-slate-100">
+                                <span className="text-accent-gold/40 font-bold text-[12px]">FS</span>
                               </div>
                             )}
-                            <span className="text-accent-deep text-[13px]">{p.name}</span>
+                            <span className="text-accent-deep text-[14px]">{p.name}</span>
                           </div>
                         </td>
-                        <td className="py-2 px-2 text-slate-500 font-mono text-[11px] whitespace-nowrap">{p.medidas}</td>
-                        <td className="py-2 px-2 font-medium text-[12px]">{p.cascos || '-'}</td>
-                        <td className="py-2 px-2">
+                        <td className="py-1.5 px-2 text-slate-500 font-mono text-[12px] whitespace-nowrap">{p.medidas}</td>
+                        <td className="py-1.5 px-2 font-medium text-[13px]">{p.cascos || '-'}</td>
+                        <td className="py-1.5 px-2">
                           {p.oferta === 'OFERTA' ? (
-                            <span className="font-bold text-white bg-accent-gold px-2 py-1 rounded text-[10px] uppercase tracking-wider shadow-sm">OFERTA</span>
+                            <span className="font-bold text-white bg-accent-gold px-2 py-1 rounded text-[11px] uppercase tracking-wider shadow-sm">OFERTA</span>
                           ) : (
-                            <span className="font-medium text-slate-600 text-[12px]">{p.jet4 || '-'}</span>
+                            <span className="font-medium text-slate-600 text-[13px]">{p.jet4 || '-'}</span>
                           )}
                         </td>
-                        <td className="py-2 px-2 font-medium text-slate-600 text-[12px]">{p.jet6 || '-'}</td>
-                        <td className="py-2 px-2 font-bold text-accent-deep bg-accent-soft/30 text-[12px]">{p.jet8 || '-'}</td>
+                        <td className="py-1.5 px-2 font-medium text-slate-600 text-[13px]">{p.jet6 || '-'}</td>
+                        <td className="py-1.5 px-2 font-bold text-accent-deep bg-accent-soft/30 text-[13px]">{p.jet8 || '-'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -860,7 +864,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           {/* Imagen Vapor */}
           <div className="w-[45%] h-48 bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
             <img src={vaporData.image} alt={vaporData.title} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-xl p-4" onError={(e) => e.currentTarget.style.display = 'none'} />
-            <span className="absolute text-[8px] text-slate-300 font-mono">vapor.png</span>
           </div>
 
           {/* Textos Vapor */}
