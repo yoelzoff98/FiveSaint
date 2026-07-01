@@ -241,22 +241,22 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         return (
           <div key={`equip-page-${pageIndex}`} className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
             {/* Banner Superior con Ángulo */}
-            <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
+            <div className="relative w-full h-20 bg-accent-deep overflow-hidden shrink-0">
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
               <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
 
-              <div className="absolute inset-0 flex items-center px-16">
-                <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
+              <div className="absolute inset-0 flex items-center px-12">
+                <h1 className="text-3xl font-bold text-white uppercase tracking-widest drop-shadow-md">
                   Equipamientos {pageIndex > 0 && <span className="text-xl text-white/70 ml-2">(Cont.)</span>}
                 </h1>
               </div>
             </div>
 
             {/* Tabla Equipamientos (Centrada) */}
-            <div className="px-16 pt-10 pb-12 flex-grow flex flex-col justify-center">
-              <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+            <div className="px-12 pt-6 pb-6 flex-grow flex flex-col justify-center">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
                 {chunk.map((e, idx) => (
-                  <div key={idx} className="flex bg-white border-b border-slate-200 pb-3 hover:bg-slate-50 transition-colors">
+                  <div key={idx} className="flex bg-white border-b border-slate-200 pb-2 hover:bg-slate-50 transition-colors">
                     {/* Image Section */}
                     <div className="w-12 h-12 bg-accent-soft/30 flex-shrink-0 flex items-center justify-center p-0.5 rounded-md border border-slate-100 mr-2">
                       {e.image ? (
@@ -267,15 +267,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     </div>
 
                     {/* Content Section */}
-                    <div className="flex-grow flex flex-col justify-between py-1">
+                    <div className="flex-grow flex flex-col justify-between py-0.5">
                       <div>
                         <div className="flex justify-between items-start gap-2">
-                          <h3 className="text-[13px] font-bold text-accent-deep leading-tight">{e.nombre}</h3>
-                          <span className="text-accent-gold font-bold text-sm whitespace-nowrap shrink-0">{e.precio}</span>
+                          <h3 className="text-[12px] font-bold text-accent-deep leading-tight">{e.nombre}</h3>
+                          <span className="text-accent-gold font-bold text-[12px] whitespace-nowrap shrink-0">{e.precio}</span>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-mono tracking-tighter">Ref: {e.codigo}</span>
+                        <span className="text-[9px] text-slate-400 font-mono tracking-tighter">Ref: {e.codigo}</span>
                       </div>
-                      <p className="text-xs text-slate-600 leading-normal line-clamp-2 pr-2">{e.descripcion}</p>
+                      <p className="text-[10px] text-slate-600 leading-normal line-clamp-2 pr-2">{e.descripcion}</p>
                     </div>
                   </div>
                 ))}
@@ -283,7 +283,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </div>
 
             {/* Footer info Pág Equipamientos */}
-            <div className="px-16 pb-8 mt-auto flex justify-end shrink-0">
+            <div className="px-12 pb-6 mt-auto flex justify-end shrink-0">
               <div className="bg-accent-deep text-white font-bold px-4 py-1.5 rounded-lg shadow-md text-xs uppercase tracking-wider">
                 LOS PRECIOS NO INCLUYEN IVA
               </div>
