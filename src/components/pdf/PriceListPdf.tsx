@@ -105,25 +105,25 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div className="text-[10px] text-slate-400 font-medium">Modelos y Equipamientos (Pág. {pageIndex})</div>
                 </div>
 
-                {/* VERSIONES section - Achicado / Compacto - Solo en la página 1 */}
+                {/* VERSIONES section - Ampliado para mayor legibilidad - Solo en la página 1 */}
                 {pageIndex === 1 && (
-                  <div className="shrink-0 mb-3 bg-slate-50 border border-slate-200 rounded-xl p-2 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1.5">
-                      <h2 className="text-[10px] font-black text-[#006699] uppercase tracking-wider">Especificaciones de Equipamientos</h2>
-                      <span className="text-[8px] text-slate-400 font-semibold uppercase">Versiones Confort & Confort Plus</span>
+                  <div className="shrink-0 mb-6 bg-slate-50 border border-slate-200 rounded-xl p-3.5 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2">
+                      <h2 className="text-[11.5px] font-black text-[#006699] uppercase tracking-wider">Especificaciones de Equipamientos</h2>
+                      <span className="text-[9px] text-slate-400 font-semibold uppercase">Versiones Confort & Confort Plus</span>
                     </div>
-                    <table className="w-full text-left border-collapse text-[9px]">
+                    <table className="w-full text-left border-collapse text-[10.5px]">
                       <thead>
                         <tr className="border-b border-slate-200 text-slate-500 font-bold">
-                          <th className="py-0.5 w-[50%]">INCLUYE</th>
-                          <th className="py-0.5 text-center bg-[#006d9c] text-white rounded-t-md text-[8px] font-bold w-[25%] uppercase tracking-wider">CONFORT</th>
-                          <th className="py-0.5 text-center bg-[#d0a65c] text-white rounded-t-md text-[8px] font-bold w-[25%] uppercase tracking-wider">CONFORT PLUS</th>
+                          <th className="py-1 w-[50%]">INCLUYE</th>
+                          <th className="py-1 text-center bg-[#006d9c] text-white rounded-t-md text-[9px] font-bold w-[25%] uppercase tracking-wider">CONFORT</th>
+                          <th className="py-1 text-center bg-[#d0a65c] text-white rounded-t-md text-[9px] font-bold w-[25%] uppercase tracking-wider">CONFORT PLUS</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         <tr>
-                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
-                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                          <td className="py-1 flex items-center gap-2 font-medium text-slate-700">
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                               <circle cx="12" cy="12" r="3" />
                               <circle cx="12" cy="5" r="1.5" />
                               <circle cx="12" cy="19" r="1.5" />
@@ -136,66 +136,66 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                             </svg>
                             16 jets de hidromasaje
                           </td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={13} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
                         </tr>
                         <tr>
-                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
-                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <td className="py-1 flex items-center gap-2 font-medium text-slate-700">
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <circle cx="12" cy="12" r="9" />
                               <circle cx="12" cy="12" r="4" />
                               <path d="M12 3v18M3 12h18" />
                             </svg>
                             Sopapa
                           </td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={13} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
                         </tr>
                         <tr>
-                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
-                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <td className="py-1 flex items-center gap-2 font-medium text-slate-700">
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <rect x="3" y="7" width="18" height="10" rx="2" />
                               <circle cx="12" cy="12" r="2.5" />
                               <path d="M6 12h1M17 12h1" />
                             </svg>
                             Desborde metálico
                           </td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={13} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
                         </tr>
                         <tr>
-                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
-                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <td className="py-1 flex items-center gap-2 font-medium text-slate-700">
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <rect x="3" y="3" width="18" height="18" rx="1" />
                               <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
                             </svg>
                             Estructura metálica autoportante
                           </td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={13} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
                         </tr>
                         <tr>
-                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
-                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <td className="py-1 flex items-center gap-2 font-medium text-slate-700">
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path d="M3 16c0-3 2.5-5.5 5.5-5.5h7c3 0 5.5 2.5 5.5 5.5" />
                               <rect x="7" y="14" width="10" height="4" rx="1" />
                             </svg>
                             Almohadilla Relax
                           </td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><DashIcon size={11} /></div></td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><DashIcon size={13} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
                         </tr>
                         <tr>
-                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
-                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <td className="py-1 flex items-center gap-2 font-medium text-slate-700">
+                            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <rect x="4" y="6" width="16" height="12" rx="1.5" />
                               <circle cx="8" cy="12" r="1.5" />
                               <path d="M13 10h4M13 14h4" />
                             </svg>
                             Comando digital
                           </td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><DashIcon size={11} /></div></td>
-                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><DashIcon size={13} /></div></td>
+                          <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
                         </tr>
                       </tbody>
                     </table>
