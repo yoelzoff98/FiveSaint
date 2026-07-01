@@ -150,7 +150,7 @@ export const ofertasData: OfertaBañera[] = [
     descripcion: "4 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 263 000",
     jetLabel: "¡6 jet!",
-    image: "/images/lady-plus.png"
+    image: "/images/Ofertas/lady plus.jpg"
   },
   {
     name: "Joya Plus",
@@ -158,7 +158,7 @@ export const ofertasData: OfertaBañera[] = [
     descripcion: "5 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 528 000",
     jetLabel: "¡7 jet!",
-    image: "/images/joya-plus.png"
+    image: "/images/Ofertas/joya plus.jpg"
   },
   {
     name: "Perla Plus",
@@ -166,7 +166,7 @@ export const ofertasData: OfertaBañera[] = [
     descripcion: "6 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 706 000",
     jetLabel: "¡8 jet!",
-    image: "/images/perla-plus.png"
+    image: "/images/Ofertas/perla plus.jpg"
   },
   {
     name: "Quarzo Plus",
@@ -174,7 +174,7 @@ export const ofertasData: OfertaBañera[] = [
     descripcion: "6 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
     precio: "$ 1 786 000",
     jetLabel: "¡8 jet!",
-    image: "/images/quarzo-plus.png"
+    image: "/images/Ofertas/quarzo plus.jpg"
   },
   {
     name: "Circular Plus",
@@ -182,7 +182,7 @@ export const ofertasData: OfertaBañera[] = [
     descripcion: "8 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
     precio: "$ 2 225 000",
     jetLabel: "¡10 jet!",
-    image: "/images/circular-plus.png"
+    image: "/images/Ofertas/Circular plus.jpg"
   },
   {
     name: "Esquinero Plus",
@@ -190,7 +190,7 @@ export const ofertasData: OfertaBañera[] = [
     descripcion: "8 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 2 225 000",
     jetLabel: "¡10 jet!",
-    image: "/images/esquinero-plus.png"
+    image: "/images/Ofertas/Esquinero plus.JPG"
   }
 ];
 
@@ -244,7 +244,8 @@ export const spaDataPage1: SpaModel[] = [
       { code: "FSSPSB", price: "$ 7 309 000" },
       { code: "FSSPSC", price: "$ 10 236 000" },
       { code: "FSSPSP", price: "$ 12 842 000" }
-    ]
+    ],
+    image: "/images/Spa/space.png"
   },
   {
     name: "Design",
@@ -270,7 +271,8 @@ export const spaDataPage1: SpaModel[] = [
       { code: "FSSPDB", price: "$ 7 309 000" },
       { code: "FSSPDC", price: "$ 11 233 000" },
       { code: "FSSPDP", price: "$ 13 640 000" }
-    ]
+    ],
+    image: "/images/Spa/Design.png"
   }
 ];
 
@@ -292,7 +294,8 @@ export const spaDataPage2: SpaModel[] = [
     ],
     prices: [
       { code: "FSSPRB", price: "$ 4 972 000" }
-    ]
+    ],
+    image: "/images/Spa/Relax.png"
   },
   {
     name: "Party",
@@ -312,7 +315,8 @@ export const spaDataPage2: SpaModel[] = [
     ],
     prices: [
       { code: "FSSPPB", price: "$ 4 972 000" }
-    ]
+    ],
+    image: "/images/Spa/Party.png"
   }
 ];
 
@@ -335,7 +339,7 @@ export interface PlatosCategory {
 
 export const platosDuchaData: PlatosCategory[] = [
   {
-    title: "Rectos",
+    title: "Cuadrados",
     image: "/images/platos-rectos.png",
     desagueCode: "FSE131",
     desaguePrice: "$ 28 000",
@@ -411,28 +415,28 @@ export const columnasDuchaData: ColumnaDucha[] = [
     name: "DIJON",
     description: "Corta con duchón",
     price: "$ 1 769 000",
-    image: "/images/columna-dijon.png"
+    image: "/images/Columnas de Ducha/Dijon.png"
   },
   {
     code: "FSCOC",
     name: "BURDEOS",
     description: "Corta",
     price: "$ 1 769 000",
-    image: "/images/columna-burdeos.png"
+    image: "/images/Columnas de Ducha/Burdeos.png"
   },
   {
     code: "FSCOLD",
     name: "PARIS",
     description: "Larga con duchón",
     price: "$ 1 844 000",
-    image: "/images/columna-paris.png"
+    image: "/images/Columnas de Ducha/Paris.png"
   },
   {
     code: "FSCOL",
     name: "MARSELLA",
     description: "Larga",
     price: "$ 1 844 000",
-    image: "/images/columna-marsella.png"
+    image: "/images/Columnas de Ducha/Marsella.png"
   }
 ];
 
