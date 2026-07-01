@@ -832,7 +832,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
             {/* Imagen grande inferior */}
             <div className="w-full h-[380px] bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
-              <img src={duchaEscocesaData.images.full} alt="Ducha Escocesa Completa" className="w-full h-full object-cover mix-blend-multiply" onError={(e) => e.currentTarget.style.display = 'none'} />
+              <img src={duchaEscocesaData.images.full} alt="Ducha Escocesa Completa" className="w-full h-full object-contain mix-blend-multiply p-2" onError={(e) => e.currentTarget.style.display = 'none'} />
             </div>
           </div>
 
@@ -863,7 +863,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="flex px-10 gap-10 mb-8">
           {/* Imagen Vapor */}
           <div className="w-[45%] h-48 bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
-            <img src={vaporData.image} alt={vaporData.title} className="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-xl p-4" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <img src={vaporData.image} alt={vaporData.title} className="w-full h-full object-cover mix-blend-multiply" onError={(e) => e.currentTarget.style.display = 'none'} />
           </div>
 
           {/* Textos Vapor */}
