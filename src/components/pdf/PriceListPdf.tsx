@@ -205,18 +205,18 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {/* Grid of bathtubs */}
                 <div className="grid grid-cols-3 gap-3 flex-grow">
                   {modelsChunk.map((group) => (
-                    <div key={group.name} className="flex flex-col bg-white rounded-xl border border-slate-200 p-2 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="mb-1">
+                    <div key={group.name} className="flex flex-col bg-white rounded-xl border border-slate-200 p-2 shadow-sm hover:shadow-md transition-shadow h-full">
+                      <div className="mb-1 shrink-0">
                         <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest block leading-none">LÍNEA PREMIUM</span>
                         <h2 className="text-sm font-black text-[#006699] uppercase tracking-wide leading-tight mt-0.5">{group.name}</h2>
                       </div>
 
                       {/* Bathtub Image */}
-                      <div className="h-20 w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-2">
+                      <div className="flex-grow min-h-[110px] w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-2">
                         {group.imagePath ? (
                           <img src={group.imagePath} alt={group.name} className="w-full h-full object-cover mix-blend-multiply p-0.5" />
                         ) : (
-                          <div className="flex flex-col items-center justify-center p-2 text-slate-300">
+                          <div className="flex flex-col items-center justify-center p-2 text-slate-300 h-full w-full">
                             <svg className="w-6 h-6 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
                             </svg>
@@ -226,7 +226,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                       </div>
 
                       {/* Pricing list */}
-                      <div className="flex-grow flex flex-col justify-between">
+                      <div className="shrink-0 mt-auto">
                         <table className="w-full text-left border-collapse text-[8px]">
                           <thead>
                             <tr className="border-b border-slate-200 text-slate-500 font-bold">
