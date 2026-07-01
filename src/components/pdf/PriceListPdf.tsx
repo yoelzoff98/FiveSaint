@@ -212,7 +212,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                       </div>
 
                       {/* Bathtub Image */}
-                      <div className="flex-grow min-h-[110px] w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-2">
+                      <div className="h-[135px] w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-2 shrink-0">
                         {group.imagePath ? (
                           <img src={group.imagePath} alt={group.name} className="w-full h-full object-cover mix-blend-multiply p-0.5" />
                         ) : (
@@ -226,7 +226,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                       </div>
 
                       {/* Pricing list */}
-                      <div className="shrink-0 mt-auto">
+                      <div className="shrink-0">
                         <table className="w-full text-left border-collapse text-[8px]">
                           <thead>
                             <tr className="border-b border-slate-200 text-slate-500 font-bold">
