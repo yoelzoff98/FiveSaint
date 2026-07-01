@@ -2,16 +2,26 @@ import React, { forwardRef } from 'react';
 import { banerasData, equipamientosData, ofertasData, spaDataPage1, spaDataPage2, spaOpcionalesData, platosDuchaData, columnasDuchaData, duchaEscocesaData, vaporData, banerasPremiumData, banerasPremiumInfo, saunaData } from '@/config/price-list-data';
 import Image from 'next/image';
 
-const CheckIcon = ({ color }: { color: string }) => (
-  <div className="w-5 h-5 rounded-full flex items-center justify-center shadow-sm" style={{ backgroundColor: color }}>
-    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
+const CheckIcon = ({ color, size = 18 }: { color: string; size?: number }) => (
+  <div 
+    className="rounded-full flex items-center justify-center shadow-sm shrink-0" 
+    style={{ backgroundColor: color, width: `${size}px`, height: `${size}px` }}
+  >
+    <svg 
+      style={{ width: `${size * 0.6}px`, height: `${size * 0.6}px` }}
+      className="text-white" 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      stroke="currentColor" 
+      strokeWidth={4}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
     </svg>
   </div>
 );
 
-const DashIcon = () => (
-  <span className="text-slate-300 font-bold text-base">—</span>
+const DashIcon = ({ size = 18 }: { size?: number }) => (
+  <span className="text-slate-300 font-bold leading-none select-none" style={{ fontSize: `${size * 0.9}px` }}>—</span>
 );
 
 export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
@@ -60,270 +70,185 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       </div>
 
       {/* 
-        PÁGINAS DE BAÑERAS PREMIUM
+        PÁGINAS DE BAÑERAS PREMIUM (2 PÁGINAS SHOWCASE)
       */}
-      {/* 1. Página Consolidada de Bañeras Premium Single (No Repetidas) */}
       {(() => {
-        const repeatedPremiumNames = ["Romana", "Perla", "Yaquelin"];
-        const singlePremiumBathtubs = banerasPremiumData.filter(
-          (item) => !repeatedPremiumNames.includes(item.name)
-        );
-
-        return (
-          <div key="baneras-premium-single-page" className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
-            {/* Banner Superior */}
-            <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
-              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-              <div className="absolute inset-0 flex flex-col justify-center px-10">
-                <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
-                  Bañeras Premium
-                </h1>
-              </div>
-            </div>
-
-            {/* Descripciones de Equipamiento */}
-            <div className="px-10 pt-4 shrink-0">
-              <div className="flex gap-4">
-                <div className="w-1/2 bg-slate-50 border border-slate-200 rounded-lg p-2.5 shadow-sm">
-                  <h3 className="text-xs font-bold text-accent-deep uppercase mb-1">Equipamiento CONFORT</h3>
-                  <p className="text-[10px] text-slate-700 leading-relaxed">{banerasPremiumInfo.confortDesc}</p>
-                </div>
-                <div className="w-1/2 bg-slate-50 border border-slate-200 rounded-lg p-2.5 shadow-sm">
-                  <h3 className="text-xs font-bold text-accent-gold uppercase mb-1">Equipamiento CONFORT PLUS</h3>
-                  <p className="text-[10px] text-slate-700 leading-relaxed">{banerasPremiumInfo.confortPlusDesc}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Listado de Bañeras Premium Single */}
-            <div className="px-10 flex-grow flex flex-col gap-1.5 pt-3">
-              {singlePremiumBathtubs.map((item, idx) => (
-                <div key={idx} className="flex gap-4 border border-slate-200 rounded-xl p-1.5 shadow-sm items-center hover:bg-slate-50 transition-colors">
-                  {/* Imagen */}
-                  <div className="w-24 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center shrink-0 shadow-inner overflow-hidden relative">
-                    {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-full h-full object-contain mix-blend-multiply p-1" />
-                    ) : (
-                      <span className="text-[8px] text-slate-300 font-bold uppercase">Falta Foto</span>
-                    )}
-                  </div>
-
-                  {/* Detalles y Precios */}
-                  <div className="flex-grow flex justify-between items-center">
-                    {/* Info */}
-                    <div className="w-1/3">
-                      <h3 className="text-sm font-black text-accent-deep uppercase leading-tight">{item.name}</h3>
-                      <p className="text-[10px] font-mono text-slate-500 mt-1">Medidas: {item.medidas}</p>
-                    </div>
-
-                    {/* Tabla de precios */}
-                    <div className="w-2/3 flex gap-4">
-                      {/* Confort */}
-                      <div className="w-1/2 flex flex-col items-end justify-center">
-                        <span className="text-[9px] font-bold text-slate-600 uppercase mb-1">Confort</span>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-mono text-slate-400">{item.confortCode}</span>
-                          <span className="text-xs font-black text-accent-deep">{item.confortPrice}</span>
-                        </div>
-                      </div>
-                      {/* Confort Plus */}
-                      <div className="w-1/2 flex flex-col items-end justify-center border-l border-slate-200 pl-4">
-                        <span className="text-[9px] font-bold text-accent-gold uppercase mb-1">Confort Plus</span>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-mono text-slate-400">{item.confortPlusCode}</span>
-                          <span className="text-xs font-black text-accent-deep">{item.confortPlusPrice}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Footer info */}
-            <div className="px-10 pb-6 mt-auto flex justify-end items-end shrink-0 pt-3">
-              <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded shadow-sm text-xs uppercase tracking-wider">
-                LOS PRECIOS NO INCLUYEN IVA
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* 2. Página de Showcase Personalizado para Bañeras Premium Repetidas (Romana, Perla, Yaquelin) */}
-      {(() => {
-        const repeatedPremiumNames = ["Romana", "Perla", "Yaquelin"];
-        const repeatedPremiumGroups = repeatedPremiumNames.map((name) => ({
-          name,
-          items: banerasPremiumData.filter((item) => item.name === name),
+        const premiumModels = [
+          { name: "Romana", imagePath: "/romana.png" },
+          { name: "Perla", imagePath: "/images/Beñeras/Perla.jpg" },
+          { name: "Yaquelin", imagePath: "" },
+          { name: "Agustar", imagePath: "/images/Beñeras/Agustar.jpg" },
+          { name: "Quadra", imagePath: "" },
+          { name: "Modena", imagePath: "/images/Beñeras/Modena.jpg" },
+          { name: "Veneto", imagePath: "/images/Beñeras/Veneto.jpg" },
+          { name: "Parma", imagePath: "/images/Beñeras/Parma.jpg" },
+          { name: "Laguna", imagePath: "/images/Beñeras/Laguna.jpg" },
+          { name: "Circular", imagePath: "" },
+          { name: "Esquinera", imagePath: "/images/Beñeras/Esquinera.jpg" },
+          { name: "Quarzo", imagePath: "/images/Beñeras/Quarzo.jpg" }
+        ].map(model => ({
+          ...model,
+          items: banerasPremiumData.filter(item => item.name === model.name)
         }));
 
-        return (
-          <div key="premium-showcase-single-page" className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
-            {/* Main Content Area */}
-            <div className="flex flex-col flex-grow">
-              {/* Top Header */}
-              <div className="border-b border-slate-200 pb-2 mb-4 shrink-0 flex justify-between items-end">
-                <div>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">LÍNEA CLÁSICA</span>
-                  <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras Premium Showcase</h1>
+        const renderPremiumPage = (pageIndex: number, modelsChunk: typeof premiumModels) => {
+          return (
+            <div key={`premium-showcase-page-${pageIndex}`} className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
+              {/* Main Content Area */}
+              <div className="flex flex-col flex-grow">
+                {/* Top Header */}
+                <div className="border-b border-slate-200 pb-2 mb-3 shrink-0 flex justify-between items-end">
+                  <div>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">LÍNEA CLÁSICA</span>
+                    <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras Premium Showcase</h1>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium">Modelos y Equipamientos (Pág. {pageIndex})</div>
                 </div>
-                <div className="text-[10px] text-slate-400 font-medium">Modelos Romana, Perla & Yaquelin</div>
-              </div>
 
-              {/* VERSIONES section */}
-              <div className="shrink-0 mb-4 bg-slate-50 border border-slate-200 rounded-xl p-3.5 shadow-sm">
-                <h2 className="text-[11px] font-black text-[#006699] uppercase tracking-wider mb-2">Especificaciones de Equipamientos</h2>
-                <table className="w-full text-left border-collapse text-[10px]">
-                  <thead>
-                    <tr className="border-b border-slate-200">
-                      <th className="py-1 font-bold text-slate-600 w-[50%]">INCLUYE</th>
-                      <th className="py-1 text-center bg-[#006d9c] text-white rounded-t-lg font-bold w-[25%] uppercase tracking-wider text-[8px]">CONFORT</th>
-                      <th className="py-1 text-center bg-[#d0a65c] text-white rounded-t-lg font-bold w-[25%] uppercase tracking-wider text-[8px]">CONFORT PLUS</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {/* 16 jets */}
-                    <tr>
-                      <td className="py-1 flex items-center gap-1.5 font-medium text-slate-700">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                          <circle cx="12" cy="12" r="3" />
-                          <circle cx="12" cy="5" r="1.5" />
-                          <circle cx="12" cy="19" r="1.5" />
-                          <circle cx="5" cy="12" r="1.5" />
-                          <circle cx="19" cy="12" r="1.5" />
-                          <circle cx="7" cy="7" r="1.5" />
-                          <circle cx="17" cy="17" r="1.5" />
-                          <circle cx="7" cy="17" r="1.5" />
-                          <circle cx="17" cy="7" r="1.5" />
-                        </svg>
-                        16 jets de hidromasaje
-                      </td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" /></div></td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" /></div></td>
-                    </tr>
-                    {/* Sopapa */}
-                    <tr>
-                      <td className="py-1 flex items-center gap-1.5 font-medium text-slate-700">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <circle cx="12" cy="12" r="9" />
-                          <circle cx="12" cy="12" r="4" />
-                          <path d="M12 3v18M3 12h18" />
-                        </svg>
-                        Sopapa
-                      </td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" /></div></td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" /></div></td>
-                    </tr>
-                    {/* Desborde metálico */}
-                    <tr>
-                      <td className="py-1 flex items-center gap-1.5 font-medium text-slate-700">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <rect x="3" y="7" width="18" height="10" rx="2" />
-                          <circle cx="12" cy="12" r="2.5" />
-                          <path d="M6 12h1M17 12h1" />
-                        </svg>
-                        Desborde metálico
-                      </td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" /></div></td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" /></div></td>
-                    </tr>
-                    {/* Estructura metálica autoportante */}
-                    <tr>
-                      <td className="py-1 flex items-center gap-1.5 font-medium text-slate-700">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <rect x="3" y="3" width="18" height="18" rx="1" />
-                          <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
-                        </svg>
-                        Estructura metálica autoportante
-                      </td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" /></div></td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" /></div></td>
-                    </tr>
-                    {/* Almohadilla Relax */}
-                    <tr>
-                      <td className="py-1 flex items-center gap-1.5 font-medium text-slate-700">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path d="M3 16c0-3 2.5-5.5 5.5-5.5h7c3 0 5.5 2.5 5.5 5.5" />
-                          <rect x="7" y="14" width="10" height="4" rx="1" />
-                        </svg>
-                        Almohadilla Relax
-                      </td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><DashIcon /></div></td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" /></div></td>
-                    </tr>
-                    {/* Comando digital */}
-                    <tr>
-                      <td className="py-1 flex items-center gap-1.5 font-medium text-slate-700">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <rect x="4" y="6" width="16" height="12" rx="1.5" />
-                          <circle cx="8" cy="12" r="1.5" />
-                          <path d="M13 10h4M13 14h4" />
-                        </svg>
-                        Comando digital
-                      </td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><DashIcon /></div></td>
-                      <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" /></div></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                {/* VERSIONES section - Achicado / Compacto - Solo en la página 1 */}
+                {pageIndex === 1 && (
+                  <div className="shrink-0 mb-3 bg-slate-50 border border-slate-200 rounded-xl p-2 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-1 mb-1.5">
+                      <h2 className="text-[10px] font-black text-[#006699] uppercase tracking-wider">Especificaciones de Equipamientos</h2>
+                      <span className="text-[8px] text-slate-400 font-semibold uppercase">Versiones Confort & Confort Plus</span>
+                    </div>
+                    <table className="w-full text-left border-collapse text-[9px]">
+                      <thead>
+                        <tr className="border-b border-slate-200 text-slate-500 font-bold">
+                          <th className="py-0.5 w-[50%]">INCLUYE</th>
+                          <th className="py-0.5 text-center bg-[#006d9c] text-white rounded-t-md text-[8px] font-bold w-[25%] uppercase tracking-wider">CONFORT</th>
+                          <th className="py-0.5 text-center bg-[#d0a65c] text-white rounded-t-md text-[8px] font-bold w-[25%] uppercase tracking-wider">CONFORT PLUS</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        <tr>
+                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                              <circle cx="12" cy="12" r="3" />
+                              <circle cx="12" cy="5" r="1.5" />
+                              <circle cx="12" cy="19" r="1.5" />
+                              <circle cx="5" cy="12" r="1.5" />
+                              <circle cx="19" cy="12" r="1.5" />
+                              <circle cx="7" cy="7" r="1.5" />
+                              <circle cx="17" cy="17" r="1.5" />
+                              <circle cx="7" cy="17" r="1.5" />
+                              <circle cx="17" cy="7" r="1.5" />
+                            </svg>
+                            16 jets de hidromasaje
+                          </td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                        </tr>
+                        <tr>
+                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <circle cx="12" cy="12" r="9" />
+                              <circle cx="12" cy="12" r="4" />
+                              <path d="M12 3v18M3 12h18" />
+                            </svg>
+                            Sopapa
+                          </td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                        </tr>
+                        <tr>
+                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <rect x="3" y="7" width="18" height="10" rx="2" />
+                              <circle cx="12" cy="12" r="2.5" />
+                              <path d="M6 12h1M17 12h1" />
+                            </svg>
+                            Desborde metálico
+                          </td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                        </tr>
+                        <tr>
+                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <rect x="3" y="3" width="18" height="18" rx="1" />
+                              <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
+                            </svg>
+                            Estructura metálica autoportante
+                          </td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={11} /></div></td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                        </tr>
+                        <tr>
+                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path d="M3 16c0-3 2.5-5.5 5.5-5.5h7c3 0 5.5 2.5 5.5 5.5" />
+                              <rect x="7" y="14" width="10" height="4" rx="1" />
+                            </svg>
+                            Almohadilla Relax
+                          </td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><DashIcon size={11} /></div></td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                        </tr>
+                        <tr>
+                          <td className="py-0.5 flex items-center gap-1 font-medium text-slate-700">
+                            <svg className="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <rect x="4" y="6" width="16" height="12" rx="1.5" />
+                              <circle cx="8" cy="12" r="1.5" />
+                              <path d="M13 10h4M13 14h4" />
+                            </svg>
+                            Comando digital
+                          </td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><DashIcon size={11} /></div></td>
+                          <td className="py-0.5 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={11} /></div></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
-              {/* MEDIDAS Y PRECIOS section */}
-              <div className="grid grid-cols-3 gap-4 flex-grow">
-                {repeatedPremiumGroups.map((group) => {
-                  let imagePath = "";
-                  if (group.name === "Romana") {
-                    imagePath = "/romana.png";
-                  } else if (group.name === "Perla") {
-                    imagePath = "/images/Beñeras/Perla.jpg";
-                  }
-
-                  return (
-                    <div key={group.name} className="flex flex-col bg-white rounded-xl border border-slate-200 p-2.5 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="mb-2">
-                        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest block leading-none">LÍNEA CLÁSICA</span>
-                        <h2 className="text-base font-black text-[#006699] uppercase tracking-wide leading-tight mt-0.5">{group.name}</h2>
+                {/* Grid of bathtubs */}
+                <div className="grid grid-cols-3 gap-3 flex-grow">
+                  {modelsChunk.map((group) => (
+                    <div key={group.name} className="flex flex-col bg-white rounded-xl border border-slate-200 p-2 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="mb-1">
+                        <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest block leading-none">LÍNEA PREMIUM</span>
+                        <h2 className="text-sm font-black text-[#006699] uppercase tracking-wide leading-tight mt-0.5">{group.name}</h2>
                       </div>
 
                       {/* Bathtub Image */}
-                      <div className="h-28 w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-3">
-                        {imagePath ? (
-                          <img src={imagePath} alt={group.name} className="w-full h-full object-cover mix-blend-multiply p-0.5" />
+                      <div className="h-20 w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-2">
+                        {group.imagePath ? (
+                          <img src={group.imagePath} alt={group.name} className="w-full h-full object-cover mix-blend-multiply p-0.5" />
                         ) : (
                           <div className="flex flex-col items-center justify-center p-2 text-slate-300">
-                            <svg className="w-8 h-8 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <svg className="w-6 h-6 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
                             </svg>
-                            <span className="text-[8px] font-mono uppercase tracking-wider">Sin Foto</span>
+                            <span className="text-[7px] font-mono uppercase tracking-wider">Sin Foto</span>
                           </div>
                         )}
                       </div>
 
                       {/* Pricing list */}
                       <div className="flex-grow flex flex-col justify-between">
-                        <table className="w-full text-left border-collapse text-[9px]">
+                        <table className="w-full text-left border-collapse text-[8px]">
                           <thead>
                             <tr className="border-b border-slate-200 text-slate-500 font-bold">
-                              <th className="py-1 w-[40%]">MEDIDA</th>
-                              <th className="py-1 text-center bg-[#006d9c] text-white rounded-t-md text-[8px] font-bold w-[30%]">CONFORT</th>
-                              <th className="py-1 text-center bg-[#d0a65c] text-white rounded-t-md text-[8px] font-bold w-[30%]">PLUS</th>
+                              <th className="py-0.5 w-[38%]">MEDIDA</th>
+                              <th className="py-0.5 text-center bg-[#006d9c] text-white rounded-t-md text-[7px] font-bold w-[31%]">CONFORT</th>
+                              <th className="py-0.5 text-center bg-[#d0a65c] text-white rounded-t-md text-[7px] font-bold w-[31%]">PLUS</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-100">
                             {group.items.map((item, idx) => (
                               <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                                <td className="py-2 font-bold text-slate-700 whitespace-nowrap">{item.medidas.replace('x', ' x ')}</td>
-                                <td className="py-2 text-center">
+                                <td className="py-1 font-bold text-slate-700 whitespace-nowrap">{item.medidas.replace('x', ' x ')}</td>
+                                <td className="py-1 text-center">
                                   <div className="flex flex-col items-center">
                                     <span className="font-bold text-[#006d9c] leading-none">{item.confortPrice}</span>
-                                    <span className="text-[7px] font-mono text-slate-400 mt-0.5 leading-none">{item.confortCode}</span>
+                                    <span className="text-[6.5px] font-mono text-slate-400 mt-0.5 leading-none">{item.confortCode}</span>
                                   </div>
                                 </td>
-                                <td className="py-2 text-center">
+                                <td className="py-1 text-center">
                                   <div className="flex flex-col items-center">
                                     <span className="font-bold text-slate-800 leading-none">{item.confortPlusPrice}</span>
-                                    <span className="text-[7px] font-mono text-slate-400 mt-0.5 leading-none">{item.confortPlusCode}</span>
+                                    <span className="text-[6.5px] font-mono text-slate-400 mt-0.5 leading-none">{item.confortPlusCode}</span>
                                   </div>
                                 </td>
                               </tr>
@@ -332,53 +257,60 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         </table>
                       </div>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
+              </div>
+
+              {/* Highlights Footer */}
+              <div className="mt-3 border border-slate-200 bg-slate-50 rounded-xl p-2 flex justify-between gap-4 text-left shadow-sm shrink-0">
+                {/* Quality */}
+                <div className="flex items-center gap-2 w-1/3">
+                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Calidad y respaldo</h4>
+                    <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">Productos diseñados para durar.</p>
+                  </div>
+                </div>
+
+                {/* Warranty */}
+                <div className="flex items-center gap-2 w-1/3 border-l border-slate-200 pl-3">
+                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Garantía Five Saint</h4>
+                    <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">2 años de garantía en bañeras.</p>
+                  </div>
+                </div>
+
+                {/* Comfort */}
+                <div className="flex items-center gap-2 w-1/3 border-l border-slate-200 pl-3">
+                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Practicidad y confort</h4>
+                    <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">Equipamiento pensado para bienestar.</p>
+                  </div>
+                </div>
               </div>
             </div>
+          );
+        };
 
-            {/* Highlights Footer */}
-            <div className="mt-4 border border-slate-200 bg-slate-50 rounded-2xl p-2.5 flex justify-between gap-4 text-left shadow-sm shrink-0">
-              {/* Quality */}
-              <div className="flex items-center gap-2 w-1/3">
-                <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Calidad y respaldo</h4>
-                  <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">Productos diseñados para durar.</p>
-                </div>
-              </div>
-
-              {/* Warranty */}
-              <div className="flex items-center gap-2 w-1/3 border-l border-slate-200 pl-3">
-                <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Garantía Five Saint</h4>
-                  <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">2 años de garantía en bañeras.</p>
-                </div>
-              </div>
-
-              {/* Comfort */}
-              <div className="flex items-center gap-2 w-1/3 border-l border-slate-200 pl-3">
-                <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Practicidad y confort</h4>
-                  <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">Equipamiento pensado para bienestar.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+        return (
+          <>
+            {renderPremiumPage(1, premiumModels.slice(0, 6))}
+            {renderPremiumPage(2, premiumModels.slice(6, 12))}
+          </>
         );
       })()}
 
