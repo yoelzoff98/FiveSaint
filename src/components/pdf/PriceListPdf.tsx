@@ -1415,6 +1415,99 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
         </div>
       </div>
+      {/* 
+        CONTRA TAPA
+      */}
+      <div className="page-break-after p-0 h-[297mm] w-[210mm] mx-auto bg-accent-deep shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-center items-center">
+        {/* Fondo Moderno Premium (Luces y Degradados) */}
+        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-accent-soft via-transparent to-transparent"></div>
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-accent-gold opacity-10 rounded-full blur-[100px]"></div>
+
+        {/* Formas Abstractas (Ondas modernas) */}
+        <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none rotate-180">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
+            <path d="M0,0 L100,0 L100,100 Q40,60 0,100 Z" className="fill-accent-soft opacity-30"></path>
+            <path d="M0,100 Q50,40 100,100 Z" className="fill-white opacity-10"></path>
+          </svg>
+        </div>
+
+        {/* Contenido Central */}
+        <div className="relative z-10 flex flex-col items-center mt-[-100px]">
+          {/* Imagen del Logo */}
+          <div className="mb-12 relative z-10 w-56 h-56 flex justify-center items-center">
+            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-xl" />
+          </div>
+
+          {/* Título o Lema */}
+          <h2 className="text-white text-2xl font-light tracking-[0.3em] uppercase mb-4 text-center drop-shadow-md">
+            Calidad y <span className="font-black text-accent-gold">Diseño</span>
+          </h2>
+          <div className="w-16 h-1 bg-accent-gold rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]"></div>
+        </div>
+
+        {/* Zócalo de Contacto */}
+        <div className="absolute bottom-0 w-full bg-white/5 backdrop-blur-md border-t border-white/10 z-10 p-8 flex flex-col items-center gap-6">
+          <div className="grid grid-cols-2 gap-x-16 gap-y-8 w-fit text-white text-xs">
+            
+            {/* Contacto 1 - Dirección */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-accent-gold tracking-wider uppercase text-[9px] mb-0.5">Dirección</span>
+                <span className="text-[10px] font-medium opacity-90 leading-tight">Baradero 1520, B1708 Morón<br/>Provincia de Buenos Aires, Argentina</span>
+              </div>
+            </div>
+
+            {/* Contacto 2 - Web */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-accent-gold tracking-wider uppercase text-[9px] mb-0.5">Sitio Web</span>
+                <span className="text-[11px] font-medium opacity-90">www.fivesaint.com</span>
+              </div>
+            </div>
+
+            {/* Contacto 3 - Instagram */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.88z"/>
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-accent-gold tracking-wider uppercase text-[9px] mb-0.5">Instagram</span>
+                <span className="text-[11px] font-medium opacity-90">@Five Saint</span>
+              </div>
+            </div>
+
+            {/* Contacto 4 - YouTube */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.498 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-accent-gold tracking-wider uppercase text-[9px] mb-0.5">YouTube</span>
+                <span className="text-[11px] font-medium opacity-90">@FiveSaintOk</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="w-full border-t border-white/10 pt-4 mt-2 text-center text-white/40 text-[9px] uppercase tracking-widest">
+            © {new Date().getFullYear()} Five Saint - Acrílico Sanitario. Todos los derechos reservados.
+          </div>
+        </div>
+      </div>
     </div>
   );
 });
