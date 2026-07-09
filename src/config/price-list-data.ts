@@ -239,9 +239,9 @@ export const spaDataPage1: SpaModel[] = [
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
     ],
     prices: [
-      { code: "FSSPSB", price: "$ 7 308 000" },
-      { code: "FSSPSC", price: "$ 10 236 000" },
-      { code: "FSSPSP", price: "$ 12 842 000" }
+      { code: "FSSPA1SB", price: "$ 7 308 000" },
+      { code: "FSSPA2SC", price: "$ 10 236 000" },
+      { code: "FSSPA3SCP", price: "$ 12 842 000" }
     ],
     image: "/images/Spa/space.png"
   },
@@ -266,9 +266,9 @@ export const spaDataPage1: SpaModel[] = [
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
     ],
     prices: [
-      { code: "FSSPDB", price: "$ 7 309 000" },
-      { code: "FSSPDC", price: "$ 11 233 000" },
-      { code: "FSSPDP", price: "$ 13 640 000" }
+      { code: "FSSPADB", price: "$ 7 309 000" },
+      { code: "FSSPADC", price: "$ 11 233 000" },
+      { code: "FSSPADCP", price: "$ 13 640 000" }
     ],
     image: "/images/Spa/Design.png"
   }
@@ -291,7 +291,7 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
-      { code: "FSSPRB", price: "$ 4 972 000" }
+      { code: "FSSPA3PB", price: "$ 4 972 000" }
     ],
     image: "/images/Spa/Relax.png"
   },
@@ -312,7 +312,7 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
-      { code: "FSSPPB", price: "$ 4 972 000" }
+      { code: "FSSPA4RB", price: "$ 4 972 000" }
     ],
     image: "/images/Spa/Party.png"
   }

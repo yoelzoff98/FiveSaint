@@ -405,7 +405,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <span className="text-[6.5px] font-black uppercase text-accent-deep mt-0.5 leading-none">Solo Bañera</span>
-                <span className="text-[5.5px] text-slate-400 leading-none">Sin hidro</span>
               </div>
 
               {/* 4 Jets */}
@@ -419,7 +418,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <span className="text-[6.5px] font-black uppercase text-accent-deep mt-0.5 leading-none">4 Jets</span>
-                <span className="text-[5.5px] text-slate-400 leading-none">Básico</span>
               </div>
 
               {/* 6 Jets */}
@@ -435,7 +433,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <span className="text-[6.5px] font-black uppercase text-accent-deep mt-0.5 leading-none">6 Jets</span>
-                <span className="text-[5.5px] text-slate-400 leading-none">Intermedio</span>
               </div>
 
               {/* 8 Jets */}
@@ -453,7 +450,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <span className="text-[6.5px] font-black uppercase text-accent-deep mt-0.5 leading-none">8 Jets</span>
-                <span className="text-[5.5px] text-slate-400 leading-none">Completo</span>
               </div>
 
               <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain ml-2 border-l border-slate-200 pl-4" />
@@ -481,7 +477,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <thead>
                       <tr className="bg-slate-50 text-slate-700 border-b border-slate-200">
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">Medida</th>
-                        <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">Solo Bañera <span className="text-[5.5px] text-slate-400 block font-normal leading-none mt-0.5">(sin hidro)</span></th>
+                        <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">Solo Bañera <span className="text-[5.5px] text-slate-400 block font-normal leading-none mt-0.5">(casco)</span></th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">4 Jets</th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">6 Jets</th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] text-center w-[20%] text-[#006699]">8 Jets</th>
