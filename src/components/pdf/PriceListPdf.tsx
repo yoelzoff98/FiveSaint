@@ -74,7 +74,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       */}
       {(() => {
         const premiumModels = [
-          { name: "Romana", imagePath: "/romana.png" },
+          { name: "Romana", imagePath: "/images/Beñeras/romana.jpg" },
           { name: "Perla", imagePath: "/images/Beñeras/Perla.jpg" },
           { name: "Yaquelin", imagePath: "/images/Beñeras/Yaqueline.jpg" },
           { name: "Agustar", imagePath: "/images/Beñeras/Agustar.jpg" },
@@ -84,7 +84,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           { name: "Parma", imagePath: "/images/Beñeras/Parma.jpg" },
           { name: "Laguna", imagePath: "/images/Beñeras/Laguna.jpg" },
           { name: "Circular", imagePath: "/images/Beñeras/Circular.jpg" },
-          { name: "Esquinera", imagePath: "/images/Beñeras/Esquinera.jpg" },
+          { name: "Esquinero", imagePath: "/images/Beñeras/Esquinera.jpg" },
           { name: "Quarzo", imagePath: "/images/Beñeras/Quarzo.jpg" }
         ].map(model => ({
           ...model,
@@ -99,12 +99,10 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {/* Top Header */}
                 <div className="border-b border-slate-200 pb-2 mb-3 shrink-0 flex justify-between items-end">
                   <div>
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">LÍNEA CLÁSICA</span>
                     <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras Premium </h1>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="text-[10px] text-slate-400 font-medium">Modelos y Equipamientos (Pág. {pageIndex})</div>
-                    <img src="/logo.png" alt="Five Saint Logo" className="h-6 object-contain" />
+                    <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
                   </div>
                 </div>
 
@@ -171,7 +169,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               <rect x="3" y="3" width="18" height="18" rx="1" />
                               <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
                             </svg>
-                            Estructura metálica autoportante
+                            Estructura metálica autoportante con piso reforzado
                           </td>
                           <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={13} /></div></td>
                           <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
@@ -297,7 +295,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </div>
                   <div>
                     <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Garantía Five Saint</h4>
-                    <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">2 años de garantía en bañeras.</p>
+                    <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">5 años en Acrílico y 1 año en Bomba.</p>
                   </div>
                 </div>
 
@@ -310,7 +308,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </div>
                   <div>
                     <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Practicidad y confort</h4>
-                    <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">Equipamiento pensado para bienestar.</p>
                   </div>
                 </div>
               </div>
@@ -365,15 +362,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           }
         ];
 
-        const singleModels = products.filter(p => 
-          !["Romana", "Perla", "Lady", "Yaquelin", "Joya"].includes(p.name) && 
+        const singleModels = products.filter(p =>
+          !["Romana", "Perla", "Lady", "Yaquelin", "Joya"].includes(p.name) &&
           !p.name.includes("Martina")
         );
 
         // Helper to render "OFERTA" badge or price
         const renderPrice = (
-          val: string | undefined, 
-          sizeClass = "text-[9px]", 
+          val: string | undefined,
+          sizeClass = "text-[9px]",
           weightClass = "font-medium text-slate-600",
           ofertaSizeClass = "text-[7px]"
         ) => {
@@ -387,19 +384,17 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const renderHeaderAndLevels = (cont = false) => (
           <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4 shrink-0">
             <div>
-              <span className="text-[8px] uppercase font-bold tracking-widest text-slate-400">Línea Clásica</span>
               <h1 className="text-2xl font-black text-accent-deep tracking-tight">
                 BAÑERAS
               </h1>
-              <p className="text-[8px] text-slate-500 font-semibold mt-0.5">Clásicas, funcionales y versátiles.</p>
-              <p className="text-[8px] text-slate-500 font-medium">Elegí el nivel de equipamiento que mejor se adapta a vos.</p>
+              <p className="text-[8px] text-slate-500 font-semibold mt-0.5">Funcionales y versátiles.</p>
             </div>
 
             <div className="flex items-center gap-4">
               <span className="text-[7.5px] uppercase font-black tracking-wider text-accent-deep border-r border-slate-200 pr-3 h-7 flex items-center leading-tight">
                 Niveles de<br />Equipamiento
               </span>
-              
+
               {/* Solo Bañera */}
               <div className="flex flex-col items-center text-center w-12">
                 <div className="w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center bg-slate-50 shadow-sm">
@@ -461,7 +456,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <span className="text-[5.5px] text-slate-400 leading-none">Completo</span>
               </div>
 
-              <img src="/logo.png" alt="Five Saint Logo" className="h-8 object-contain ml-2 border-l border-slate-200 pl-4" />
+              <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain ml-2 border-l border-slate-200 pl-4" />
             </div>
           </div>
         );
@@ -469,17 +464,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const renderGroupedCard = (group: typeof groupedModels[0]) => (
           <div key={group.name} className="shrink-0">
             <div className="flex items-baseline gap-1.5 mb-1 shrink-0">
-              <span className="text-[7.5px] uppercase font-bold tracking-widest text-[#006699]/60">Línea Clásica</span>
-              <span className="text-[9px] text-[#006699]/30">|</span>
               <h2 className="text-[12px] font-black text-[#006699] uppercase tracking-wide leading-none">{group.name}</h2>
             </div>
-            
+
             <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm flex items-center bg-white p-3 gap-4">
               {/* Left Image Section */}
               <div className="w-[30%] flex items-center justify-center bg-slate-50/50 rounded-lg p-2 border border-slate-100 shrink-0 h-[100px]">
                 <img src={group.image} alt={group.name} className="w-full h-full object-contain mix-blend-multiply" />
               </div>
-              
+
               {/* Right Table Section */}
               <div className="flex-grow flex flex-col justify-center">
                 <h4 className="text-[7.5px] font-black uppercase text-[#006699] tracking-wider mb-1.5">Varias medidas para adaptarse a tu espacio</h4>
@@ -504,15 +497,29 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               item.medidas
                             )}
                           </td>
-                          <td className="py-1 px-2 font-medium text-slate-600 text-center border-r border-slate-200 text-[9px]">{item.cascos || '-'}</td>
-                          <td className="py-1 px-2 text-center border-r border-slate-200 text-[9px]">
-                            {renderPrice(item.jet4, "text-[9px]")}
+                          <td className="py-1 px-2 font-medium text-slate-600 text-center border-r border-slate-200 text-[9px]">
+                            <div className="flex flex-col items-center">
+                              <span className="text-[10px] font-black text-slate-900">{item.cascos || '-'}</span>
+                              {item.cascosCode && <span className="text-[8px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.cascosCode}</span>}
+                            </div>
                           </td>
                           <td className="py-1 px-2 text-center border-r border-slate-200 text-[9px]">
-                            {renderPrice(item.jet6, "text-[9px]")}
+                            <div className="flex flex-col items-center">
+                              {renderPrice(item.jet4, "text-[10px]", "font-black text-slate-900")}
+                              {item.jet4Code && <span className="text-[8px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet4Code}</span>}
+                            </div>
+                          </td>
+                          <td className="py-1 px-2 text-center border-r border-slate-200 text-[9px]">
+                            <div className="flex flex-col items-center">
+                              {renderPrice(item.jet6, "text-[10px]", "font-black text-slate-900")}
+                              {item.jet6Code && <span className="text-[8px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet6Code}</span>}
+                            </div>
                           </td>
                           <td className="py-1 px-2 bg-[#006699]/5 text-center text-[9px]">
-                            {renderPrice(item.jet8, "text-[9px] font-bold text-accent-deep")}
+                            <div className="flex flex-col items-center">
+                              {renderPrice(item.jet8, "text-[10px]", "font-black text-accent-deep")}
+                              {item.jet8Code && <span className="text-[8px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet8Code}</span>}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -528,8 +535,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const renderSingleModelsTable = (models: typeof singleModels, isContinuation = false) => (
           <div className="mt-4">
             <div className="flex items-baseline gap-1.5 mb-2 shrink-0">
-              <span className="text-[8.5px] uppercase font-bold tracking-widest text-slate-400">Línea Clásica</span>
-              <span className="text-[10px] text-slate-300">|</span>
               <h2 className="text-[14px] font-black text-accent-deep uppercase tracking-wide leading-none">
                 Modelos de Medida Única
               </h2>
@@ -544,7 +549,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[11%]">Cascos</th>
                     <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[16%]">4 Jet</th>
                     <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[16%]">6 Jet</th>
-                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center text-accent-gold w-[16%]">8 Jet</th>
+                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[16%]">8 Jet</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -563,15 +568,29 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         </div>
                       </td>
                       <td className="py-3.5 px-2 text-slate-750 font-mono text-[13px] font-semibold text-center whitespace-nowrap">{p.medidas}</td>
-                      <td className="py-3.5 px-2 font-black text-[13.5px] text-slate-700 text-center whitespace-nowrap">{p.cascos || '-'}</td>
                       <td className="py-3.5 px-2 text-center whitespace-nowrap">
-                        {renderPrice(p.jet4, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
+                        <div className="flex flex-col items-center">
+                          <span className="font-bold text-[13.5px] text-slate-800">{p.cascos || '-'}</span>
+                          {p.cascosCode && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.cascosCode}</span>}
+                        </div>
                       </td>
                       <td className="py-3.5 px-2 text-center whitespace-nowrap">
-                        {renderPrice(p.jet6, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
+                        <div className="flex flex-col items-center">
+                          {renderPrice(p.jet4, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
+                          {p.jet4Code && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.jet4Code}</span>}
+                        </div>
                       </td>
-                      <td className="py-3.5 px-2 bg-[#006699]/5 text-center whitespace-nowrap">
-                        {renderPrice(p.jet8, "text-[13.5px]", "font-black text-[#006699]", "text-[10px]")}
+                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
+                        <div className="flex flex-col items-center">
+                          {renderPrice(p.jet6, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
+                          {p.jet6Code && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.jet6Code}</span>}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
+                        <div className="flex flex-col items-center">
+                          {renderPrice(p.jet8, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
+                          {p.jet8Code && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.jet8Code}</span>}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -596,8 +615,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               {/* Footer */}
               <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
-                <div className="text-[7.5px] text-slate-400 max-w-sm">
-                  <p>Los precios corresponden a color blanco.</p>
+                <div className="text-[9px] text-slate-600 max-w-[500px] leading-relaxed">
+                  <p className="font-bold text-slate-800">Los precios corresponden a color blanco</p>
+                  <p className="mt-0.5">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
                   <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
                 </div>
                 <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[9px] uppercase tracking-wider">
@@ -610,7 +630,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div key="baneras-page-2" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(true)}
-                
+
                 <div className="flex flex-col gap-2.5">
                   {renderGroupedCard(groupedModels[4])} {/* Joya */}
                   {renderGroupedCard(groupedModels[5])} {/* Martina */}
@@ -620,8 +640,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               {/* Footer */}
               <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
-                <div className="text-[7.5px] text-slate-400 max-w-sm">
-                  <p>Los precios corresponden a color blanco.</p>
+                <div className="text-[9px] text-slate-600 max-w-[500px] leading-relaxed">
+                  <p className="font-bold text-slate-800">Los precios corresponden a color blanco</p>
+                  <p className="mt-0.5">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
                   <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
                 </div>
                 <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[9px] uppercase tracking-wider">
@@ -638,8 +659,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               {/* Footer */}
               <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
-                <div className="text-[7.5px] text-slate-400 max-w-sm">
-                  <p>Los precios corresponden a color blanco.</p>
+                <div className="text-[9px] text-slate-600 max-w-[500px] leading-relaxed">
+                  <p className="font-bold text-slate-800">Los precios corresponden a color blanco</p>
+                  <p className="mt-0.5">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
                   <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
                 </div>
                 <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[9px] uppercase tracking-wider">
@@ -656,22 +678,22 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       */}
       <div key="equip-page-single" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between">
         <div className="flex flex-col flex-grow">
-          {/* Banner Superior con Ángulo */}
-          <div className="relative w-full h-[55px] bg-accent-deep overflow-hidden shrink-0">
+          {/* Banner Superior Premium */}
+          <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0 border-b-2 border-accent-gold/40">
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
-            <div className="absolute inset-0 flex items-center justify-between px-10">
+            <div className="absolute -top-10 -left-10 w-64 h-64 bg-accent-soft opacity-10 rounded-full blur-3xl"></div>
+
+            <div className="absolute inset-0 flex items-center justify-between px-12">
               <div>
-                <h1 className="text-xl font-black text-white uppercase tracking-widest drop-shadow-md">
+                <h1 className="text-4xl font-extrabold text-white uppercase tracking-widest drop-shadow-md">
                   Equipamiento Adicional
                 </h1>
-                <span className="text-[8px] uppercase font-bold tracking-wider text-white/60">
-                  Opcionales para personalizar tu hidromasaje
-                </span>
+                <p className="text-white/60 tracking-widest uppercase text-[10px] mt-1">
+                  Pensado para una Experiencia Superior
+                </p>
               </div>
-              <div className="w-20 h-10 relative p-1.5 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-                <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-              </div>
+              <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
             </div>
           </div>
 
@@ -702,7 +724,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="px-10 pb-4 flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mt-2">
           <div className="text-[7.5px] text-slate-400 max-w-sm">
             <p>Los precios corresponden a color blanco.</p>
-            <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
+            <p className="mt-0.5">Precios sujetos a modificación sin previo aviso.</p>
           </div>
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[9px] uppercase tracking-wider">
             LOS PRECIOS NO INCLUYEN IVA
@@ -732,13 +754,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <h1 className="text-4xl font-extrabold text-white uppercase tracking-widest drop-shadow-md flex items-baseline">
                     OFERTAS <span className="text-accent-gold font-light italic ml-2">Especiales</span>
                   </h1>
-                  <p className="text-white/60 tracking-widest uppercase text-[10px] mt-1">
-                    Equipamiento completo de hidromasaje bonificado
-                  </p>
+
                 </div>
-                <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-                  <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-                </div>
+                <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
               </div>
             </div>
 
@@ -825,9 +843,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               SPA
             </h1>
-            <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-              <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-            </div>
+            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
           </div>
         </div>
 
@@ -932,9 +948,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               SPA
             </h1>
-            <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-              <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-            </div>
+            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
           </div>
         </div>
 
@@ -1025,6 +1039,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       {/* 
         PÁGINAS DE PLATOS DE DUCHA
       */}
+      {/* 
+        PÁGINAS DE PLATOS DE DUCHA Y COLUMNAS
+      */}
       {Array.from({ length: 2 }).map((_, pageIndex) => {
         const pageCats = pageIndex === 0
           ? platosDuchaData.slice(0, 3)
@@ -1039,16 +1056,18 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
               <div className="absolute inset-0 flex items-center justify-between px-16">
                 <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
-                  Platos de Ducha <span className="text-xl text-white/70 ml-2">Acrílico</span>
+                  {pageIndex === 0 ? (
+                    <>Platos de Ducha <span className="text-xl text-white/70 ml-2">Acrílico</span></>
+                  ) : (
+                    <>Platos y Columnas <span className="text-xl text-white/70 ml-2">de Ducha</span></>
+                  )}
                 </h1>
-                <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-                  <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-                </div>
+                <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
               </div>
             </div>
 
-            {/* Contenido Platos de Ducha (1 Columna, Centrado vertical, distribución optimizada para fotos verticales) */}
-            <div className={`flex-grow px-16 py-8 flex flex-col justify-center ${pageIndex === 0 ? 'gap-6' : 'gap-10'}`}>
+            {/* Contenido Platos de Ducha */}
+            <div className={`flex-grow px-16 py-8 flex flex-col justify-center ${pageIndex === 0 ? 'gap-6' : 'gap-5'}`}>
               {pageCats.map((cat, idx) => (
                 <div key={idx} className="flex flex-col">
                   {/* Título de la Categoría */}
@@ -1118,6 +1137,52 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </div>
                 </div>
               ))}
+
+              {/* Columnas de Ducha Section */}
+              {pageIndex === 1 && (
+                <div className="mt-2 flex flex-col">
+                  {/* Título de la Categoría */}
+                  <div className="flex justify-between items-end border-b-2 border-accent-deep pb-1 mb-2">
+                    <h3 className="text-xl font-black text-accent-deep uppercase tracking-wide">Columnas de Ducha</h3>
+                  </div>
+
+                  {/* Contenido Columnas (4 en fila horizontal) */}
+                  <div className="flex gap-4 justify-between mt-1">
+                    {columnasDuchaData.map((columna, idx) => (
+                      <div key={idx} className="flex flex-col items-center w-[23%] bg-slate-50 border border-slate-200 rounded-xl p-2.5 shadow-sm relative">
+                        {/* Espacio para la imagen alta (columna) */}
+                        <div className="w-[52px] h-[250px] bg-white rounded-lg overflow-hidden flex items-center justify-center border border-slate-150 shadow-inner relative mb-2 shrink-0">
+                          {columna.image ? (
+                            <img src={columna.image} alt={columna.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="text-center">
+                              <span className="text-slate-300 font-bold text-[8px] uppercase block">Falta Foto</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Tarjeta de Información */}
+                        <div className="w-full flex flex-col items-center text-center">
+                          <span className="text-accent-deep font-mono font-bold text-[7px] bg-accent-soft px-1.5 py-0.2 rounded-full mb-1 tracking-wider leading-none">
+                            {columna.code}
+                          </span>
+
+                          <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-wide leading-none mb-0.5">
+                            {columna.name}
+                          </h3>
+                          <p className="text-[6.5px] text-slate-400 font-bold uppercase tracking-wider mb-2 leading-none">
+                            {columna.description}
+                          </p>
+
+                          <div className="w-full bg-accent-deep text-white font-black text-[9.5px] py-0.5 rounded-lg shadow-sm tracking-wider">
+                            {columna.price}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer info */}
@@ -1132,88 +1197,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       })}
 
       {/* 
-        PÁGINA DE COLUMNAS DE DUCHA
-      */}
-      <div className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-slate-50 shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
-        {/* Fondo decorativo premium */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-accent-soft via-transparent to-transparent"></div>
-        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-accent-gold/20 via-transparent to-transparent"></div>
-
-        {/* Banner Superior Premium */}
-        <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0 border-b-2 border-accent-gold/40">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-          <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
-          <div className="absolute -top-10 -left-10 w-64 h-64 bg-accent-soft opacity-10 rounded-full blur-3xl"></div>
-
-          <div className="absolute inset-0 flex items-center justify-between px-12">
-            <div>
-              <h1 className="text-4xl font-extrabold text-white uppercase tracking-widest drop-shadow-md">
-                Columnas de Ducha
-              </h1>
-              <p className="text-white/60 tracking-widest uppercase text-[10px] mt-1">
-                Diseño vanguardista para hidromasaje vertical
-              </p>
-            </div>
-            <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-              <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-            </div>
-          </div>
-        </div>
-
-        {/* Contenido Columnas (4 en fila horizontal) */}
-        <div className="flex-grow px-8 pt-10 flex gap-4 justify-between">
-          {columnasDuchaData.map((columna, idx) => (
-            <div key={idx} className="flex flex-col items-center w-[22%]">
-
-              {/* Espacio para la imagen alta (columna) */}
-              <div className="w-[120px] h-[580px] bg-white rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200/80 shadow-lg relative mb-4 hover:shadow-xl transition-all duration-300">
-                <span className="absolute top-2 left-2 bg-accent-gold/90 text-white font-extrabold text-[7px] uppercase tracking-widest px-2 py-0.5 rounded z-20 shadow-sm">
-                  PREMIUM
-                </span>
-                {columna.image ? (
-                  <img src={columna.image} alt={columna.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-center">
-                    <span className="text-slate-300 font-bold text-[12px] uppercase block">Falta Foto</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Tarjeta de Información */}
-              <div className="w-full bg-gradient-to-b from-white to-slate-50 border border-slate-200/80 shadow-md rounded-2xl p-3.5 flex flex-col items-center text-center relative hover:shadow-lg transition-all duration-300">
-                {/* Triángulo decorativo apuntando a la imagen */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-accent-gold"></div>
-
-                <span className="text-accent-deep font-mono font-bold text-[9px] bg-accent-soft px-3 py-0.5 rounded-full mb-2 tracking-wider">
-                  {columna.code}
-                </span>
-
-                <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider leading-none mb-1">
-                  {columna.name}
-                </h3>
-                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-3">
-                  {columna.description}
-                </p>
-
-                <div className="w-full mt-auto bg-gradient-to-r from-accent-deep to-accent-hover text-white font-black text-sm py-1.5 rounded-xl shadow-md tracking-wider">
-                  {columna.price}
-                </div>
-              </div>
-
-            </div>
-          ))}
-        </div>
-
-        {/* Footer info */}
-        <div className="px-12 pb-8 mt-auto flex justify-between items-end shrink-0 text-[10px] text-slate-500 border-t border-slate-200/50 pt-4 mx-12">
-          <p>Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
-          <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded shadow-sm text-xs uppercase tracking-wider">
-            LOS PRECIOS NO INCLUYEN IVA
-          </div>
-        </div>
-      </div>
-
-      {/* 
         PÁGINA DE DUCHA ESCOCESA Y VAPOR
       */}
       <div className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
@@ -1226,9 +1209,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               {duchaEscocesaData.title}
             </h1>
-            <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-              <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-            </div>
+            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
           </div>
         </div>
 
@@ -1317,9 +1298,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-5xl font-bold text-white tracking-widest drop-shadow-md uppercase">
               {saunaData.title}
             </h1>
-            <div className="w-24 h-12 relative p-2 bg-white/5 rounded-lg backdrop-blur-sm border border-white/10 flex justify-center items-center">
-              <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain" />
-            </div>
+            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
           </div>
         </div>
 
@@ -1448,7 +1427,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Zócalo de Contacto */}
         <div className="absolute bottom-0 w-full bg-white/5 backdrop-blur-md border-t border-white/10 z-10 p-8 flex flex-col items-center gap-6">
           <div className="grid grid-cols-2 gap-x-16 gap-y-8 w-fit text-white text-xs">
-            
+
             {/* Contacto 1 - Dirección */}
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
@@ -1459,7 +1438,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-accent-gold tracking-wider uppercase text-[9px] mb-0.5">Dirección</span>
-                <span className="text-[10px] font-medium opacity-90 leading-tight">Baradero 1520, B1708 Morón<br/>Provincia de Buenos Aires, Argentina</span>
+                <span className="text-[10px] font-medium opacity-90 leading-tight">Baradero 1520, B1708 Morón<br />Provincia de Buenos Aires, Argentina</span>
               </div>
             </div>
 
@@ -1480,7 +1459,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.88z"/>
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.88z" />
                 </svg>
               </div>
               <div className="flex flex-col">
@@ -1493,7 +1472,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.498 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.498 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                 </svg>
               </div>
               <div className="flex flex-col">
@@ -1502,7 +1481,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
             </div>
           </div>
-          
+
           <div className="w-full border-t border-white/10 pt-4 mt-2 text-center text-white/40 text-[9px] uppercase tracking-widest">
             © {new Date().getFullYear()} Five Saint - Acrílico Sanitario. Todos los derechos reservados.
           </div>
