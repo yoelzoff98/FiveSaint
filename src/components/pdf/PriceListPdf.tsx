@@ -84,7 +84,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           { name: "Parma", imagePath: "/images/Beñeras/Parma.jpg" },
           { name: "Laguna", imagePath: "/images/Beñeras/Laguna.jpg" },
           { name: "Circular", imagePath: "/images/Beñeras/Circular.jpg" },
-          { name: "Esquinero", imagePath: "/images/Beñeras/Esquinera.jpg" },
+          { name: "Esquinero", imagePath: "/images/Beñeras/Esquinero.jpg" },
           { name: "Quarzo", imagePath: "/images/Beñeras/Quarzo.jpg" }
         ].map(model => ({
           ...model,
