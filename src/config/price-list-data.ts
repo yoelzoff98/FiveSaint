@@ -291,7 +291,7 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
-      { code: "FSSPA3PB", price: "$ 4 972 000" }
+      { code: "FSSPA4RB", price: "$ 4 972 000" }
     ],
     image: "/images/Spa/Relax.png"
   },
@@ -312,7 +312,7 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
-      { code: "FSSPA4RB", price: "$ 4 972 000" }
+      { code: "FSSPA3PB", price: "$ 4 972 000" }
     ],
     image: "/images/Spa/Party.png"
   }
