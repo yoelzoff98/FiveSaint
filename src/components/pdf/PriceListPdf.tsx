@@ -102,7 +102,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras Premium </h1>
                   </div>
                   <div className="flex items-center gap-4">
-                    <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+                    <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
                   </div>
                 </div>
 
@@ -456,7 +456,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <span className="text-[5.5px] text-slate-400 leading-none">Completo</span>
               </div>
 
-              <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain ml-2 border-l border-slate-200 pl-4" />
+              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain ml-2 border-l border-slate-200 pl-4" />
             </div>
           </div>
         );
@@ -693,7 +693,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   Pensado para una Experiencia Superior
                 </p>
               </div>
-              <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
             </div>
           </div>
 
@@ -756,7 +756,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </h1>
 
                 </div>
-                <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+                <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
               </div>
             </div>
 
@@ -843,7 +843,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               SPA
             </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
@@ -948,7 +948,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               SPA
             </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
@@ -1062,7 +1062,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <>Platos y Columnas <span className="text-xl text-white/70 ml-2">de Ducha</span></>
                   )}
                 </h1>
-                <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+                <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
               </div>
             </div>
 
@@ -1209,7 +1209,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               {duchaEscocesaData.title}
             </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
@@ -1298,7 +1298,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-5xl font-bold text-white tracking-widest drop-shadow-md uppercase">
               {saunaData.title}
             </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
