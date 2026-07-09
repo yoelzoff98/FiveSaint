@@ -404,7 +404,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <path d="M6 15v2M18 15v2" />
                   </svg>
                 </div>
-                <span className="text-[6.5px] font-black uppercase text-accent-deep mt-0.5 leading-none">Solo Bañera</span>
+                <span className="text-[6.5px] font-black uppercase text-accent-deep mt-0.5 leading-none">Casco</span>
               </div>
 
               {/* 4 Jets */}
@@ -477,7 +477,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <thead>
                       <tr className="bg-slate-50 text-slate-700 border-b border-slate-200">
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">Medida</th>
-                        <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">Solo Bañera <span className="text-[5.5px] text-slate-400 block font-normal leading-none mt-0.5">(casco)</span></th>
+                        <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">Bañera <span className="text-[5.5px] text-slate-400 block font-normal leading-none mt-0.5">(casco)</span></th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">4 Jets</th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] border-r border-slate-200 text-center w-[20%]">6 Jets</th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[7px] text-center w-[20%] text-[#006699]">8 Jets</th>
