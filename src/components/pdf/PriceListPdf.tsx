@@ -168,6 +168,206 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       </div>
 
       {/* 
+        GUÍA DE CATÁLOGO & ÍNDICE (PÁGINA 2)
+      */}
+      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-10">
+        {/* Decorative background gradients */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-accent-soft via-transparent to-transparent"></div>
+        
+        {/* Header */}
+        <div className="border-b-2 border-[#006699] pb-3 shrink-0 flex justify-between items-end">
+          <div>
+            <span className="text-[10px] font-black text-[#b08b5c] uppercase tracking-widest block mb-0.5">FIVE SAINT • BIENESTAR</span>
+            <h1 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide leading-none">GUÍA DE CATÁLOGO & ÍNDICE</h1>
+          </div>
+          <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
+        </div>
+
+        {/* Content Body Grid */}
+        <div className="flex-grow grid grid-cols-12 gap-8 py-6 items-stretch">
+          {/* Left Column (Brand info and Quality) */}
+          <div className="col-span-5 bg-slate-50 border border-slate-100 rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">CALIDAD DE MATERIALES</h3>
+              <p className="text-[10px] text-slate-600 leading-relaxed text-justify mb-4">
+                Todas nuestras bañeras y spas están fabricados con <strong>acrílico sanitario 100% virgen</strong> termoformado de origen importado, reforzado con fibra de vidrio y resina poliéster de alta resistencia, garantizando un acabado brillante, durabilidad excepcional y fácil mantenimiento.
+              </p>
+              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">FILOSOFÍA FIVE SAINT</h3>
+              <p className="text-[10px] text-slate-600 leading-relaxed text-justify">
+                Diseñamos soluciones de hidromasaje y bienestar que transforman el baño cotidiano en un santuario personal de relajación, renovación física y descanso mental.
+              </p>
+            </div>
+
+            {/* Quality Seals */}
+            <div className="border-t border-slate-200/60 pt-4 flex flex-col gap-3 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c]/10 flex items-center justify-center text-[#004a7c] shrink-0">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <span className="text-[9px] font-black text-slate-700 block leading-tight">100% ACRÍLICO VIRGEN</span>
+                  <span className="text-[8px] text-slate-500 block">Sanitario de alta resistencia y brillo</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#b08b5c]/10 flex items-center justify-center text-[#b08b5c] shrink-0">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <span className="text-[9px] font-black text-slate-700 block leading-tight">GARANTÍA DE FÁBRICA</span>
+                  <span className="text-[8px] text-slate-500 block">Respaldo directo de Five Saint</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#006699]/10 flex items-center justify-center text-[#006699] shrink-0">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  </svg>
+                </div>
+                <div>
+                  <span className="text-[9px] font-black text-slate-700 block leading-tight">PRODUCCIÓN NACIONAL</span>
+                  <span className="text-[8px] text-slate-500 block">Tecnología y diseño de vanguardia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (Index & Directory) */}
+          <div className="col-span-7 flex flex-col justify-between py-1">
+            <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-3 border-b border-slate-100 pb-1.5 shrink-0">SECCIONES DEL CATÁLOGO</h3>
+            <div className="flex-grow flex flex-col gap-3 justify-center">
+              {/* Item 1 */}
+              <div className="flex gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">01</div>
+                <div>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Línea Premium (Showcase)</h4>
+                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Modelos de alta gama con diseños anatómicos exclusivos y equipamiento premium.</p>
+                </div>
+              </div>
+              {/* Item 2 */}
+              <div className="flex gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">02</div>
+                <div>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Bañeras de Línea</h4>
+                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Gama clásica y moderna de bañeras con variadas opciones de medidas y volúmenes.</p>
+                </div>
+              </div>
+              {/* Item 3 */}
+              <div className="flex gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">03</div>
+                <div>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Equipamiento Adicional</h4>
+                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Opcionales y accesorios para configurar y potenciar la experiencia de masaje.</p>
+                </div>
+              </div>
+              {/* Item 4 */}
+              <div className="flex gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">04</div>
+                <div>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Ofertas Especiales</h4>
+                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo incluido a precios especiales.</p>
+                </div>
+              </div>
+              {/* Item 5 */}
+              <div className="flex gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">05</div>
+                <div>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Línea Spa & Opcionales</h4>
+                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Minipiscinas y spas de alto rendimiento para el confort en interiores y exteriores.</p>
+                </div>
+              </div>
+              {/* Item 6 */}
+              <div className="flex gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">06</div>
+                <div>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Ducha, Vapor y Saunas</h4>
+                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Platos de ducha reforzados, columnas escocesas, saunas secos y generadores de vapor.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Legend of Icons & Symbols */}
+        <div className="border-t border-slate-200 pt-5 mt-auto shrink-0">
+          <h3 className="text-[10px] font-black text-[#004a7c] uppercase tracking-wider mb-3">GUÍA DE ICONOS & EQUIPAMIENTOS</h3>
+          <div className="grid grid-cols-4 gap-4">
+            <div className="flex gap-2">
+              <HydroJetsIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Hidromasaje</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Cantidad de jets regulables instalados en el casco.</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <CervicalIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Jets Cervicales</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Jets superiores orientados al cuello y cervicales.</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <VistasIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Vistas</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Terminación estética de los jets (Cromo de alta calidad).</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <SuccionIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Succión</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Sistema de retorno con rejilla y filtro de seguridad.</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-4 gap-4 mt-3">
+            <div className="flex gap-2">
+              <EncendidoIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Encendido</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Pulsador neumático o digital estanco de encendido.</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <ReguladorAireIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Regulador Aire</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Válvula mezcladora de aire para modular la intensidad.</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <SopapaIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Sopapa</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Desagüe de fondo metálico o plástico de acoplamiento directo.</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <DesbordeIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[8.5px] font-black text-slate-800 block">Desborde</span>
+                <span className="text-[7.5px] text-slate-500 leading-tight block">Rebosadero de seguridad para prevenir desbordes.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-slate-200 pt-3 flex justify-between items-center shrink-0 mt-4">
+          <span className="text-[8px] text-slate-400">Five Saint © 2026 • Catálogo y Lista de Precios</span>
+          <div className="bg-[#b08b5c]/10 text-[#b08b5c] font-black px-3 py-1 rounded text-[8px] uppercase tracking-wider">
+            Guía de Referencia
+          </div>
+        </div>
+      </div>
+
+      {/* 
         PÁGINAS DE BAÑERAS PREMIUM (2 PÁGINAS SHOWCASE)
       */}
       {(() => {
