@@ -24,6 +24,104 @@ const DashIcon = ({ size = 18 }: { size?: number }) => (
   <span className="text-slate-300 font-bold leading-none select-none" style={{ fontSize: `${size * 0.9}px` }}>—</span>
 );
 
+// Helper to parse the unstructured offer description
+const parseOfertaDescription = (desc: string) => {
+  const hydroMatch = desc.match(/(\d+)\s*jet\s*de\s*caudal/i);
+  const hydroCount = hydroMatch ? hydroMatch[1] : '4';
+  
+  const cervicalMatch = desc.match(/(\d+)\s*jet\s*cervicales/i);
+  const cervicalCount = cervicalMatch ? cervicalMatch[1] : '2';
+
+  const vistasMatch = desc.match(/vistas\s+([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)/i);
+  const vistas = vistasMatch ? vistasMatch[1] : 'cromo';
+
+  const succion = desc.toLowerCase().includes('succión');
+
+  const encendidoMatch = desc.match(/encendido\s+([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)/i);
+  const encendido = encendidoMatch ? encendidoMatch[1] : 'neumático';
+
+  const reguladorAire = desc.toLowerCase().includes('regulador de aire');
+  const sopapa = desc.toLowerCase().includes('sopapa');
+
+  const desbordeMatch = desc.match(/desborde\s+([a-zA-ZáéíóúÁÉÍÓÚñÑ]+)/i);
+  let desborde = desbordeMatch ? desbordeMatch[1] : 'plástico';
+  if (desborde.endsWith('.')) {
+    desborde = desborde.slice(0, -1);
+  }
+
+  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+  return {
+    hydroJets: `${hydroCount} jets de caudal regulable individual`,
+    cervicalJets: `${cervicalCount} jets`,
+    vistas: capitalize(vistas),
+    succion,
+    encendido: capitalize(encendido),
+    reguladorAire,
+    sopapa,
+    desborde: capitalize(desborde)
+  };
+};
+
+// Icons for the offer specs table
+const HydroJetsIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+  </svg>
+);
+
+const CervicalIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+const VistasIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  </svg>
+);
+
+const SuccionIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <circle cx="12" cy="12" r="9" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v8m-4-4l4 4 4-4" />
+  </svg>
+);
+
+const EncendidoIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10" />
+  </svg>
+);
+
+const ReguladorAireIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2" />
+  </svg>
+);
+
+const SopapaIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a7 7 0 00-14 0v2M12 2v2" />
+  </svg>
+);
+
+const DesbordeIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 4.79M9 11h.01M15 11h.01M12 11h.01" />
+  </svg>
+);
+
+const CheckedCircleIcon = ({ size = 14 }: { size?: number }) => (
+  <div className="bg-[#004a7c] text-white rounded-full flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+    <svg className="w-[70%] h-[70%]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  </div>
+);
+
 export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
   return (
     <div ref={ref} className="bg-white w-full print:bg-white text-slate-800 text-sm font-sans">
@@ -734,42 +832,43 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const chunk = ofertasData.slice(pageIndex * 3, (pageIndex + 1) * 3);
 
         return (
-          <div key={`ofertas-page-${pageIndex}`} className="page-break-after p-0 min-h-[297mm] w-[210mm] mx-auto bg-slate-50 shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
-            {/* Fondo decorativo premium */}
-            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-accent-soft via-transparent to-transparent"></div>
-            <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-accent-gold/20 via-transparent to-transparent"></div>
-
-            {/* Banner Ofertas */}
-            <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0 border-b-2 border-accent-gold/40">
-              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-              <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
-              <div className="absolute -top-10 -left-10 w-64 h-64 bg-accent-soft opacity-10 rounded-full blur-3xl"></div>
-
-              <div className="absolute inset-0 flex items-center justify-between px-12">
-                <div>
-                  <h1 className="text-4xl font-extrabold text-white uppercase tracking-widest drop-shadow-md flex items-baseline">
-                    OFERTAS <span className="text-accent-gold font-light italic ml-2">Especiales</span>
-                  </h1>
-
-                </div>
-                <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+          <div key={`ofertas-page-${pageIndex}`} className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
+            {/* Header */}
+            <div className="border-b border-slate-200 pb-2 mb-4 shrink-0 flex justify-between items-end">
+              <div>
+                <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">OFERTAS</h1>
+              </div>
+              <div className="flex items-center gap-4">
+                <img src="/logo.png" alt="Five Saint Logo" className="h-12 object-contain" />
               </div>
             </div>
 
-            {/* Listado de Ofertas */}
-            <div className="flex-grow mt-8 flex flex-col gap-6 px-12 pt-4">
+            {/* Listado de Ofertas (Exactamente 3 por página) */}
+            <div className="flex-grow flex flex-col justify-between py-2">
               {chunk.map((oferta, idx) => {
-                const isEven = idx % 2 === 0;
-                return (
-                  <div key={idx} className={`bg-gradient-to-br from-white to-slate-50/50 border border-slate-200/80 rounded-3xl p-4 shadow-md flex ${isEven ? 'flex-row' : 'flex-row-reverse'} items-center gap-6 h-52 relative hover:shadow-lg transition-all duration-300`}>
+                const globalIdx = pageIndex * 3 + idx;
+                const isEven = globalIdx % 2 === 0;
+                const specs = parseOfertaDescription(oferta.descripcion);
 
+                return (
+                  <div key={idx} className={`w-full bg-white border border-slate-200 rounded-3xl p-3.5 shadow-sm flex ${isEven ? 'flex-row' : 'flex-row-reverse'} items-center gap-6 h-[278px] shrink-0 relative`}>
+                    
                     {/* Imagen de la bañera */}
-                    <div className="w-[38%] relative h-full bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center">
-                      <span className="absolute top-2 left-2 bg-accent-gold/90 text-white font-extrabold text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-full z-20 shadow-sm">
+                    <div className="w-[35%] relative h-[250px] bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center shrink-0">
+                      <span className="absolute top-3 left-3 bg-[#004a7c] text-white font-extrabold text-[8px] uppercase tracking-widest px-3 py-1 rounded-full z-20 shadow-sm">
                         EXCLUSIVO
                       </span>
+                      
+                      {/* Zoom/Viewport bracket icon on the top right */}
+                      <div className="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-xs border border-[#006699] rounded-full flex items-center justify-center z-20 shadow-xs">
+                        <svg className="w-4 h-4 text-[#006699]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2" />
+                          <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                        </svg>
+                      </div>
+
                       {oferta.image ? (
-                        <img src={oferta.image} alt={oferta.name} className={`w-full h-full object-cover ${!isEven ? '-scale-x-100' : ''}`} />
+                        <img src={oferta.image} alt={oferta.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full bg-slate-50 flex items-center justify-center">
                           <span className="text-slate-300 font-bold text-xs uppercase">Sin Imagen</span>
@@ -778,30 +877,121 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     </div>
 
                     {/* Tarjeta de información */}
-                    <div className="w-[62%] flex flex-col h-full justify-between py-1">
-                      {/* Título y Label */}
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-[17px] font-black text-accent-deep uppercase tracking-wide leading-none">{oferta.name}</h3>
-                          <span className="inline-block mt-1 text-[10px] text-slate-500 font-bold font-mono bg-slate-100 px-2 py-0.5 rounded">
+                    <div className="w-[65%] flex flex-col h-[250px] justify-between py-0.5">
+                      {/* Título, Medida y Badge */}
+                      <div className="flex justify-between items-center shrink-0">
+                        <div className="flex items-center gap-2.5">
+                          <h3 className="text-lg font-black text-[#004a7c] uppercase tracking-wide leading-none">{oferta.name}</h3>
+                          <span className="bg-[#e6f2fa] text-[#006699] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider font-mono">
                             {oferta.medidas}
                           </span>
                         </div>
-                        <div className="bg-gradient-to-r from-accent-gold to-accent-gold-hover text-white font-black italic text-[10px] px-3.5 py-1 rounded-full shadow-sm tracking-wider flex items-center gap-1 uppercase shrink-0">
-                          <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                          {oferta.jetLabel}
+                        <div className="bg-[#b08b5c] text-white font-black text-[10px] px-3.5 py-1 rounded-full shadow-xs tracking-wider uppercase shrink-0">
+                          • {oferta.jetLabel}
                         </div>
                       </div>
 
-                      {/* Descripción */}
-                      <p className="text-[11px] text-slate-600 leading-relaxed mt-2 text-justify line-clamp-3 pr-2">
-                        {oferta.descripcion}
-                      </p>
+                      {/* Equipamiento label */}
+                      <div className="mt-1 shrink-0">
+                        <span className="text-[10px] font-black text-[#004a7c] uppercase tracking-wider block">EQUIPAMIENTO</span>
+                      </div>
+
+                      {/* Tabla de Especificaciones */}
+                      <div className="flex-grow flex flex-col justify-center">
+                        <table className="w-full border-collapse text-[10px] text-slate-700 leading-normal">
+                          <tbody>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <HydroJetsIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Jets de hidromasaje</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.hydroJets}</td>
+                            </tr>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <CervicalIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Jets cervicales</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.cervicalJets}</td>
+                            </tr>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <VistasIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Vistas</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.vistas}</td>
+                            </tr>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <SuccionIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Succión</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right align-middle">
+                                <div className="flex justify-end">
+                                  {specs.succion ? <CheckedCircleIcon size={12} /> : <DashIcon size={12} />}
+                                </div>
+                              </td>
+                            </tr>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <EncendidoIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Encendido</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.encendido}</td>
+                            </tr>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <ReguladorAireIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Regulador de aire</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right align-middle">
+                                <div className="flex justify-end">
+                                  {specs.reguladorAire ? <CheckedCircleIcon size={12} /> : <DashIcon size={12} />}
+                                </div>
+                              </td>
+                            </tr>
+                            <tr className="border-b border-slate-100">
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <SopapaIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Sopapa</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right align-middle">
+                                <div className="flex justify-end">
+                                  {specs.sopapa ? <CheckedCircleIcon size={12} /> : <DashIcon size={12} />}
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="py-[2px] text-left font-bold">
+                                <div className="flex items-center gap-1.5">
+                                  <DesbordeIcon className="w-3.5 h-3.5 text-[#004a7c]" />
+                                  <span>Desborde</span>
+                                </div>
+                              </td>
+                              <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.desborde}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
 
                       {/* Precio */}
-                      <div className="flex justify-between items-end mt-auto pt-2 border-t border-slate-100">
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Precio Promocional</span>
-                        <div className="bg-gradient-to-r from-accent-deep to-accent-hover text-white font-black text-base py-1 px-5 rounded-xl shadow-md tracking-wider">
+                      <div className="flex justify-between items-center mt-1 pt-1 border-t border-slate-100 shrink-0">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PRECIO PROMOCIONAL</span>
+                        <div className="bg-[#004a7c] text-white font-black text-sm py-1.5 px-6 rounded-full shadow-sm tracking-wider">
                           {oferta.precio}
                         </div>
                       </div>
@@ -813,12 +1003,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </div>
 
             {/* Footer info Ofertas */}
-            <div className="px-12 pb-8 mt-auto flex justify-between items-end shrink-0 text-[10px] text-slate-500 pt-4 border-t border-slate-200/50">
-              <div>
-                <p>Los precios corresponden a color blanco.</p>
-                <p className="mt-1">Las bañeras de OFERTA se les puede agregar equipamiento <strong className="text-slate-700">sin variar la cantidad de jet.</strong></p>
+            <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
+              <div className="text-[9px] text-slate-500 max-w-[500px] leading-relaxed">
+                <p className="font-bold text-slate-700">Los precios corresponden a color blanco.</p>
+                <p className="mt-0.5">Las bañeras de OFERTA se les puede agregar equipamiento <strong className="text-slate-700">sin variar la cantidad de jet.</strong></p>
               </div>
-              <div className="bg-slate-200 text-slate-600 font-bold px-3 py-1 text-xs">
+              <div className="bg-slate-150 text-slate-600 font-bold px-3 py-1 rounded text-[9px] uppercase tracking-wider">
                 LOS PRECIOS NO INCLUYEN IVA
               </div>
             </div>
