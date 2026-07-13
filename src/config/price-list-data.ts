@@ -286,7 +286,6 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Succión", values: [1] },
       { label: "Bomba autodrenante", values: [1] },
       { label: "Encendido neumático", values: [1] },
-      { label: "Regulador de aire", values: [1] },
       { label: "Desagüe de 1 1/2\"", values: [1] },
       { label: "Llenado interno", values: [1] }
     ],
@@ -306,7 +305,6 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Succión", values: [1] },
       { label: "Bomba autodrenante", values: [1] },
       { label: "Encendido numático", values: [1] },
-      { label: "Regulador de aire", values: [1] },
       { label: "Desagüe 1. 1/2\"", values: [1] },
       { label: "Jet cervical", values: [4] },
       { label: "Llenado interno", values: [1] }
