@@ -108,7 +108,7 @@ export const equipamientosData: Equipamiento[] = [
   { codigo: "FSE114P", nombre: "Jet punzante adicional", descripcion: "Mini jet adicional de masaje punzante", precio: "$ 38 600" },
   { codigo: "FSE119", nombre: "Potenciación de jets", descripcion: "Instalación de turbo soplador para inyectar aire a alta velocidad", precio: "$ 734 400" },
   { codigo: "FSE115", nombre: "Sistema Air Pool", descripcion: "Burbujeador de piso", precio: "$ 900 100" },
-  { codigo: "FSE116", nombre: "Sistema Air Pool / ozono", descripcion: "Burbujeador de piso con lámpara de ozonización", precio: "$ 1.323 000" },
+  { codigo: "FSE116", nombre: "Sistema Air Pool / ozono", descripcion: "Burbujeador de piso con lámpara de ozonización", precio: "$ 1 323 000" },
   { codigo: "FSE117", nombre: "Equipo ozono de 1 lámpara", descripcion: "Aplicable a sistema de aire en los jets", precio: "$ 445 200" },
   { codigo: "FSE104M", nombre: "Desborde y desagüe metal cromo", descripcion: "Sistema anti-derrame y sopapa de desagüe", precio: "$ 181 400" },
   { codigo: "FSE101M", nombre: "Tapa inspección metal 30x40 p/revestir", descripcion: "Para revestir 30 x 40 cm (con marco para amurar)", precio: "$ 164 600" },

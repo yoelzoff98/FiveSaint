@@ -985,7 +985,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
             <div className="absolute -top-10 -left-10 w-64 h-64 bg-accent-soft opacity-10 rounded-full blur-3xl"></div>
 
-            <div className="absolute inset-0 flex items-center justify-between px-12">
+            <div className="absolute inset-0 flex items-center justify-between px-10">
               <div>
                 <h1 className="text-4xl font-extrabold text-white uppercase tracking-widest drop-shadow-md">
                   Equipamiento Adicional
