@@ -465,7 +465,7 @@ export const vaporData = {
   title: "Vapor",
   image: "/images/Ducha Escocesa/Vapor.png",
   description: "Generador de vapor para cabinas automático con encendido digital monofásico y trifásico.",
-  contact: "Solicitar cotización a comercial@fivesaint.com"
+  contact: "Solicitar cotización a fivesaint@fivesaint.com"
 };
 
 export interface SaunaModel {
@@ -514,5 +514,5 @@ export const saunaData = {
     { code: "FSSAUB", name: "Puerta de blindex con marco de madera" }
   ],
   note: "Los Saunas se realizan a medida.\nLos gráficos mostrados son solo a modo de ejemplo.",
-  contact: "Solicitar cotización a: comercial@fivesaint.com"
+  contact: "Solicitar cotización a: fivesaint@fivesaint.com"
 };
