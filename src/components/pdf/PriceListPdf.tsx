@@ -218,8 +218,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <div>
-                  <span className="text-[9px] font-black text-slate-700 block leading-tight">GARANTÍA DE FÁBRICA</span>
-                  <span className="text-[8px] text-slate-500 block">Respaldo directo de Five Saint</span>
+                  <span className="text-[9px] font-black text-slate-700 block leading-tight">GARANTÍA DE FABRICA</span>
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
@@ -244,7 +243,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <div className="flex gap-3">
                 <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">01</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Línea Premium (Showcase)</h4>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Línea Premium</h4>
                   <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Modelos de alta gama con diseños anatómicos exclusivos y equipamiento premium.</p>
                 </div>
               </div>
@@ -252,7 +251,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <div className="flex gap-3">
                 <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">02</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Bañeras de Línea</h4>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Bañeras</h4>
                   <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Gama clásica y moderna de bañeras con variadas opciones de medidas y volúmenes.</p>
                 </div>
               </div>
@@ -268,7 +267,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <div className="flex gap-3">
                 <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">04</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Ofertas Especiales</h4>
+                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Ofertas</h4>
                   <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo incluido a precios especiales.</p>
                 </div>
               </div>
