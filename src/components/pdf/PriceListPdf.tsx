@@ -177,8 +177,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Header */}
         <div className="border-b-2 border-[#006699] pb-3 shrink-0 flex justify-between items-end">
           <div>
-            <span className="text-[10px] font-black text-[#b08b5c] uppercase tracking-widest block mb-0.5">FIVE SAINT • BIENESTAR</span>
-            <h1 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide leading-none">GUÍA DE CATÁLOGO & ÍNDICE</h1>
+            <h1 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide leading-none">Bienvenidos a Five Saint</h1>
           </div>
           <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
         </div>
@@ -188,13 +187,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           {/* Left Column (Brand info and Quality) */}
           <div className="col-span-5 bg-slate-50 border border-slate-100 rounded-3xl p-6 flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">CALIDAD DE MATERIALES</h3>
+              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">Más de 30 años desarrollando soluciones para baños y Spa</h3>
               <p className="text-[10px] text-slate-600 leading-relaxed text-justify mb-4">
-                Todas nuestras bañeras y spas están fabricados con <strong>acrílico sanitario 100% virgen</strong> termoformado de origen importado, reforzado con fibra de vidrio y resina poliéster de alta resistencia, garantizando un acabado brillante, durabilidad excepcional y fácil mantenimiento.
+                Esta lista/catálogo fue diseñada <strong >para facilitar la selección de nuestros productos</strong> y ayudarlos a asesorar y cotizar cada proyecto de forma rápida y sencilla.
               </p>
-              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">FILOSOFÍA FIVE SAINT</h3>
+              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">Cómo está organizado esta lista</h3>
               <p className="text-[10px] text-slate-600 leading-relaxed text-justify">
-                Diseñamos soluciones de hidromasaje y bienestar que transforman el baño cotidiano en un santuario personal de relajación, renovación física y descanso mental.
               </p>
             </div>
 
@@ -229,7 +227,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 </div>
                 <div>
                   <span className="text-[9px] font-black text-slate-700 block leading-tight">PRODUCCIÓN NACIONAL</span>
-                  <span className="text-[8px] text-slate-500 block">Tecnología y diseño de vanguardia</span>
                 </div>
               </div>
             </div>
@@ -241,50 +238,58 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div className="flex-grow flex flex-col gap-3 justify-center">
               {/* Item 1 */}
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">01</div>
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">01</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Línea Premium</h4>
-                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Modelos de alta gama con diseños anatómicos exclusivos y equipamiento premium.</p>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Configuracion Premium  <strong> Confort y Confort Plus</strong> </h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Dos versiones de los hidromasajes más elegidos listos para ofrecer</p>
                 </div>
               </div>
               {/* Item 2 */}
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">02</div>
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">02</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Bañeras</h4>
-                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Gama clásica y moderna de bañeras con variadas opciones de medidas y volúmenes.</p>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Bañeras</h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Todos nuestros modelos disponibles en versión Bañera o Hidromasaje</p>
                 </div>
               </div>
               {/* Item 3 */}
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">03</div>
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">03</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Equipamiento Adicional</h4>
-                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Opcionales y accesorios para configurar y potenciar la experiencia de masaje.</p>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Equipamiento Adicional</h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Todo lo necesario para crear el hidromasaje que cada cliente está buscando</p>
                 </div>
               </div>
               {/* Item 4 */}
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">04</div>
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">04</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Ofertas</h4>
-                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo incluido a precios especiales.</p>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Ofertas</h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo a precios especiales.</p>
                 </div>
               </div>
               {/* Item 5 */}
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">05</div>
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">05</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Línea Spa & Opcionales</h4>
-                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Minipiscinas y spas de alto rendimiento para el confort en interiores y exteriores.</p>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Línea Spa y Minipiscinas</h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
                 </div>
               </div>
               {/* Item 6 */}
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-sm mt-0.5">06</div>
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">06</div>
                 <div>
-                  <h4 className="text-[10px] font-black text-[#004a7c] uppercase leading-tight">Ducha, Vapor y Saunas</h4>
-                  <p className="text-[9px] text-slate-600 leading-snug mt-0.5">Platos de ducha reforzados, columnas escocesas, saunas secos y generadores de vapor.</p>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Platos de Ducha</h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Receptáculoscon varias medidas y opciones para cada necesidad.</p>
+                </div>
+              </div>
+              {/* Item 7 */}
+              <div className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">07</div>
+                <div>
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Vapor y Saunas</h4>
+                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
                 </div>
               </div>
             </div>
@@ -396,7 +401,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {/* Top Header */}
                 <div className="border-b border-slate-200 pb-2 mb-3 shrink-0 flex justify-between items-end">
                   <div>
-                    <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras Premium </h1>
+                    <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras: Configuraciones Premium </h1>
                   </div>
                   <div className="flex items-center gap-4">
                     <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
