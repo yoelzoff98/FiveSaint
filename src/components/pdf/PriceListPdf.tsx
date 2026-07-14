@@ -172,13 +172,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       */}
       <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col font-sans">
         
-        {/* 1. Top Blue Bar */}
-        <div className="bg-[#004a7c] h-16 flex items-center justify-between px-10 shrink-0">
-          <h1 className="text-white text-[22px] font-black uppercase tracking-wider flex gap-2">
-            GUÍA <span className="font-light">DEL CATÁLOGO</span>
-          </h1>
-          <div className="bg-[#004a7c] p-2 h-12 w-12 flex items-center justify-center">
-             <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain brightness-0 invert" />
+        {/* Header */}
+        <div className="border-b border-slate-200 pb-2 mb-0 shrink-0 flex justify-between items-end px-10 pt-8 bg-white relative z-20">
+          <div>
+            <h1 className="text-[22px] font-black text-[#006699] uppercase tracking-wide">
+              Guía del Catálogo
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
@@ -266,7 +268,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
             <div className="flex flex-col flex-grow justify-between pb-2">
                {/* 01 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">01</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -277,12 +279,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">CONFIGURACIONES PREMIUM CONFORT Y CONFORT PLUS</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Dos versiones de los hidromasajes más elegidos listos para ofrecer.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 2</div>
                </div>
                <div className="w-full border-t border-slate-100"></div>
 
                {/* 02 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">02</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -293,12 +294,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">BAÑERAS</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todos nuestros modelos disponibles en versión Bañera o Hidromasaje.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 6</div>
                </div>
                <div className="w-full border-t border-slate-100"></div>
 
                {/* 03 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">03</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -310,12 +310,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">EQUIPAMIENTO ADICIONAL</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todo lo necesario para crear el hidromasaje que cada cliente está buscando.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 12</div>
                </div>
                <div className="w-full border-t border-slate-100"></div>
 
                {/* 04 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">04</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -326,12 +325,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">OFERTAS</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo a precios especiales.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 16</div>
                </div>
                <div className="w-full border-t border-slate-100"></div>
 
                {/* 05 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">05</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -342,12 +340,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">LÍNEA SPA Y MINIPISCINAS</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 18</div>
                </div>
                <div className="w-full border-t border-slate-100"></div>
 
                {/* 06 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">06</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -358,12 +355,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">PLATOS DE DUCHA</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Receptáculos con varias medidas y opciones para cada necesidad.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 24</div>
                </div>
                <div className="w-full border-t border-slate-100"></div>
 
                {/* 07 */}
-               <div className="flex gap-4 items-center">
+               <div className="flex gap-4 items-center pr-6">
                   <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">07</div>
                   <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
                     <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -374,7 +370,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">VAPOR Y SAUNAS</h4>
                     <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
                   </div>
-                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 30</div>
                </div>
             </div>
           </div>
