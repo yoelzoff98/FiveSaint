@@ -170,203 +170,260 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       {/* 
         GUÍA DE CATÁLOGO & ÍNDICE (PÁGINA 2)
       */}
-      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-10">
-        {/* Decorative background gradients */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-accent-soft via-transparent to-transparent"></div>
-
-        {/* Header */}
-        <div className="border-b-2 border-[#006699] pb-3 shrink-0 flex justify-between items-end">
-          <div>
-            <h1 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide leading-none">Bienvenidos a Five Saint</h1>
+      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col font-sans">
+        
+        {/* 1. Top Blue Bar */}
+        <div className="bg-[#004a7c] h-16 flex items-center justify-between px-10 shrink-0">
+          <h1 className="text-white text-[22px] font-black uppercase tracking-wider flex gap-2">
+            GUÍA <span className="font-light">DEL CATÁLOGO</span>
+          </h1>
+          <div className="bg-[#004a7c] p-2 h-12 w-12 flex items-center justify-center">
+             <img src="/logo.png" alt="Five Saint Logo" className="w-full h-full object-contain brightness-0 invert" />
           </div>
-          <img src="/logo.png" alt="Five Saint Logo" className="h-10 object-contain" />
         </div>
 
-        {/* Content Body Grid */}
-        <div className="flex-grow grid grid-cols-12 gap-8 py-6 items-stretch">
-          {/* Left Column (Brand info and Quality) */}
-          <div className="col-span-5 bg-slate-50 border border-slate-100 rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">Más de 30 años desarrollando soluciones para baños y Spa</h3>
-              <p className="text-[10px] text-slate-600 leading-relaxed text-justify mb-4">
-                Esta lista/catálogo fue diseñada <strong >para facilitar la selección de nuestros productos</strong> y ayudarlos a asesorar y cotizar cada proyecto de forma rápida y sencilla.
-              </p>
-              <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-2.5">Cómo está organizado esta lista</h3>
-              <p className="text-[10px] text-slate-600 leading-relaxed text-justify">
-              </p>
+        {/* 2. Hero Image Banner */}
+        <div className="relative h-[280px] shrink-0 w-full overflow-hidden bg-slate-100">
+          <img src="/images/Spa/Design.png" alt="Spa Banner" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
+          <div className="absolute inset-0 bg-[#004a7c]/40 mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#004a7c]/90 via-[#004a7c]/60 to-transparent"></div>
+          
+          <div className="relative z-10 h-full flex flex-col justify-center px-10 text-white w-[75%]">
+            <h2 className="text-[18px] font-bold tracking-widest uppercase mb-1">MÁS DE</h2>
+            <h3 className="text-[85px] font-black leading-none mb-1 tracking-tighter">30 AÑOS</h3>
+            <p className="text-[19px] font-bold tracking-wider uppercase leading-snug">
+              DESARROLLANDO SOLUCIONES<br/>PARA BAÑOS Y SPA
+            </p>
+          </div>
+        </div>
+
+        {/* 3. Intro Text */}
+        <div className="px-10 py-5 shrink-0 flex items-center gap-6 border-b border-slate-200 mx-6 mt-3">
+          <div className="w-14 h-14 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0 shadow-md">
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <p className="text-[13.5px] text-slate-700 leading-relaxed font-medium">
+            Este catálogo fue desarrollado para facilitar la <strong className="text-[#004a7c] font-black">búsqueda de productos</strong>, <strong className="text-[#004a7c] font-black">comparar configuraciones y acompañarlos en la cotización</strong> de cada proyecto de forma rápida y sencilla.
+          </p>
+        </div>
+
+        {/* 4. Two Columns Grid */}
+        <div className="flex-grow flex px-10 py-6 gap-10">
+          
+          {/* Left Column: Info General */}
+          <div className="w-[42%] flex flex-col gap-6">
+            <div className="flex items-center gap-3 border-b border-slate-200 pb-2">
+               <div className="w-10 h-10 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
+                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                 </svg>
+               </div>
+               <h3 className="text-[15px] font-black text-[#004a7c] uppercase tracking-wider">INFORMACIÓN GENERAL</h3>
+            </div>
+            
+            <div className="flex flex-col gap-7 mt-1">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full border-[2.5px] border-[#004a7c] shrink-0 bg-white"></div>
+                <p className="text-[12px] text-slate-700 font-medium leading-snug pt-1.5">Los precios corresponden a productos en color blanco.</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 shrink-0 flex items-center justify-center text-[#004a7c]">
+                  <svg className="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <p className="text-[12px] text-slate-700 font-medium leading-snug">Los Sistemas Hidroterapéuticos están compuestos de: casco con soporte para bomba, jets, succión, pulsador neumático y bomba.</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 shadow-inner shrink-0 border border-slate-300"></div>
+                <p className="text-[12px] text-slate-700 font-medium leading-snug pt-1.5">Las terminaciones visibles corresponden a acabado cromo.</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 shrink-0 flex items-center justify-center text-[#004a7c]">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 18H4m2 0v-2m12-10h2m-2 0v2" />
+                  </svg>
+                </div>
+                <p className="text-[12px] text-slate-700 font-medium leading-snug">Las medidas e imágenes son ilustrativas y podrán presentar variaciones sin previo aviso.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-[1px] bg-slate-200 my-4"></div>
+
+          {/* Right Column: Sections */}
+          <div className="w-[55%] flex flex-col pl-4">
+             <div className="flex items-center gap-3 border-b border-slate-200 pb-2 mb-4">
+               <div className="w-10 h-10 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
+                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                 </svg>
+               </div>
+               <h3 className="text-[15px] font-black text-[#004a7c] uppercase tracking-wider leading-tight">ENCONTRÁ RÁPIDAMENTE<br/>LO QUE BUSCÁS</h3>
             </div>
 
-            {/* Quality Seals */}
-            <div className="border-t border-slate-200/60 pt-4 flex flex-col gap-3 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#004a7c]/10 flex items-center justify-center text-[#004a7c] shrink-0">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <div className="flex flex-col flex-grow justify-between pb-2">
+               {/* 01 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">01</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 14v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 14h20M12 4v7M9 7h6 M18 3l1 1-1 1 M6 5l-1 1 1 1" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">CONFIGURACIONES PREMIUM CONFORT Y CONFORT PLUS</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Dos versiones de los hidromasajes más elegidos listos para ofrecer.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 2</div>
+               </div>
+               <div className="w-full border-t border-slate-100"></div>
+
+               {/* 02 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">02</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 14v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 14h20" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">BAÑERAS</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todos nuestros modelos disponibles en versión Bañera o Hidromasaje.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 6</div>
+               </div>
+               <div className="w-full border-t border-slate-100"></div>
+
+               {/* 03 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">03</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">EQUIPAMIENTO ADICIONAL</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todo lo necesario para crear el hidromasaje que cada cliente está buscando.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 12</div>
+               </div>
+               <div className="w-full border-t border-slate-100"></div>
+
+               {/* 04 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">04</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">OFERTAS</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo a precios especiales.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 16</div>
+               </div>
+               <div className="w-full border-t border-slate-100"></div>
+
+               {/* 05 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">05</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 15v5a2 2 0 002 2h12a2 2 0 002-2v-5M2 15h20M8 11v-2M12 11V6M16 11v-3" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">LÍNEA SPA Y MINIPISCINAS</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 18</div>
+               </div>
+               <div className="w-full border-t border-slate-100"></div>
+
+               {/* 06 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">06</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v5m0 0a4 4 0 100 8 4 4 0 000-8zm0 10v3m-3-2v2m6-2v2" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">PLATOS DE DUCHA</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Receptáculos con varias medidas y opciones para cada necesidad.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 24</div>
+               </div>
+               <div className="w-full border-t border-slate-100"></div>
+
+               {/* 07 */}
+               <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">07</div>
+                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 18h16M5 18v-5m14 5v-5M8 7v4m4-5v5m4-4v4" />
+                    </svg>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">VAPOR Y SAUNAS</h4>
+                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
+                  </div>
+                  <div className="text-[13px] font-black text-[#004a7c] whitespace-nowrap">P. 30</div>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 5. Footer Badges */}
+        <div className="px-8 pb-8 mt-auto shrink-0">
+          <div className="flex justify-between items-center border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl py-3 px-6 shadow-sm">
+            <div className="flex items-center gap-2">
+               <div className="text-[#004a7c]">
+                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="text-[11px] font-black text-slate-700 block leading-tight">100% ACRÍLICO</span>
-                  <span className="text-[10px] text-slate-500 block">Sanitario de alta resistencia y brillo</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#b08b5c]/10 flex items-center justify-center text-[#b08b5c] shrink-0">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                 </svg>
+               </div>
+               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">ACRÍLICO<br/>SANITARIO</span>
+            </div>
+            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
+               <div className="text-[#004a7c]">
+                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="text-[11px] font-black text-slate-700 block leading-tight">GARANTÍA DE FABRICA</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#006699]/10 flex items-center justify-center text-[#006699] shrink-0">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                  </svg>
-                </div>
-                <div>
-                  <span className="text-[11px] font-black text-slate-700 block leading-tight">PRODUCCIÓN NACIONAL</span>
-                </div>
-              </div>
+                 </svg>
+               </div>
+               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">5 AÑOS DE GARANTÍA<br/>EN ACRÍLICO</span>
             </div>
-          </div>
-
-          {/* Right Column (Index & Directory) */}
-          <div className="col-span-7 flex flex-col justify-between py-1">
-            <h3 className="text-xs font-black text-[#004a7c] uppercase tracking-wider mb-3 border-b border-slate-100 pb-1.5 shrink-0">SECCIONES DEL CATÁLOGO</h3>
-            <div className="flex-grow flex flex-col gap-3 justify-center">
-              {/* Item 1 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">01</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Configuracion Premium  <strong> Confort y Confort Plus</strong> </h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Dos versiones de los hidromasajes más elegidos listos para ofrecer</p>
-                </div>
-              </div>
-              {/* Item 2 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">02</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Bañeras</h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Todos nuestros modelos disponibles en versión Bañera o Hidromasaje</p>
-                </div>
-              </div>
-              {/* Item 3 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">03</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Equipamiento Adicional</h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Todo lo necesario para crear el hidromasaje que cada cliente está buscando</p>
-                </div>
-              </div>
-              {/* Item 4 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">04</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Ofertas</h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo a precios especiales.</p>
-                </div>
-              </div>
-              {/* Item 5 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">05</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Línea Spa y Minipiscinas</h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
-                </div>
-              </div>
-              {/* Item 6 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">06</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Platos de Ducha</h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Receptáculos con varias medidas y opciones para cada necesidad.</p>
-                </div>
-              </div>
-              {/* Item 7 */}
-              <div className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-sm mt-0.5">07</div>
-                <div>
-                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">Vapor y Saunas</h4>
-                  <p className="text-[11px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
+               <div className="text-[#004a7c]">
+                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                 </svg>
+               </div>
+               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">REPUESTOS<br/>PERMANENTES</span>
             </div>
-          </div>
-        </div>
-
-        {/* Legend of Icons & Symbols */}
-        <div className="border-t border-slate-200 pt-5 mt-auto shrink-0">
-          <h3 className="text-[12px] font-black text-[#004a7c] uppercase tracking-wider mb-3">GUÍA DE ICONOS & EQUIPAMIENTOS</h3>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="flex gap-2">
-              <HydroJetsIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Hidromasaje</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Cantidad de jets regulables instalados en el casco.</span>
-              </div>
+            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
+               <div className="text-[#004a7c]">
+                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                 </svg>
+               </div>
+               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">FABRICACIÓN<br/>NACIONAL</span>
             </div>
-            <div className="flex gap-2">
-              <CervicalIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Jets Cervicales</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Jets superiores orientados al cuello y cervicales.</span>
-              </div>
+            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
+               <div className="text-[#004a7c]">
+                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 3l-6 6m0 0V4m0 5h5M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
+                 </svg>
+               </div>
+               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">SOPORTE Y<br/>ASESORAMIENTO</span>
             </div>
-            <div className="flex gap-2">
-              <VistasIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Vistas</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Terminación estética de los jets (Cromo de alta calidad).</span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <SuccionIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Succión</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Sistema de retorno con rejilla y filtro de seguridad.</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 gap-4 mt-3">
-            <div className="flex gap-2">
-              <EncendidoIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Encendido</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Pulsador neumático o digital estanco de encendido.</span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <ReguladorAireIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Regulador Aire</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Válvula mezcladora de aire para modular la intensidad.</span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <SopapaIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Sopapa</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Desagüe de fondo metálico o plástico de acoplamiento directo.</span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <DesbordeIcon className="w-4 h-4 text-[#004a7c] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[10.5px] font-black text-slate-800 block">Desborde</span>
-                <span className="text-[10px] text-slate-500 leading-tight block">Rebosadero de seguridad para prevenir desbordes.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-slate-200 pt-3 flex justify-between items-center shrink-0 mt-4">
-          <span className="text-[10px] text-slate-400">Five Saint © 2026 • Catálogo y Lista de Precios</span>
-          <div className="bg-[#b08b5c]/10 text-[#b08b5c] font-black px-3 py-1 rounded text-[10px] uppercase tracking-wider">
-            Guía de Referencia
           </div>
         </div>
       </div>
