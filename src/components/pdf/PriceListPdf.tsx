@@ -392,7 +392,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">5 AÑOS DE GARANTÍA<br />EN ACRÍLICO</span>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">5 AÑOS DE GARANTÍA<br />EN ACRÍLICO / 1 AÑO EN BOMBA</span>
             </div>
             <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
               <div className="text-[#004a7c]">
@@ -668,7 +668,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
               {/* Footer info Premium */}
               <div className="flex justify-between items-center shrink-0 pt-2 border-t border-slate-100 mt-2">
-                <p className="text-[10.5px] text-slate-400 font-bold">Los precios publicados corresponden a la version en color blanco.</p>
+                <p className="text-[10.5px] text-slate-400 font-bold">Los precios publicados corresponden a la versión en color blanco.</p>
                 <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[10.5px] uppercase tracking-wider">
                   LOS PRECIOS NO INCLUYEN IVA
                 </div>
@@ -893,7 +893,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           <div className="mt-4">
             <div className="flex items-baseline gap-1.5 mb-2 shrink-0">
               <h2 className="text-[14px] font-black text-accent-deep uppercase tracking-wide leading-none">
-                Modelos de Medida Única
+                Modelos de Única Medida
               </h2>
             </div>
 
@@ -983,7 +983,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
             </div>
 
-            {/* PÁGINA 2 DE BAÑERAS: Cabecera Cont. + Niveles + Joya + Martina + Modelos de Medida Única (Parte 1) */}
+            {/* PÁGINA 2 DE BAÑERAS: Cabecera Cont. + Niveles + Joya + Martina + Modelos de Única Medida  (Parte 1) */}
             <div key="baneras-page-2" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(true)}
@@ -1008,7 +1008,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
             </div>
 
-            {/* PÁGINA 3 DE BAÑERAS: Cabecera Cont. + Niveles + Modelos de Medida Única (Parte 2) */}
+            {/* PÁGINA 3 DE BAÑERAS: Cabecera Cont. + Niveles + Modelos de Única Medida  (Parte 2) */}
             <div key="baneras-page-3" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(true)}
@@ -1091,7 +1091,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Footer info Pág Equipamientos */}
         <div className="px-10 pb-4 flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mt-2">
           <div className="text-[12px] text-slate-400 max-w-sm">
-            <p>Los precios publicados corresponden a la version en color blanco.</p>
+            <p>Los precios publicados corresponden a la versión en color blanco.</p>
             <p className="mt-0.5"></p>
           </div>
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[11px] uppercase tracking-wider">
@@ -1276,7 +1276,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             {/* Footer info Ofertas */}
             <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
               <div className="text-[11px] text-slate-500 max-w-[500px] leading-relaxed">
-                <p className="font-bold text-slate-700">Los precios publicados corresponden a la version en color blanco.</p>
+                <p className="font-bold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
                 <p className="mt-0.5">Las bañeras de OFERTA se les puede agregar equipamiento <strong className="text-slate-700">sin variar la cantidad de jet.</strong></p>
               </div>
               <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded text-[11px] uppercase tracking-wider">
@@ -1396,7 +1396,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Footer info SPA Page 1 */}
         <div className="px-10 pb-4 mt-auto flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mx-10">
           <div className="text-[11px] text-slate-600 max-w-[500px]">
-            <p>Los precios publicados corresponden a la version en color blanco.</p>
+            <p>Los precios publicados corresponden a la versión en color blanco.</p>
           </div>
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[11px] uppercase tracking-wider">
             LOS PRECIOS NO INCLUYEN IVA
@@ -1505,7 +1505,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Footer info SPA Page 2 */}
         <div className="px-10 pb-4 mt-auto flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mx-10">
           <div className="text-[11px] text-slate-600 max-w-[500px]">
-            <p>Los precios publicados corresponden a la version en color blanco.</p>
+            <p>Los precios publicados corresponden a la versión en color blanco.</p>
           </div>
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[11px] uppercase tracking-wider">
             LOS PRECIOS NO INCLUYEN IVA
@@ -1664,7 +1664,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
             {/* Footer info */}
             <div className="px-16 pb-8 mt-auto flex justify-between items-end shrink-0 text-[12px] text-slate-500 border-t border-slate-200 pt-4">
-              <p>Los precios publicados corresponden a la version en color blanco.</p>
+              <p>Los precios publicados corresponden a la versión en color blanco.</p>
               <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded shadow-sm text-[11px] uppercase tracking-wider">
                 LOS PRECIOS NO INCLUYEN IVA
               </div>
