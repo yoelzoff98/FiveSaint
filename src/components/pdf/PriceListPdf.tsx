@@ -171,7 +171,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         GUÍA DE CATÁLOGO & ÍNDICE (PÁGINA 2)
       */}
       <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col font-sans">
-        
+
         {/* Header */}
         <div className="border-b border-slate-200 pb-2 mb-0 shrink-0 flex justify-between items-end px-10 pt-8 bg-white relative z-20">
           <div>
@@ -189,12 +189,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           <img src="/images/Spa/Design.png" alt="Spa Banner" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
           <div className="absolute inset-0 bg-[#004a7c]/40 mix-blend-multiply"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#004a7c]/90 via-[#004a7c]/60 to-transparent"></div>
-          
+
           <div className="relative z-10 h-full flex flex-col justify-center px-10 text-white w-[75%]">
             <h2 className="text-[18px] font-bold tracking-widest uppercase mb-1">MÁS DE</h2>
             <h3 className="text-[85px] font-black leading-none mb-1 tracking-tighter">30 AÑOS</h3>
             <p className="text-[19px] font-bold tracking-wider uppercase leading-snug">
-              DESARROLLANDO SOLUCIONES<br/>PARA BAÑOS Y SPA
+              DESARROLLANDO SOLUCIONES<br />PARA BAÑOS Y SPA
             </p>
           </div>
         </div>
@@ -213,18 +213,18 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         {/* 4. Two Columns Grid */}
         <div className="flex-grow flex px-10 py-6 gap-10">
-          
+
           {/* Left Column: Info General */}
           <div className="w-[42%] flex flex-col gap-6">
             <div className="flex items-center gap-3 border-b border-slate-200 pb-2">
-               <div className="w-10 h-10 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
-                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                 </svg>
-               </div>
-               <h3 className="text-[15px] font-black text-[#004a7c] uppercase tracking-wider">INFORMACIÓN GENERAL</h3>
+              <div className="w-10 h-10 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <h3 className="text-[15px] font-black text-[#004a7c] uppercase tracking-wider">INFORMACIÓN GENERAL</h3>
             </div>
-            
+
             <div className="flex flex-col gap-7 mt-1">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full border-[2.5px] border-[#004a7c] shrink-0 bg-white"></div>
@@ -257,120 +257,120 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
           {/* Right Column: Sections */}
           <div className="w-[55%] flex flex-col pl-4">
-             <div className="flex items-center gap-3 border-b border-slate-200 pb-2 mb-4">
-               <div className="w-10 h-10 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
-                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                 </svg>
-               </div>
-               <h3 className="text-[15px] font-black text-[#004a7c] uppercase tracking-wider leading-tight">ENCONTRÁ RÁPIDAMENTE<br/>LO QUE BUSCÁS</h3>
+            <div className="flex items-center gap-3 border-b border-slate-200 pb-2 mb-4">
+              <div className="w-10 h-10 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <h3 className="text-[15px] font-black text-[#004a7c] uppercase tracking-wider leading-tight">ENCONTRÁ RÁPIDAMENTE<br />LO QUE BUSCÁS</h3>
             </div>
 
             <div className="flex flex-col flex-grow justify-between pb-2">
-               {/* 01 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">01</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 14v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 14h20M12 4v7M9 7h6 M18 3l1 1-1 1 M6 5l-1 1 1 1" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">CONFIGURACIONES PREMIUM CONFORT Y CONFORT PLUS</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Dos versiones de los hidromasajes más elegidos listos para ofrecer.</p>
-                  </div>
-               </div>
-               <div className="w-full border-t border-slate-100"></div>
+              {/* 01 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">01</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 14v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 14h20M12 4v7M9 7h6 M18 3l1 1-1 1 M6 5l-1 1 1 1" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">CONFIGURACIONES PREMIUM CONFORT Y CONFORT PLUS</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Dos versiones de los hidromasajes más elegidos listos para ofrecer.</p>
+                </div>
+              </div>
+              <div className="w-full border-t border-slate-100"></div>
 
-               {/* 02 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">02</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 14v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 14h20" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">BAÑERAS</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todos nuestros modelos disponibles en versión Bañera o Hidromasaje.</p>
-                  </div>
-               </div>
-               <div className="w-full border-t border-slate-100"></div>
+              {/* 02 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">02</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 14v6a2 2 0 002 2h12a2 2 0 002-2v-6M2 14h20" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">BAÑERAS</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todos nuestros modelos disponibles en versión Bañera o Hidromasaje.</p>
+                </div>
+              </div>
+              <div className="w-full border-t border-slate-100"></div>
 
-               {/* 03 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">03</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">EQUIPAMIENTO ADICIONAL</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todo lo necesario para crear el hidromasaje que cada cliente está buscando.</p>
-                  </div>
-               </div>
-               <div className="w-full border-t border-slate-100"></div>
+              {/* 03 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">03</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">EQUIPAMIENTO ADICIONAL</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Todo lo necesario para crear el hidromasaje que cada cliente está buscando.</p>
+                </div>
+              </div>
+              <div className="w-full border-t border-slate-100"></div>
 
-               {/* 04 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">04</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">OFERTAS</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo a precios especiales.</p>
-                  </div>
-               </div>
-               <div className="w-full border-t border-slate-100"></div>
+              {/* 04 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">04</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">OFERTAS</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Modelos con equipamiento de hidromasaje completo a precios especiales.</p>
+                </div>
+              </div>
+              <div className="w-full border-t border-slate-100"></div>
 
-               {/* 05 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">05</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 15v5a2 2 0 002 2h12a2 2 0 002-2v-5M2 15h20M8 11v-2M12 11V6M16 11v-3" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">LÍNEA SPA Y MINIPISCINAS</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
-                  </div>
-               </div>
-               <div className="w-full border-t border-slate-100"></div>
+              {/* 05 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">05</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 15v5a2 2 0 002 2h12a2 2 0 002-2v-5M2 15h20M8 11v-2M12 11V6M16 11v-3" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">LÍNEA SPA Y MINIPISCINAS</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
+                </div>
+              </div>
+              <div className="w-full border-t border-slate-100"></div>
 
-               {/* 06 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">06</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v5m0 0a4 4 0 100 8 4 4 0 000-8zm0 10v3m-3-2v2m6-2v2" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">PLATOS DE DUCHA</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Receptáculos con varias medidas y opciones para cada necesidad.</p>
-                  </div>
-               </div>
-               <div className="w-full border-t border-slate-100"></div>
+              {/* 06 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">06</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v5m0 0a4 4 0 100 8 4 4 0 000-8zm0 10v3m-3-2v2m6-2v2" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">PLATOS DE DUCHA</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Receptáculos con varias medidas y opciones para cada necesidad.</p>
+                </div>
+              </div>
+              <div className="w-full border-t border-slate-100"></div>
 
-               {/* 07 */}
-               <div className="flex gap-4 items-center pr-6">
-                  <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">07</div>
-                  <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 18h16M5 18v-5m14 5v-5M8 7v4m4-5v5m4-4v4" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">VAPOR Y SAUNAS</h4>
-                    <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
-                  </div>
-               </div>
+              {/* 07 */}
+              <div className="flex gap-4 items-center pr-6">
+                <div className="w-8 h-8 rounded-full bg-[#004a7c] text-white flex items-center justify-center font-black text-[13px] shrink-0">07</div>
+                <div className="w-10 h-10 shrink-0 text-[#004a7c] flex items-center justify-center">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 18h16M5 18v-5m14 5v-5M8 7v4m4-5v5m4-4v4" />
+                  </svg>
+                </div>
+                <div className="flex-grow">
+                  <h4 className="text-[11px] font-black text-[#004a7c] uppercase leading-tight">VAPOR Y SAUNAS</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -379,45 +379,45 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="px-8 pb-8 mt-auto shrink-0">
           <div className="flex justify-between items-center border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl py-3 px-6 shadow-sm">
             <div className="flex items-center gap-2">
-               <div className="text-[#004a7c]">
-                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                 </svg>
-               </div>
-               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">ACRÍLICO<br/>SANITARIO</span>
+              <div className="text-[#004a7c]">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">ACRÍLICO<br />SANITARIO</span>
             </div>
             <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-               <div className="text-[#004a7c]">
-                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                 </svg>
-               </div>
-               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">5 AÑOS DE GARANTÍA<br/>EN ACRÍLICO</span>
+              <div className="text-[#004a7c]">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">5 AÑOS DE GARANTÍA<br />EN ACRÍLICO</span>
             </div>
             <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-               <div className="text-[#004a7c]">
-                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                 </svg>
-               </div>
-               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">REPUESTOS<br/>PERMANENTES</span>
+              <div className="text-[#004a7c]">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">REPUESTOS<br />PERMANENTES</span>
             </div>
             <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-               <div className="text-[#004a7c]">
-                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                 </svg>
-               </div>
-               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">FABRICACIÓN<br/>NACIONAL</span>
+              <div className="text-[#004a7c]">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">FABRICACIÓN<br />NACIONAL</span>
             </div>
             <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-               <div className="text-[#004a7c]">
-                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 3l-6 6m0 0V4m0 5h5M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
-                 </svg>
-               </div>
-               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">SOPORTE Y<br/>ASESORAMIENTO</span>
+              <div className="text-[#004a7c]">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 3l-6 6m0 0V4m0 5h5M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
+                </svg>
+              </div>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">SOPORTE Y<br />ASESORAMIENTO</span>
             </div>
           </div>
         </div>
@@ -568,7 +568,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         {rowChunk.map((group) => (
                           <div key={group.name} className="flex flex-col bg-white rounded-xl border border-slate-200 p-2 shadow-sm hover:shadow-md transition-shadow h-full">
                             <div className="mb-1 shrink-0">
-                              <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest block leading-none">LÍNEA PREMIUM</span>
+                              <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest block leading-none">Configuración Premium</span>
                               <h2 className="text-sm font-black text-[#006699] uppercase tracking-wide leading-tight mt-0.5">{group.name}</h2>
                             </div>
 
