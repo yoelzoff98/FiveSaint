@@ -1731,12 +1731,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <h3 className="text-xl font-black text-[#00a8e8] mb-4 uppercase tracking-wide">
                   {model.name}
                 </h3>
-                <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-line text-justify mb-6 min-h-[100px]">
+                <p className="text-[12.5px] text-slate-600 leading-relaxed whitespace-pre-line text-justify mb-6 min-h-[100px]">
                   {model.description}
                 </p>
-                <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-inner flex justify-between gap-2 shrink-0">
-                  <span className="text-[11px] font-mono font-bold text-slate-500">{model.code}</span>
-                  <span className="text-[14px] font-black text-slate-800">{model.price}</span>
+                <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-inner flex justify-between gap-2 shrink-0 items-center">
+                  <span className="text-[12.5px] font-mono font-bold text-slate-500">{model.code}</span>
+                  <span className="text-[17px] font-black text-slate-800">{model.price}</span>
                 </div>
               </div>
             ))}
@@ -1759,11 +1759,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h2 className="text-5xl font-bold text-accent-deep uppercase tracking-widest mb-4">
               {vaporData.title}
             </h2>
-            <p className="text-[11px] text-slate-700 font-medium leading-relaxed mb-6 pr-10">
+            <p className="text-[13px] text-slate-700 font-medium leading-relaxed mb-6 pr-10">
               {vaporData.description}
             </p>
             <div className="bg-white border border-slate-300 shadow-sm p-4 text-center rounded-lg inline-block self-start">
-              <span className="text-[11px] font-bold text-slate-700">{vaporData.contact}</span>
+              <span className="text-[13px] font-bold text-slate-700">{vaporData.contact}</span>
             </div>
           </div>
         </div>
@@ -1805,7 +1805,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Tabla Modelos */}
         <div className="px-10 pt-8 flex-grow flex flex-col">
           {/* Cabecera Tabla */}
-          <div className="flex font-bold text-slate-800 text-[12px] mb-2 px-4 border-b-2 border-accent-deep pb-2">
+          <div className="flex font-bold text-slate-800 text-[14px] mb-2 px-4 border-b-2 border-accent-deep pb-2">
             <div className="w-[25%]">Capacidad</div>
             <div className="w-[20%]">Consumo</div>
             <div className="w-[25%]">Línea</div>
@@ -1816,16 +1816,16 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           <div className="flex flex-col gap-4 mt-2">
             {saunaData.models.map((model, idx) => (
               <div key={idx} className="flex bg-slate-50 border border-slate-200 rounded-xl p-4 items-center shadow-sm relative overflow-hidden">
-                <div className="w-[25%] flex flex-col gap-3 text-[11px] text-slate-700 font-medium z-10">
-                  <span className="text-[12px] font-bold text-slate-800">{model.capacidad}</span>
+                <div className="w-[25%] flex flex-col gap-3 text-[12.5px] text-slate-700 font-medium z-10">
+                  <span className="text-[14px] font-bold text-slate-800">{model.capacidad}</span>
                   <div className="flex flex-col">
                     <span className="font-mono text-slate-600">{model.cabinaCode}</span>
                     <span className="font-mono text-slate-600">{model.revestimientoCode}</span>
                   </div>
                 </div>
 
-                <div className="w-[20%] flex flex-col gap-3 text-[11px] text-slate-700 z-10">
-                  <span className="font-bold">{model.consumo}</span>
+                <div className="w-[20%] flex flex-col gap-3 text-[12.5px] text-slate-700 z-10">
+                  <span className="font-bold text-[13px]">{model.consumo}</span>
                   <div className="flex flex-col leading-tight">
                     <span>Cabina</span>
                     <span>Revestimiento</span>
@@ -1833,7 +1833,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </div>
                 </div>
 
-                <div className="w-[25%] text-[11px] text-slate-700 flex flex-col gap-1 z-10">
+                <div className="w-[25%] text-[12.5px] text-slate-700 flex flex-col gap-1 z-10">
                   {model.linea.map((l, i) => (
                     <span key={i}>{l}</span>
                   ))}
@@ -1854,10 +1854,10 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           <div className="flex justify-between items-end mt-12 mb-4">
             {/* Opcionales */}
             <div className="w-1/2">
-              <h3 className="text-lg font-bold text-slate-800 border-b-2 border-accent-deep pb-1 mb-4 inline-block">Opcionales</h3>
+              <h3 className="text-xl font-bold text-slate-800 border-b-2 border-accent-deep pb-1 mb-4 inline-block">Opcionales</h3>
               <div className="flex flex-col gap-2">
                 {saunaData.opcionales.map((opc, idx) => (
-                  <div key={idx} className="flex gap-6 text-[11px] text-slate-700">
+                  <div key={idx} className="flex gap-6 text-[13px] text-slate-700">
                     <span className="font-mono font-bold w-16">{opc.code}</span>
                     <span>{opc.name}</span>
                   </div>
@@ -1866,7 +1866,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </div>
 
             {/* Nota */}
-            <div className="w-[45%] border border-slate-300 rounded-md p-4 text-[10px] text-slate-600 bg-white leading-relaxed text-center shadow-sm">
+            <div className="w-[45%] border border-slate-300 rounded-md p-4 text-[11.5px] text-slate-600 bg-white leading-relaxed text-center shadow-sm">
               {saunaData.note.split('\n').map((line, i) => (
                 <div key={i}>{line}</div>
               ))}
