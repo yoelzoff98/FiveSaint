@@ -1855,7 +1855,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="relative z-10 flex flex-col items-center justify-center flex-grow mt-12">
           {/* Imagen del Logo */}
           <div className="mb-10 w-60 h-60 flex justify-center items-center">
-            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-2xl brightness-0 invert" />
+            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-2xl" />
           </div>
 
           {/* Título o Lema */}
