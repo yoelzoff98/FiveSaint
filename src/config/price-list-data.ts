@@ -30,8 +30,8 @@ export interface BaneraPremium {
 }
 
 export const banerasPremiumInfo = {
-  confortDesc: "Bañera con piso reforzado, estructura metálica autoportante, 16 jet y sopapa y desborde metalico.",
-  confortPlusDesc: "Bañera con piso reforzado, estructura metálica autoportante, 16 jet, sopapa y desborde metalico, almohadilla relax y comando digital."
+  confortDesc: "Bañera con piso reforzado, estructura metálica autoportante, 16 jets y sopapa y desborde metálico.",
+  confortPlusDesc: "Bañera con piso reforzado, estructura metálica autoportante, 16 jets, sopapa y desborde metálico, almohadilla relax y comando digital."
 };
 
 export const banerasPremiumData: BaneraPremium[] = [
@@ -145,49 +145,49 @@ export const ofertasData: OfertaBañera[] = [
   {
     name: "Lady Plus",
     medidas: "150 x 70",
-    descripcion: "4 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
+    descripcion: "4 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 263 000",
-    jetLabel: "¡6 jet!",
+    jetLabel: "¡6 jets!",
     image: "/images/Ofertas/lady plus.jpg"
   },
   {
     name: "Joya Plus",
     medidas: "160 x 75",
-    descripcion: "5 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
+    descripcion: "5 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 528 000",
-    jetLabel: "¡7 jet!",
+    jetLabel: "¡7 jets!",
     image: "/images/Ofertas/joya plus.jpg"
   },
   {
     name: "Perla Plus",
     medidas: "165 x 90",
-    descripcion: "6 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
+    descripcion: "6 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 706 000",
-    jetLabel: "¡8 jet!",
+    jetLabel: "¡8 jets!",
     image: "/images/Ofertas/perla plus.jpg"
   },
   {
     name: "Quarzo Plus",
     medidas: "170 x 83",
-    descripcion: "6 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
+    descripcion: "6 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
     precio: "$ 1 786 000",
-    jetLabel: "¡8 jet!",
+    jetLabel: "¡8 jets!",
     image: "/images/Ofertas/quarzo plus.jpg"
   },
   {
     name: "Circular Plus",
     medidas: "150",
-    descripcion: "8 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
+    descripcion: "8 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
     precio: "$ 2 225 000",
-    jetLabel: "¡10 jet!",
+    jetLabel: "¡10 jets!",
     image: "/images/Ofertas/Circular plus.jpg"
   },
   {
     name: "Esquinero Plus",
     medidas: "150 x 150",
-    descripcion: "8 jet de caudal regulable individual y 2 jet cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
+    descripcion: "8 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 2 225 000",
-    jetLabel: "¡10 jet!",
+    jetLabel: "¡10 jets!",
     image: "/images/Ofertas/Esquinero plus.JPG"
   }
 ];
@@ -219,21 +219,21 @@ export const spaDataPage1: SpaModel[] = [
   {
     name: "Space",
     dimensions: "Ancho: 225 cm / Largo: 225 cm\nProf.: 100 cm (Opción 60 cm) / Cap.: 1.400 lts.",
-    columns: ["Basic", "Confort", "Confort plus"],
+    columns: ["Basic", "Confort", "Confort Plus"],
     features: [
       { label: "Casco acrílico sanitario", sublabel: "Termoformado y reforzado con PRFV.", values: [1, 1, 1] },
-      { label: "Jet de Caudal", sublabel: "Regulable individual", values: [1, 8, 15] },
-      { label: "Jet de Caudal", sublabel: "En camilla", values: [3, 3, 3] },
-      { label: "Jet de Caudal", sublabel: "En asientos zona lumbar", values: [2, 2, 2] },
-      { label: "Mini jet", sublabel: "en camilla", values: [3, 3, 3] },
-      { label: "Mini jet", sublabel: "en asiento zona de columna", values: [3, 3, 3] },
+      { label: "Jets de caudal", sublabel: "Regulable individual", values: [1, 8, 15] },
+      { label: "Jets de caudal", sublabel: "En camilla", values: [3, 3, 3] },
+      { label: "Jets de caudal", sublabel: "En asientos zona lumbar", values: [2, 2, 2] },
+      { label: "Mini jets", sublabel: "en camilla", values: [3, 3, 3] },
+      { label: "Mini jets", sublabel: "en asiento zona de columna", values: [3, 3, 3] },
       { label: "Succiones", values: [2, 2, 4] },
       { label: "Llenado interno", values: [1, 1, 1] },
-      { label: "Pulsadores para encendido", sublabel: "Sistema Air Swich", values: [1, 2, 3] },
-      { label: "Jet cervicales", sublabel: "Con cierre individual", values: [2, 2, 2] },
+      { label: "Pulsadores para encendido", sublabel: "Sistema Air Switch", values: [1, 2, 3] },
+      { label: "Jets cervicales", sublabel: "Con cierre individual", values: [2, 2, 2] },
       { label: "Almohadilla relax en camilla", values: [1, 1, 1] },
-      { label: "Bombas autodrenantes", sublabel: "y autocebantes\nCon protector térmico\ny sistema de encendido Air Swich", values: [1, 1, 2] },
-      { label: "Turbo sopladores", sublabel: "Con sistema de encendido Air Swich", values: ["-", 2, 2] },
+      { label: "Bombas autodrenantes", sublabel: "y autocebantes\nCon protector térmico\ny sistema de encendido Air Switch", values: [1, 1, 2] },
+      { label: "Turbo sopladores", sublabel: "Con sistema de encendido Air Switch", values: ["-", 2, 2] },
       { label: "Inyectores de aire", values: ["-", 15, 35] },
       { label: "Desagüe de 1 1/2\"", values: [1, 1, 1] },
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
@@ -248,19 +248,19 @@ export const spaDataPage1: SpaModel[] = [
   {
     name: "Design",
     dimensions: "Ancho: 218 cm / Largo: 203 cm\nProf.: 100 cm / Cap.: 850 lts.",
-    columns: ["Basic", "Confort", "Confort plus"],
+    columns: ["Basic", "Confort", "Confort Plus"],
     features: [
       { label: "Casco acrílico sanitario", sublabel: "Termoformado y reforzado con PRFV.", values: [1, 1, 1] },
-      { label: "Jet caudal", sublabel: "Regulable individual", values: [6, 6, 6] },
-      { label: "Jet caudal", sublabel: "En camilla", values: [8, 8, 16] },
-      { label: "Mini jet punzante", sublabel: "en camilla", values: ["-", 32, 50] },
+      { label: "Jets de caudal", sublabel: "Regulable individual", values: [6, 6, 6] },
+      { label: "Jets de caudal", sublabel: "En camilla", values: [8, 8, 16] },
+      { label: "Mini jets punzantes", sublabel: "en camilla", values: ["-", 32, 50] },
       { label: "Succiones", values: [2, 2, 4] },
       { label: "Llenado interno", values: [1, 1, 1] },
-      { label: "Pulsadores para encendido", sublabel: "Sistema Air Swich", values: [1, 3, 3] },
-      { label: "Jet cervicales", sublabel: "Con cierre individual", values: [2, 2, 4] },
+      { label: "Pulsadores para encendido", sublabel: "Sistema Air Switch", values: [1, 3, 3] },
+      { label: "Jets cervicales", sublabel: "Con cierre individual", values: [2, 2, 4] },
       { label: "Almohadilla relax en camilla", values: [2, 2, 2] },
-      { label: "Bombas autodrenantes", sublabel: "y autocebantes\nCon protector térmico\ny Sist. de encendido Air Swich.", values: [1, 1, 2] },
-      { label: "Turbo sopladores", sublabel: "Con sistema de encendido Air Siwich uno en potenciación y uno en sistema Air Pool", values: ["-", 2, 2] },
+      { label: "Bombas autodrenantes", sublabel: "y autocebantes\nCon protector térmico\ny Sist. de encendido Air Switch.", values: [1, 1, 2] },
+      { label: "Turbo sopladores", sublabel: "Con sistema de encendido Air Switch uno en potenciación y uno en sistema Air Pool", values: ["-", 2, 2] },
       { label: "Inyectores de aire", values: ["-", 30, 30] },
       { label: "Desagüe de 1 1/2\"", values: [1, 1, 1] },
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
@@ -281,8 +281,8 @@ export const spaDataPage2: SpaModel[] = [
     columns: ["Cantidad"],
     features: [
       { label: "Casco acrílico sanitario", values: [1] },
-      { label: "Jet de caudal regulanle individual", values: [5] },
-      { label: "Jet punzantes", values: [3] },
+      { label: "Jets de caudal regulable individual", values: [5] },
+      { label: "Jets punzantes", values: [3] },
       { label: "Succión", values: [1] },
       { label: "Bomba autodrenante", values: [1] },
       { label: "Encendido neumático", values: [1] },
@@ -300,13 +300,13 @@ export const spaDataPage2: SpaModel[] = [
     columns: ["Cantidad"],
     features: [
       { label: "Casco acrílico sanitario", values: [1] },
-      { label: "Jet de caudal regulable individual", values: [8] },
-      { label: "Jet punzantes", values: [3] },
+      { label: "Jets de caudal regulable individual", values: [8] },
+      { label: "Jets punzantes", values: [3] },
       { label: "Succión", values: [1] },
       { label: "Bomba autodrenante", values: [1] },
-      { label: "Encendido numático", values: [1] },
-      { label: "Desagüe 1. 1/2\"", values: [1] },
-      { label: "Jet cervical", values: [4] },
+      { label: "Encendido neumático", values: [1] },
+      { label: "Desagüe de 1 1/2\"", values: [1] },
+      { label: "Jets cervicales", values: [4] },
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
@@ -340,12 +340,12 @@ export const platosDuchaData: PlatosCategory[] = [
     desagueCode: "FSE131",
     desaguePrice: "$ 28 000",
     items: [
-      { code: "FSPD01", largo: "100", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 527 000" },
-      { code: "FSPD02", largo: "120", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 547 000" },
-      { code: "FSPD03", largo: "130", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 557 000" },
-      { code: "FSPD04", largo: "140", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 610 000" },
-      { code: "FSPD05", largo: "150", ancho: "70", altura: "5", profundidad: "3.6", price: "$ 654 000" },
-      { code: "FSPD06", largo: "160", ancho: "70", altura: "5", profundidad: "3.6", price: "$ 686 700" }
+      { code: "FSPD01", largo: "100", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 527 000" },
+      { code: "FSPD02", largo: "120", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 547 000" },
+      { code: "FSPD03", largo: "130", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 557 000" },
+      { code: "FSPD04", largo: "140", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 610 000" },
+      { code: "FSPD05", largo: "150", ancho: "70", altura: "5", profundidad: "3,6", price: "$ 654 000" },
+      { code: "FSPD06", largo: "160", ancho: "70", altura: "5", profundidad: "3,6", price: "$ 686 700" }
     ]
   },
   {
@@ -354,13 +354,13 @@ export const platosDuchaData: PlatosCategory[] = [
     desagueCode: "FSE131",
     desaguePrice: "$ 28 000",
     items: [
-      { code: "FSPD6F", largo: "90", ancho: "60", altura: "5", profundidad: "35", price: "$ 342 000" },
-      { code: "FSPD9J", largo: "100", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 377 000" },
-      { code: "FSPD8Z", largo: "120", ancho: "70", altura: "5", profundidad: "35", price: "$ 391 000" },
-      { code: "FSPD6K", largo: "130", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 398 000" },
-      { code: "FSPD7Z", largo: "140", ancho: "70", altura: "5", profundidad: "35", price: "$ 436 000" },
-      { code: "FSPD6L", largo: "150", ancho: "70", altura: "5", profundidad: "35", price: "$ 467 000" },
-      { code: "FSPD7M", largo: "160", ancho: "70", altura: "5", profundidad: "35", price: "$ 491 000" }
+      { code: "FSPD6F", largo: "90", ancho: "60", altura: "5", profundidad: "3,5", price: "$ 342 000" },
+      { code: "FSPD9J", largo: "100", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 377 000" },
+      { code: "FSPD8Z", largo: "120", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 391 000" },
+      { code: "FSPD6K", largo: "130", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 398 000" },
+      { code: "FSPD7Z", largo: "140", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 436 000" },
+      { code: "FSPD6L", largo: "150", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 467 000" },
+      { code: "FSPD7M", largo: "160", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 491 000" }
     ]
   },
   {
@@ -369,8 +369,8 @@ export const platosDuchaData: PlatosCategory[] = [
     desagueCode: "FSE131",
     desaguePrice: "$ 28 000",
     items: [
-      { code: "FSPDS2", largo: "120", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 430 000" },
-      { code: "FSPDS1", largo: "150", ancho: "70", altura: "5", profundidad: "3.5", price: "$ 515 000" }
+      { code: "FSPDS2", largo: "120", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 430 000" },
+      { code: "FSPDS1", largo: "150", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 515 000" }
     ]
   },
   {
@@ -379,10 +379,10 @@ export const platosDuchaData: PlatosCategory[] = [
     desagueCode: "FSE131",
     desaguePrice: "$ 28 000",
     items: [
-      { code: "FSPD1M", largo: "70", ancho: "70", altura: "5", profundidad: "35", price: "$ 342 000" },
-      { code: "FSPD5D", largo: "75", ancho: "75", altura: "5", profundidad: "35", price: "$ 342 000" },
-      { code: "FSPD4B", largo: "80", ancho: "80", altura: "5", profundidad: "35", price: "$ 342 000" },
-      { code: "FSPD3E", largo: "90", ancho: "90", altura: "5", profundidad: "35", price: "$ 342 000" }
+      { code: "FSPD1M", largo: "70", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 342 000" },
+      { code: "FSPD5D", largo: "75", ancho: "75", altura: "5", profundidad: "3,5", price: "$ 342 000" },
+      { code: "FSPD4B", largo: "80", ancho: "80", altura: "5", profundidad: "3,5", price: "$ 342 000" },
+      { code: "FSPD3E", largo: "90", ancho: "90", altura: "5", profundidad: "3,5", price: "$ 342 000" }
     ]
   },
   {
@@ -391,8 +391,8 @@ export const platosDuchaData: PlatosCategory[] = [
     desagueCode: "FSE131",
     desaguePrice: "$ 28 000",
     items: [
-      { code: "FSPDC8", largo: "80", ancho: "80", altura: "5", profundidad: "35", price: "$ 342 000" },
-      { code: "FSPDC9", largo: "90", ancho: "90", altura: "5", profundidad: "35", price: "$ 342 000" }
+      { code: "FSPDC8", largo: "80", ancho: "80", altura: "5", profundidad: "3,5", price: "$ 342 000" },
+      { code: "FSPDC9", largo: "90", ancho: "90", altura: "5", profundidad: "3,5", price: "$ 342 000" }
     ]
   }
 ];
@@ -446,13 +446,13 @@ export const duchaEscocesaData = {
   models: [
     {
       name: "De recirculación",
-      description: "Ducha escocesa y receptáculo para recirculación de 100 x 75 x 32 cm.\n\nIncluye: barrales de acero inoxidable, llave esférica de interrupción de duchón, desagüe con comando a distancia, desborde, control de nivel, llenado interno, deck, bomba de recirculación, con encendido neumático (sistema air swich).",
+      description: "Ducha escocesa y receptáculo para recirculación de 100 x 75 x 32 cm.\n\nIncluye: barrales de acero inoxidable, llave esférica de interrupción de duchón, desagüe con comando a distancia, desborde, control de nivel, llenado interno, deck, bomba de recirculación, con encendido neumático (sistema air switch).",
       code: "FSESCRE",
       price: "$ 5 098 000"
     },
     {
       name: "Exterior/embutir",
-      description: "2 Barrales de acero inoxidable pulido para Ducha Escocesa. Diámetro 1 1/4”, con entrada de agua inferior y salida superior 3/4” para duchón.\n\nIncluye 6 duchas punzantes direccionables, con regulador y duchón.\n\nSe recomienda presurizar hasta 1.5kg.",
+      description: "2 Barrales de acero inoxidable pulido para Ducha Escocesa. Diámetro 1 1/4”, con entrada de agua inferior y salida superior 3/4” para duchón.\n\nIncluye 6 duchas punzantes direccionables, con regulador y duchón.\n\nSe recomienda presurizar hasta 1,5 kg.",
       code: "FSESCEX",
       price: "$ 2 603 000"
     }
@@ -484,8 +484,8 @@ export const saunaData = {
   models: [
     {
       capacidad: "3 a 4 personas",
-      consumo: "4.5 kw.",
-      linea: ["Trifásica 2.5mm", "Monofásica 6mm"],
+      consumo: "4,5 kw.",
+      linea: ["Trifásica 2,5 mm", "Monofásica 6 mm"],
       cabinaCode: "FSSAU1C",
       revestimientoCode: "FSSAU1R",
       image: "/images/Sauna/Esquema 1.png"
@@ -493,15 +493,15 @@ export const saunaData = {
     {
       capacidad: "5 a 6 personas",
       consumo: "6 kw.",
-      linea: ["Trifásica 2.5mm", "Monofásica 6mm"],
+      linea: ["Trifásica 2,5 mm", "Monofásica 6 mm"],
       cabinaCode: "FSSAU2C",
       revestimientoCode: "FSSAU2R",
       image: "/images/Sauna/Esquema 2.png"
     },
     {
       capacidad: "6 a 7 personas",
-      consumo: "7.5kw.",
-      linea: ["Trifásica 2.5mm", "Monofásica 6mm"],
+      consumo: "7,5 kw.",
+      linea: ["Trifásica 2,5 mm", "Monofásica 6 mm"],
       cabinaCode: "FSSAU3C",
       revestimientoCode: "FSSAU3R",
       image: "/images/Sauna/Esquema 3.png"
