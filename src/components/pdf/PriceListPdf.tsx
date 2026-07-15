@@ -668,7 +668,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
               {/* Footer info Premium */}
               <div className="flex justify-between items-center shrink-0 pt-2 border-t border-slate-100 mt-2">
-                <p className="text-[10.5px] text-slate-400 font-bold">Los precios publicados corresponden a la versión en color blanco.</p>
+                <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
                 <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[10.5px] uppercase tracking-wider">
                   LOS PRECIOS NO INCLUYEN IVA
                 </div>
@@ -973,7 +973,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               {/* Footer */}
               <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
                 <div className="text-[11px] text-slate-600 max-w-[520px] leading-relaxed">
-                  <p className="font-bold text-slate-800">Los precios publicados corresponden a la version en color blanco</p>
+                  <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
                   <p className="mt-0.5">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
                   <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
                 </div>
@@ -998,7 +998,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               {/* Footer */}
               <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
                 <div className="text-[11px] text-slate-600 max-w-[520px] leading-relaxed">
-                  <p className="font-bold text-slate-800">Los precios publicados corresponden a la version en color blanco</p>
+                  <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
                   <p className="mt-0.5">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
                   <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
                 </div>
@@ -1017,7 +1017,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               {/* Footer */}
               <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
                 <div className="text-[11px] text-slate-600 max-w-[520px] leading-relaxed">
-                  <p className="font-bold text-slate-800">Los precios publicados corresponden a la version en color blanco</p>
+                  <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
                   <p className="mt-0.5">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
                   <p className="mt-0.5">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
                 </div>
@@ -1289,7 +1289,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             {/* Footer info Ofertas */}
             <div className="flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-2">
               <div className="text-[11px] text-slate-500 max-w-[500px] leading-relaxed">
-                <p className="font-bold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
+                <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
                 <p className="mt-0.5">Las bañeras de OFERTA se les puede agregar equipamiento <strong className="text-slate-700">sin variar la cantidad de jet.</strong></p>
               </div>
               <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded text-[11px] uppercase tracking-wider">
@@ -1409,7 +1409,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Footer info SPA Page 1 */}
         <div className="px-10 pb-4 mt-auto flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mx-10">
           <div className="text-[11px] text-slate-600 max-w-[500px]">
-            <p>Los precios publicados corresponden a la versión en color blanco.</p>
+            <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
           </div>
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[11px] uppercase tracking-wider">
             LOS PRECIOS NO INCLUYEN IVA
@@ -1518,7 +1518,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Footer info SPA Page 2 */}
         <div className="px-10 pb-4 mt-auto flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mx-10">
           <div className="text-[11px] text-slate-600 max-w-[500px]">
-            <p>Los precios publicados corresponden a la versión en color blanco.</p>
+            <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
           </div>
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[11px] uppercase tracking-wider">
             LOS PRECIOS NO INCLUYEN IVA
@@ -1677,7 +1677,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
             {/* Footer info */}
             <div className="px-16 pb-8 mt-auto flex justify-between items-end shrink-0 text-[12px] text-slate-500 border-t border-slate-200 pt-4">
-              <p>Los precios publicados corresponden a la versión en color blanco.</p>
+              <p className="text-[11.5px] font-semibold text-slate-700">Los precios publicados corresponden a la versión en color blanco.</p>
               <div className="bg-accent-gold text-white font-bold px-3 py-1 rounded shadow-sm text-[11px] uppercase tracking-wider">
                 LOS PRECIOS NO INCLUYEN IVA
               </div>
