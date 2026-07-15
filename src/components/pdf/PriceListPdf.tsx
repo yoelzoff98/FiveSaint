@@ -175,7 +175,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Header */}
         <div className="border-b border-slate-200 pb-2 mb-0 shrink-0 flex justify-between items-end px-10 pt-8 bg-white relative z-20">
           <div>
-            <h1 className="text-[22px] font-black text-[#006699] uppercase tracking-wide">
+            <h1 className="text-[22px] font-black text-[#004a7c] uppercase tracking-wide">
               Guía del Catálogo
             </h1>
           </div>
@@ -453,7 +453,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {/* Top Header */}
                 <div className="border-b border-slate-200 pb-2 mb-3 shrink-0 flex justify-between items-end">
                   <div>
-                    <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">Bañeras: Configuraciones Premium </h1>
+                    <h1 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide">Bañeras: Configuraciones Premium </h1>
                   </div>
                   <div className="flex items-center gap-4">
                     <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
@@ -464,7 +464,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {pageIndex === 1 && (
                   <div className="shrink-0 mb-3.5 bg-slate-50 border border-slate-200 rounded-xl p-3.5 shadow-sm">
                     <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2">
-                      <h2 className="text-[11.5px] font-black text-[#006699] uppercase tracking-wider">Especificaciones de Equipamientos</h2>
+                      <h2 className="text-[11.5px] font-black text-[#004a7c] uppercase tracking-wider">Especificaciones de Equipamientos</h2>
                     </div>
                     <table className="w-full text-left border-collapse text-[10.5px]">
                       <thead>
@@ -569,7 +569,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                           <div key={group.name} className="flex flex-col bg-white rounded-xl border border-slate-200 p-2 shadow-sm hover:shadow-md transition-shadow h-full">
                             <div className="mb-1 shrink-0">
                               <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest block leading-none">Configuración Premium</span>
-                              <h2 className="text-sm font-black text-[#006699] uppercase tracking-wide leading-tight mt-0.5">{group.name}</h2>
+                              <h2 className="text-sm font-black text-[#004a7c] uppercase tracking-wide leading-tight mt-0.5">{group.name}</h2>
                             </div>
 
                             {/* Bathtub Image */}
@@ -629,39 +629,39 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <div className="mt-3 border border-slate-200 bg-slate-50 rounded-xl p-2 flex justify-between gap-4 text-left shadow-sm shrink-0">
                 {/* Quality */}
                 <div className="flex items-center gap-2 w-1/3">
-                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
+                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#004a7c] shrink-0">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Calidad y respaldo</h4>
+                    <h4 className="text-[8px] font-black text-[#004a7c] uppercase tracking-wide leading-tight">Calidad y respaldo</h4>
                     <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">Productos diseñados para durar.</p>
                   </div>
                 </div>
 
                 {/* Warranty */}
                 <div className="flex items-center gap-2 w-1/3 border-l border-slate-200 pl-3">
-                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
+                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#004a7c] shrink-0">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Garantía Five Saint</h4>
+                    <h4 className="text-[8px] font-black text-[#004a7c] uppercase tracking-wide leading-tight">Garantía Five Saint</h4>
                     <p className="text-[7px] text-slate-500 font-medium leading-none mt-0.5">5 años en Acrílico y 1 año en Bomba.</p>
                   </div>
                 </div>
 
                 {/* Comfort */}
                 <div className="flex items-center gap-2 w-1/3 border-l border-slate-200 pl-3">
-                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#006699] shrink-0">
+                  <div className="bg-white p-1 rounded-lg border border-slate-200 shadow-sm text-[#004a7c] shrink-0">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-[8px] font-black text-accent-deep uppercase tracking-wide leading-tight">Practicidad y confort</h4>
+                    <h4 className="text-[8px] font-black text-[#004a7c] uppercase tracking-wide leading-tight">Practicidad y confort</h4>
                   </div>
                 </div>
               </div>
@@ -746,13 +746,13 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const renderHeaderAndLevels = (cont = false) => (
           <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4 shrink-0">
             <div>
-              <h1 className="text-2xl font-black text-accent-deep tracking-tight">
+              <h1 className="text-2xl font-black text-[#004a7c] tracking-tight">
                 BAÑERAS
               </h1>
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="text-[10px] uppercase font-black tracking-wider text-accent-deep border-r border-slate-200 pr-3 h-8 flex items-center leading-tight">
+              <span className="text-[10px] uppercase font-black tracking-wider text-[#004a7c] border-r border-slate-200 pr-3 h-8 flex items-center leading-tight">
                 Niveles de<br />Equipamiento
               </span>
 
@@ -765,7 +765,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <path d="M6 15v2M18 15v2" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-accent-deep mt-1 leading-none">Casco</span>
+                <span className="text-[10px] font-black uppercase text-[#004a7c] mt-1 leading-none">Casco</span>
               </div>
 
               {/* 4 Jets */}
@@ -778,7 +778,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <circle cx="17" cy="17" r="2.2" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-accent-deep mt-1 leading-none">4 Jets</span>
+                <span className="text-[10px] font-black uppercase text-[#004a7c] mt-1 leading-none">4 Jets</span>
               </div>
 
               {/* 6 Jets */}
@@ -793,7 +793,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <circle cx="18" cy="17" r="2" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-accent-deep mt-1 leading-none">6 Jets</span>
+                <span className="text-[10px] font-black uppercase text-[#004a7c] mt-1 leading-none">6 Jets</span>
               </div>
 
               {/* 8 Jets */}
@@ -810,7 +810,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <circle cx="18" cy="18" r="1.5" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-accent-deep mt-1 leading-none">8 Jets</span>
+                <span className="text-[10px] font-black uppercase text-[#004a7c] mt-1 leading-none">8 Jets</span>
               </div>
 
               <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain ml-2 border-l border-slate-200 pl-4" />
@@ -821,7 +821,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const renderGroupedCard = (group: typeof groupedModels[0]) => (
           <div key={group.name} className="shrink-0">
             <div className="flex items-baseline gap-1.5 mb-0.5 shrink-0">
-              <h2 className="text-[14px] font-black text-[#006699] uppercase tracking-wide leading-none">{group.name}</h2>
+              <h2 className="text-[14px] font-black text-[#004a7c] uppercase tracking-wide leading-none">{group.name}</h2>
             </div>
 
             <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm flex items-center bg-white py-1.5 px-3 gap-4">
@@ -832,7 +832,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
               {/* Right Table Section */}
               <div className="flex-grow flex flex-col justify-center">
-                <h4 className="text-[10.5px] font-black uppercase text-[#006699] tracking-wider mb-1">Varias medidas para adaptarse a tu espacio</h4>
+                <h4 className="text-[10.5px] font-black uppercase text-[#004a7c] tracking-wider mb-1">Varias medidas para adaptarse a tu espacio</h4>
                 <div className="rounded-lg overflow-hidden border border-slate-200 bg-white">
                   <table className="w-full text-left border-collapse text-[10px]">
                     <thead>
@@ -841,7 +841,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[9.5px] border-r border-slate-200 text-center w-[20%]">Bañera <span className="text-[7px] text-slate-400 block font-normal leading-none mt-0.5">(casco)</span></th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[9.5px] border-r border-slate-200 text-center w-[20%]">4 Jets</th>
                         <th className="py-1 px-2 font-bold uppercase tracking-wider text-[9.5px] border-r border-slate-200 text-center w-[20%]">6 Jets</th>
-                        <th className="py-1 px-2 font-bold uppercase tracking-wider text-[9.5px] text-center w-[20%] text-[#006699]">8 Jets</th>
+                        <th className="py-1 px-2 font-bold uppercase tracking-wider text-[9.5px] text-center w-[20%] text-[#004a7c]">8 Jets</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -872,9 +872,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               {item.jet6Code && <span className="text-[8px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet6Code}</span>}
                             </div>
                           </td>
-                          <td className="py-1 px-2 bg-[#006699]/5 text-center text-[9px]">
+                          <td className="py-1 px-2 bg-[#004a7c]/5 text-center text-[9px]">
                             <div className="flex flex-col items-center">
-                              {renderPrice(item.jet8, "text-[10px]", "font-black text-accent-deep")}
+                              {renderPrice(item.jet8, "text-[10px]", "font-black text-[#004a7c]")}
                               {item.jet8Code && <span className="text-[8px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet8Code}</span>}
                             </div>
                           </td>
@@ -892,14 +892,14 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const renderSingleModelsTable = (models: typeof singleModels, isContinuation = false) => (
           <div className="mt-4">
             <div className="flex items-baseline gap-1.5 mb-2 shrink-0">
-              <h2 className="text-[14px] font-black text-accent-deep uppercase tracking-wide leading-none">
+              <h2 className="text-[14px] font-black text-[#004a7c] uppercase tracking-wide leading-none">
                 Modelos de Única Medida
               </h2>
             </div>
 
             <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-white">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-[#006699] text-white">
+                <thead className="bg-[#004a7c] text-white">
                   <tr>
                     <th className="py-3 px-4 font-bold uppercase tracking-wider text-[11px] w-[30%]">Modelo</th>
                     <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[11%]">Medidas</th>
@@ -921,7 +921,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               <span className="text-accent-gold/40 font-bold text-[13px]">FS</span>
                             </div>
                           )}
-                          <span className="text-accent-deep text-[15px] font-black">{p.name}</span>
+                          <span className="text-[#004a7c] text-[15px] font-black">{p.name}</span>
                         </div>
                       </td>
                       <td className="py-3.5 px-2 text-slate-750 font-mono text-[13px] font-semibold text-center whitespace-nowrap">{p.medidas}</td>
@@ -1071,7 +1071,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div key={idx} className="flex flex-col justify-between border-b border-slate-100 pb-0.5 hover:bg-slate-50 transition-colors">
                     <div>
                       <div className="flex justify-between items-baseline gap-2">
-                        <h3 className="text-[10px] font-black text-accent-deep leading-none uppercase">{e.nombre}</h3>
+                        <h3 className="text-[10px] font-black text-[#004a7c] leading-none uppercase">{e.nombre}</h3>
                         <span className="text-accent-gold font-black text-[11px] whitespace-nowrap shrink-0">{e.precio}</span>
                       </div>
                       <div className="flex items-center gap-1.5 mt-0 mb-0.5">
@@ -1123,7 +1123,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             {/* Header */}
             <div className="border-b border-slate-200 pb-2 mb-4 shrink-0 flex justify-between items-end">
               <div>
-                <h1 className="text-2xl font-black text-[#006699] uppercase tracking-wide">OFERTAS</h1>
+                <h1 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide">OFERTAS</h1>
               </div>
               <div className="flex items-center gap-4">
                 <img src="/logo.png" alt="Five Saint Logo" className="h-12 object-contain" />
@@ -1144,8 +1144,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <div className="w-[48%] relative h-[250px] bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center shrink-0">
 
                       {/* Zoom/Viewport bracket icon on the top right */}
-                      <div className="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-xs border border-[#006699] rounded-full flex items-center justify-center z-20 shadow-xs">
-                        <svg className="w-4 h-4 text-[#006699]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <div className="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-xs border border-[#004a7c] rounded-full flex items-center justify-center z-20 shadow-xs">
+                        <svg className="w-4 h-4 text-[#004a7c]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2" />
                           <circle cx="12" cy="12" r="1.5" fill="currentColor" />
                         </svg>
@@ -1166,7 +1166,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                       <div className="flex justify-between items-center shrink-0">
                         <div className="flex items-center gap-2.5">
                           <h3 className="text-lg font-black text-[#004a7c] uppercase tracking-wide leading-none">{oferta.name}</h3>
-                          <span className="bg-[#e6f2fa] text-[#006699] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider font-mono">
+                          <span className="bg-[#e6f2fa] text-[#004a7c] font-black text-[9px] px-2 py-0.5 rounded uppercase tracking-wider font-mono">
                             {oferta.medidas}
                           </span>
                         </div>
@@ -1324,7 +1324,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
               <div className="mb-2 flex flex-col gap-1.5">
                 <div className="flex justify-between items-baseline">
-                  <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
+                  <h2 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide leading-none">{spa.name}</h2>
                 </div>
                 {/* Espacio para la imagen del SPA */}
                 <div className="w-full h-40 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
@@ -1375,7 +1375,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     {spa.prices.map((p, pIdx) => (
                       <div key={pIdx} className="flex-1 flex flex-col items-center bg-white border border-slate-200 rounded p-1 shadow-sm">
                         <span className="text-[9.5px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
-                        <span className="text-[11.5px] font-black text-accent-deep">{p.price}</span>
+                        <span className="text-[11.5px] font-black text-[#004a7c]">{p.price}</span>
                       </div>
                     ))}
                   </div>
@@ -1398,7 +1398,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
-                    <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                    <span className="text-[11.5px] font-black text-[#004a7c] w-24 text-right whitespace-nowrap">{opc.price}</span>
                   </div>
                 </div>
               ))}
@@ -1439,7 +1439,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
               <div className="mb-2 flex flex-col gap-1.5">
                 <div className="flex justify-between items-baseline">
-                  <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
+                  <h2 className="text-2xl font-black text-[#004a7c] uppercase tracking-wide leading-none">{spa.name}</h2>
                 </div>
                 {/* Espacio para la imagen del SPA */}
                 <div className="w-full h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
@@ -1472,7 +1472,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         <td className="py-1 px-3 text-slate-700 leading-tight">
                           <span className="font-bold text-[11.5px]">{feat.label}</span>
                         </td>
-                        <td className="py-1 px-2 text-center font-black text-accent-deep text-[12.5px]">
+                        <td className="py-1 px-2 text-center font-black text-[#004a7c] text-[12.5px]">
                           {feat.values[0]}
                         </td>
                       </tr>
@@ -1485,7 +1485,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div className="flex justify-center items-center gap-2">
                     <div className="w-full flex items-center justify-between bg-white border border-slate-200 rounded p-3 shadow-md">
                       <span className="text-[10px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
-                      <span className="text-lg font-black text-accent-deep">{spa.prices[0].price}</span>
+                      <span className="text-lg font-black text-[#004a7c]">{spa.prices[0].price}</span>
                     </div>
                   </div>
                 </div>
@@ -1507,7 +1507,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
-                    <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                    <span className="text-[11.5px] font-black text-[#004a7c] w-24 text-right whitespace-nowrap">{opc.price}</span>
                   </div>
                 </div>
               ))}
@@ -1562,7 +1562,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <div key={idx} className="flex flex-col">
                   {/* Título de la Categoría */}
                   <div className="flex justify-between items-end border-b-2 border-accent-deep pb-1.5 mb-3">
-                    <h3 className="text-xl font-black text-accent-deep uppercase tracking-wide">{cat.title}</h3>
+                    <h3 className="text-xl font-black text-[#004a7c] uppercase tracking-wide">{cat.title}</h3>
                   </div>
 
                   {/* Fila de Contenido con Imagen Vertical a la izquierda y Tabla/Desagüe a la derecha */}
@@ -1601,7 +1601,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                                 <td className="py-1 px-2 text-center text-slate-700">{item.ancho}</td>
                                 <td className="py-1 px-2 text-center text-slate-700">{item.altura}</td>
                                 <td className="py-1 px-2 text-center text-slate-700">{item.profundidad}</td>
-                                <td className="py-1 px-3 text-right font-black text-accent-deep">{item.price}</td>
+                                <td className="py-1 px-3 text-right font-black text-[#004a7c]">{item.price}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1620,7 +1620,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               <span className="text-[8px] font-mono text-slate-500 leading-normal">{cat.desagueCode}</span>
                             </div>
                           </div>
-                          <span className="text-[11px] font-black text-accent-deep">{cat.desaguePrice}</span>
+                          <span className="text-[11px] font-black text-[#004a7c]">{cat.desaguePrice}</span>
                         </div>
                       )}
                     </div>
@@ -1633,7 +1633,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <div className="mt-2 flex flex-col">
                   {/* Título de la Categoría */}
                   <div className="flex justify-between items-end border-b-2 border-accent-deep pb-1 mb-2">
-                    <h3 className="text-xl font-black text-accent-deep uppercase tracking-wide">Columnas de Ducha</h3>
+                    <h3 className="text-xl font-black text-[#004a7c] uppercase tracking-wide">Columnas de Ducha</h3>
                   </div>
 
                   {/* Contenido Columnas (4 en fila horizontal) */}
@@ -1653,7 +1653,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
                         {/* Tarjeta de Información */}
                         <div className="w-full flex flex-col items-center text-center">
-                          <span className="text-accent-deep font-mono font-bold text-[7px] bg-accent-soft px-1.5 py-0.2 rounded-full mb-1 tracking-wider leading-none">
+                          <span className="text-[#004a7c] font-mono font-bold text-[7px] bg-accent-soft px-1.5 py-0.2 rounded-full mb-1 tracking-wider leading-none">
                             {columna.code}
                           </span>
 
@@ -1756,7 +1756,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
           {/* Textos Vapor */}
           <div className="w-[55%] flex flex-col justify-center">
-            <h2 className="text-5xl font-bold text-accent-deep uppercase tracking-widest mb-4">
+            <h2 className="text-5xl font-bold text-[#004a7c] uppercase tracking-widest mb-4">
               {vaporData.title}
             </h2>
             <p className="text-[11px] text-slate-700 font-medium leading-relaxed mb-6 pr-10">
