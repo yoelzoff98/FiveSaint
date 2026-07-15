@@ -1085,7 +1085,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 ));
               })()}
             </div>
-            
+
             {/* Mensaje de Asesoramiento */}
             <div className="mt-6 mx-2 border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl p-5 shadow-sm flex items-center gap-5">
               <div className="w-12 h-12 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
@@ -1093,9 +1093,14 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <p className="text-[13px] text-slate-700 leading-relaxed font-semibold">
-                Los equipamientos y accesorios incluidos en esta sección permiten desarrollar configuraciones personalizadas para los Sistemas Hidroterapéuticos Five Saint. Nuestro equipo comercial te puede asesorar en la selección de los componentes más adecuados para cada proyecto.
-              </p>
+              <div className="flex flex-col gap-1.5 text-justify">
+                <p className="text-[13px] text-slate-700 leading-relaxed font-semibold">
+                  Los equipamientos y accesorios incluidos en esta sección permiten desarrollar configuraciones personalizadas para los Sistemas Hidroterapéuticos Five Saint.
+                </p>
+                <p className="text-[13px] text-slate-700 leading-relaxed font-semibold">
+                  Nuestro equipo comercial te puede asesorar en la selección de los componentes más adecuados para cada proyecto.
+                </p>
+              </div>
             </div>
           </div>
         </div>
