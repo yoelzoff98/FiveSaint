@@ -72,11 +72,11 @@ const formatMedida = (medida: string) => {
 };
 
 // Helper to render unified footer on content pages
-const renderFooter = (extraNote?: React.ReactNode, paddingClass = "") => {
+const renderFooter = (extraNote?: React.ReactNode, paddingClass = "", hideDefaultText = false) => {
   return (
     <div className={`flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-auto ${paddingClass}`}>
       <div className="text-[11.5px] font-bold text-slate-700 leading-relaxed max-w-[520px]">
-        <p>Los precios publicados corresponden a la versión en color blanco.</p>
+        {!hideDefaultText && <p>Los precios publicados corresponden a la versión en color blanco.</p>}
         {extraNote}
       </div>
       <div className="bg-accent-gold text-white font-bold px-2.5 py-1 rounded text-[10.5px] uppercase tracking-wider shrink-0">
@@ -1097,7 +1097,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         </div>
 
         {/* Footer info Pág Equipamientos */}
-        {renderFooter(undefined, "px-10 pb-4")}
+        {renderFooter(undefined, "px-10 pb-4", true)}
       </div>
       {/* 
         PÁGINAS DE OFERTAS
