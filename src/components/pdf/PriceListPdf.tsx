@@ -1085,15 +1085,23 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 ));
               })()}
             </div>
+            
+            {/* Mensaje de Asesoramiento */}
+            <div className="mt-6 mx-2 border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl p-5 shadow-sm flex items-center gap-5">
+              <div className="w-12 h-12 rounded-full bg-[#004a7c] text-white flex items-center justify-center shrink-0">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <p className="text-[13px] text-slate-700 leading-relaxed font-semibold">
+                Los equipamientos y accesorios incluidos en esta sección permiten desarrollar configuraciones personalizadas para los Sistemas Hidroterapéuticos Five Saint. Nuestro equipo comercial te puede asesorar en la selección de los componentes más adecuados para cada proyecto.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Footer info Pág Equipamientos */}
-        <div className="px-10 pb-4 flex justify-between items-end shrink-0 border-t border-slate-100 pt-2 mt-2">
-          <div className="text-[12px] text-slate-400 max-w-sm">
-            <p>Los precios publicados corresponden a la versión en color blanco.</p>
-            <p className="mt-0.5"></p>
-          </div>
+        <div className="px-10 pb-4 flex justify-end items-end shrink-0 border-t border-slate-100 pt-2 mt-2">
           <div className="bg-accent-gold text-white font-bold px-2 py-1 rounded text-[11px] uppercase tracking-wider">
             LOS PRECIOS NO INCLUYEN IVA
           </div>
@@ -1534,9 +1542,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <div className="absolute inset-0 flex items-center justify-between px-16">
                 <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
                   {pageIndex === 0 ? (
-                    <>Platos de Ducha <span className="text-xl text-white/70 ml-2">Acrílico</span></>
+                    <>Platos de Ducha <span className="text-xl text-white/70 ml-2"></span></>
                   ) : (
-                    <>Platos y Columnas <span className="text-xl text-white/70 ml-2">de Ducha</span></>
+                    <>Platos y Columnas <span className="text-xl text-white/70 ml-2"></span></>
                   )}
                 </h1>
                 <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
