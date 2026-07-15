@@ -709,6 +709,13 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       {(() => {
         const products = banerasData.products;
 
+        const banerasExtraNote = (
+          <>
+            <p className="mt-1 text-[9.5px] font-medium text-slate-500 leading-snug">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
+            <p className="mt-0.5 text-[9.5px] font-medium text-slate-500 leading-snug">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
+          </>
+        );
+
         const groupedModels = [
           {
             name: "Romana",
@@ -989,7 +996,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 </div>
               </div>
               {/* Footer */}
-              {renderFooter(undefined, "")}
+              {renderFooter(banerasExtraNote, "")}
             </div>
 
             {/* PÁGINA 2 DE BAÑERAS: Cabecera Cont. + Niveles + Joya + Martina + Modelos de Única Medida  (Parte 1) */}
@@ -1005,7 +1012,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {renderSingleModelsTable(singleModels.slice(0, 5), false)}
               </div>
               {/* Footer */}
-              {renderFooter(undefined, "")}
+              {renderFooter(banerasExtraNote, "")}
             </div>
 
             {/* PÁGINA 3 DE BAÑERAS: Cabecera Cont. + Niveles + Modelos de Única Medida  (Parte 2) */}
@@ -1015,7 +1022,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 {renderSingleModelsTable(singleModels.slice(5), true)}
               </div>
               {/* Footer */}
-              {renderFooter(undefined, "")}
+              {renderFooter(banerasExtraNote, "")}
             </div>
           </>
         );
