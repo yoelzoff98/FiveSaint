@@ -1845,7 +1845,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       {/* 
         CONTRA TAPA
       */}
-      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-accent-deep shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between items-center py-20">
+      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-accent-deep shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-center items-center">
         {/* Fondo Moderno Premium (Luces y Degradados) */}
         <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-accent-soft via-transparent to-transparent"></div>
         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-accent-gold opacity-10 rounded-full blur-[100px]"></div>
@@ -1858,22 +1858,24 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </svg>
         </div>
 
-        {/* Contenido Central */}
-        <div className="relative z-10 flex flex-col items-center justify-center flex-grow mt-12">
+        {/* Contenido Central (idéntico a la portada para centrado exacto) */}
+        <div className="relative z-10 flex flex-col items-center">
           {/* Imagen del Logo */}
-          <div className="mb-10 w-60 h-60 flex justify-center items-center">
-            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-2xl" />
+          <div className="mb-20 relative z-10 w-64 h-64 flex justify-center items-center">
+            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-xl" />
           </div>
 
-          {/* Título o Lema */}
-          <h2 className="text-white text-3xl font-light tracking-[0.3em] uppercase mb-4 text-center drop-shadow-md">
-            Calidad y <span className="font-black text-accent-gold">Diseño</span>
-          </h2>
-          <div className="w-20 h-1 bg-accent-gold rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]"></div>
+          {/* Título Invisible (Mantiene el logo en la posición exacta que la portada) */}
+          <div className="invisible flex flex-col items-center">
+            <h2 className="text-4xl font-light tracking-[0.4em] uppercase mb-6 text-center">
+              Acrílico Sanitario
+            </h2>
+            <div className="w-24 h-1.5 mb-16 rounded-full"></div>
+          </div>
         </div>
 
         {/* Contacto */}
-        <div className="relative z-10 w-full flex flex-col items-center gap-12 mt-auto">
+        <div className="absolute bottom-16 w-full flex flex-col items-center gap-12 z-10">
           <div className="flex flex-row justify-center items-start gap-12 w-full max-w-4xl px-8">
 
             {/* Contacto 1 - Dirección */}
