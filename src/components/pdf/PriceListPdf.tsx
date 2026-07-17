@@ -1249,7 +1249,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         PÁGINAS DE SPA
       */}
       {/* SPA Página 1 (Space y Design) */}
-      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
+      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between">
+        <div className="flex flex-col flex-grow">
         {/* Banner Superior Premium (Igual al resto) */}
         <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
@@ -1273,7 +1274,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
                 </div>
                 {/* Espacio para la imagen del SPA */}
-                <div className="w-full h-40 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
+                <div className="w-full h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
                   {spa.image ? (
                     <img src={spa.image} alt={spa.name} className="w-full h-full object-cover drop-shadow-md" />
                   ) : (
@@ -1304,6 +1305,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                       <tr key={fIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                         <td className="py-0.5 px-3 text-slate-700 leading-tight">
                           <span className="font-bold text-[10px]">{feat.label}</span>
+                          {feat.sublabel && (
+                            <span className="text-[9px] text-slate-500 block leading-tight mt-0.5 whitespace-pre-line">{feat.sublabel}</span>
+                          )}
                         </td>
                         {feat.values.map((val, vIdx) => (
                           <td key={vIdx} className="py-0.5 px-1 text-center font-medium text-slate-600 text-[10px]">
@@ -1320,8 +1324,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div className="flex justify-between items-center gap-2">
                     {spa.prices.map((p, pIdx) => (
                       <div key={pIdx} className="flex-1 flex flex-col items-center bg-white border border-slate-200 rounded p-1 shadow-sm">
-                        <span className="text-[9.5px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
-                        <span className="text-[11.5px] font-black text-accent-deep">{p.price}</span>
+                        <span className="text-[9px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
+                        <span className="text-[11px] font-black text-accent-deep">{p.price}</span>
                       </div>
                     ))}
                   </div>
@@ -1333,13 +1337,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         {/* Opcionales Page 1 */}
         <div className="px-10 pb-1.5 mt-0.5 shrink-0">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-2 shadow-sm">
-            <h3 className="text-[13px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-sm">
+            <h3 className="text-[12px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
               <span className="w-2 h-2 bg-accent-deep rounded-full"></span>
               Opcionales Disponibles
             </h3>
             <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-              {spaOpcionalesData.map((opc, oIdx) => (
+              {spaOpcionalesData
+                .filter((opc) => opc.name !== "Estructura metalica autoportante")
+                .map((opc, oIdx) => (
                 <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
                   <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
                   <div className="flex items-center gap-3 shrink-0">
@@ -1352,12 +1358,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
         </div>
 
+        </div>
+
         {/* Footer info SPA Page 1 */}
         {renderFooter(undefined, "px-10 pb-4 mx-10")}
       </div>
 
       {/* SPA Página 2 (Relax y Party) */}
-      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
+      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between">
+        <div className="flex flex-col flex-grow">
         {/* Banner Superior Premium */}
         <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
@@ -1381,7 +1390,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
                 </div>
                 {/* Espacio para la imagen del SPA */}
-                <div className="w-full h-44 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
+                <div className="w-full h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
                   {spa.image ? (
                     <img src={spa.image} alt={spa.name} className="w-full h-full object-cover drop-shadow-md" />
                   ) : (
@@ -1410,6 +1419,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                       <tr key={fIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                         <td className="py-1 px-3 text-slate-700 leading-tight">
                           <span className="font-bold text-[11.5px]">{feat.label}</span>
+                          {feat.sublabel && (
+                            <span className="text-[10px] text-slate-500 block leading-tight mt-0.5 whitespace-pre-line">{feat.sublabel}</span>
+                          )}
                         </td>
                         <td className="py-1 px-2 text-center font-black text-accent-deep text-[12.5px]">
                           {feat.values[0]}
@@ -1423,8 +1435,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-4">
                   <div className="flex justify-center items-center gap-2">
                     <div className="w-full flex items-center justify-between bg-white border border-slate-200 rounded p-3 shadow-md">
-                      <span className="text-[10px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
-                      <span className="text-lg font-black text-accent-deep">{spa.prices[0].price}</span>
+                      <span className="text-[9.5px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
+                      <span className="text-[16px] font-black text-accent-deep">{spa.prices[0].price}</span>
                     </div>
                   </div>
                 </div>
@@ -1434,9 +1446,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         </div>
 
         {/* Opcionales Page 2 */}
-        <div className="px-10 pb-2 mt-2 shrink-0">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-sm">
-            <h3 className="text-[13px] font-bold text-accent-gold uppercase mb-2 flex items-center gap-2">
+        <div className="px-10 pb-1.5 mt-0.5 shrink-0">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-sm">
+            <h3 className="text-[12px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
               <span className="w-2 h-2 bg-accent-deep rounded-full"></span>
               Opcionales Disponibles
             </h3>
@@ -1452,6 +1464,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               ))}
             </div>
           </div>
+        </div>
+
         </div>
 
         {/* Footer info SPA Page 2 */}

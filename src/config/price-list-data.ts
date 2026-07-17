@@ -239,8 +239,8 @@ export const spaDataPage1: SpaModel[] = [
       { label: "Pulsadores para encendido", sublabel: "Sistema Air Switch", values: [1, 2, 3] },
       { label: "Jets cervicales", sublabel: "Con cierre individual", values: [2, 2, 2] },
       { label: "Almohadilla relax en camilla", values: [1, 1, 1] },
-      { label: "Bombas autodrenantes", sublabel: "y autocebantes\nCon protector térmico\ny sistema de encendido Air Switch", values: [1, 1, 2] },
-      { label: "Turbo sopladores", sublabel: "Con sistema de encendido Air Switch", values: ["-", 2, 2] },
+      { label: "Bombas", values: [1, 1, 2] },
+      { label: "Turbo sopladores", values: ["-", 2, 2] },
       { label: "Inyectores de aire", values: ["-", 15, 35] },
       { label: "Desagüe de 1 1/2\"", values: [1, 1, 1] },
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
@@ -266,8 +266,8 @@ export const spaDataPage1: SpaModel[] = [
       { label: "Pulsadores para encendido", sublabel: "Sistema Air Switch", values: [1, 3, 3] },
       { label: "Jets cervicales", sublabel: "Con cierre individual", values: [2, 2, 4] },
       { label: "Almohadilla relax en camilla", values: [2, 2, 2] },
-      { label: "Bombas autodrenantes", sublabel: "y autocebantes\nCon protector térmico\ny Sist. de encendido Air Switch.", values: [1, 1, 2] },
-      { label: "Turbo sopladores", sublabel: "Con sistema de encendido Air Switch uno en potenciación y uno en sistema Air Pool", values: ["-", 2, 2] },
+      { label: "Bombas", values: [1, 1, 2] },
+      { label: "Turbo sopladores", values: ["-", 2, 2] },
       { label: "Inyectores de aire", values: ["-", 30, 30] },
       { label: "Desagüe de 1 1/2\"", values: [1, 1, 1] },
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
