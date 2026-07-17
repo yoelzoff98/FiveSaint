@@ -138,6 +138,7 @@ export interface OfertaBañera {
   descripcion: string;
   precio: string;
   jetLabel: string;
+  code: string;
   image?: string;
 }
 
@@ -147,6 +148,7 @@ export const ofertasData: OfertaBañera[] = [
     medidas: "150 x 70",
     descripcion: "4 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 263 000",
+    code: "FSLP1",
     jetLabel: "¡6 jets!",
     image: "/images/Ofertas/lady plus.jpg"
   },
@@ -155,6 +157,7 @@ export const ofertasData: OfertaBañera[] = [
     medidas: "160 x 75",
     descripcion: "5 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 528 000",
+    code: "FSJP04",
     jetLabel: "¡7 jets!",
     image: "/images/Ofertas/joya plus.jpg"
   },
@@ -163,6 +166,7 @@ export const ofertasData: OfertaBañera[] = [
     medidas: "165 x 90",
     descripcion: "6 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 1 706 000",
+    code: "FSPL06",
     jetLabel: "¡8 jets!",
     image: "/images/Ofertas/perla plus.jpg"
   },
@@ -171,6 +175,7 @@ export const ofertasData: OfertaBañera[] = [
     medidas: "170 x 83",
     descripcion: "6 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
     precio: "$ 1 786 000",
+    code: "FSQPC",
     jetLabel: "¡8 jets!",
     image: "/images/Ofertas/quarzo plus.jpg"
   },
@@ -179,6 +184,7 @@ export const ofertasData: OfertaBañera[] = [
     medidas: "150",
     descripcion: "8 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico",
     precio: "$ 2 225 000",
+    code: "FSCP06",
     jetLabel: "¡10 jets!",
     image: "/images/Ofertas/Circular plus.jpg"
   },
@@ -187,6 +193,7 @@ export const ofertasData: OfertaBañera[] = [
     medidas: "150 x 150",
     descripcion: "8 jets de caudal regulable individual y 2 jets cervicales. Vistas cromo, succión, encendido neumático, regulador de aire, sopapa y desborde plástico.",
     precio: "$ 2 225 000",
+    code: "FSEP10",
     jetLabel: "¡10 jets!",
     image: "/images/Ofertas/Esquinero plus.JPG"
   }
@@ -208,11 +215,11 @@ export interface SpaModel {
 }
 
 export const spaOpcionalesData = [
-  { name: "Cromoterapia", code: "FSE106C", price: "$ 477 000" },
-  { name: "Cobertor térmico", code: "FSSPCT", price: "$ 743 000" },
-  { name: "Calefactor eléctrico", code: "FSSPAOPC", price: "$ 2 601 000" },
-  { name: "Equipo de filtrado c/bomba", code: "FSSPAF", price: "$ 1 069 000" },
-  { name: "Estructura metalica autoportante", code: "FSSPAOPEN", price: "$ 1 072 000" }
+  { name: "Cromoterapia", code: "FSSPAZCRT", price: "$ 477 000" },
+  { name: "Cobertor térmico", code: "FSSPAZCT", price: "$ 743 000" },
+  { name: "Calefactor eléctrico", code: "FSSPAZC", price: "$ 2 601 000" },
+  { name: "Equipo de filtrado c/bomba", code: "FSSPAZF", price: "$ 1 069 000" },
+  { name: "Estructura metalica autoportante", code: "FSSPAZMEM", price: "$ 1 072 000" }
 ];
 
 export const spaDataPage1: SpaModel[] = [
@@ -240,8 +247,8 @@ export const spaDataPage1: SpaModel[] = [
     ],
     prices: [
       { code: "FSSPA1SB", price: "$ 7 308 000" },
-      { code: "FSSPA2SC", price: "$ 10 236 000" },
-      { code: "FSSPA3SCP", price: "$ 12 842 000" }
+      { code: "FSSPA1SC", price: "$ 10 236 000" },
+      { code: "FSSPA1SCP", price: "$ 12 842 000" }
     ],
     image: "/images/Spa/space.png"
   },
@@ -266,9 +273,9 @@ export const spaDataPage1: SpaModel[] = [
       { label: "Estructura metálica autoportante", values: [1, 1, 1] }
     ],
     prices: [
-      { code: "FSSPADB", price: "$ 7 309 000" },
-      { code: "FSSPADC", price: "$ 11 233 000" },
-      { code: "FSSPADCP", price: "$ 13 640 000" }
+      { code: "FSSPA2DB", price: "$ 7 173 000" },
+      { code: "FSSPA2DC", price: "$ 11 233 000" },
+      { code: "FSSPA2DCP", price: "$ 13 640 000" }
     ],
     image: "/images/Spa/Design.png"
   }
@@ -290,7 +297,7 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
-      { code: "FSSPA4RB", price: "$ 4 972 000" }
+      { code: "FSSPA4RB", price: "$ 6 044 000" }
     ],
     image: "/images/Spa/Relax.png"
   },
@@ -310,7 +317,7 @@ export const spaDataPage2: SpaModel[] = [
       { label: "Llenado interno", values: [1] }
     ],
     prices: [
-      { code: "FSSPA3PB", price: "$ 4 972 000" }
+      { code: "FSSPA3PB", price: "$ 6 044 000" }
     ],
     image: "/images/Spa/Party.png"
   }

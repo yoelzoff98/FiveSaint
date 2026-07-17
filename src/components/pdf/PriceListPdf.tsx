@@ -1268,7 +1268,10 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
                       {/* Precio */}
                       <div className="flex justify-between items-center mt-1 pt-1 border-t border-slate-100 shrink-0">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PRECIO PROMOCIONAL</span>
+                        <div className="flex flex-col">
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PRECIO PROMOCIONAL</span>
+                          {oferta.code && <span className="text-[10px] text-slate-500 font-mono mt-0.5">{oferta.code}</span>}
+                        </div>
                         <div className="bg-accent-deep text-white font-black text-sm py-1.5 px-6 rounded-full shadow-sm tracking-wider">
                           {oferta.precio}
                         </div>
