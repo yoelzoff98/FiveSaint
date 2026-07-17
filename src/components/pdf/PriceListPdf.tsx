@@ -1182,19 +1182,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               </td>
                               <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.encendido}</td>
                             </tr>
-                            <tr className="border-b border-slate-100">
-                              <td className="py-[2px] text-left font-bold">
-                                <div className="flex items-center gap-1.5">
-                                  <ReguladorAireIcon className="w-3.5 h-3.5 text-accent-deep" />
-                                  <span>Regulador de aire</span>
-                                </div>
-                              </td>
-                              <td className="py-[2px] text-right align-middle">
-                                <div className="flex justify-end">
-                                  {specs.reguladorAire ? <CheckedCircleIcon size={12} /> : <DashIcon size={12} />}
-                                </div>
-                              </td>
-                            </tr>
+
                             <tr className="border-b border-slate-100">
                               <td className="py-[2px] text-left font-bold">
                                 <div className="flex items-center gap-1.5">
