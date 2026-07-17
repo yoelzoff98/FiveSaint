@@ -400,47 +400,59 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         {/* 5. Footer Badges */}
         <div className="px-10 pb-4 mt-auto shrink-0 flex flex-col gap-4">
-          <div className="flex justify-between items-center border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl py-3 px-6 shadow-sm">
-            <div className="flex items-center gap-2">
-              <div className="text-accent-deep">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="flex justify-between items-center w-full border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl py-3 px-5 shadow-sm">
+            <div className="flex items-center gap-1.5">
+              <div className="text-accent-deep shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
-              <span className="text-[9.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">ACRÍLICO<br />SANITARIO</span>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">ACRÍLICO<br />SANITARIO</span>
             </div>
-            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-              <div className="text-accent-deep">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            
+            <div className="w-[1.5px] h-6 bg-slate-200 shrink-0"></div>
+            
+            <div className="flex items-center gap-1.5">
+              <div className="text-accent-deep shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span className="text-[9.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">5 AÑOS DE GARANTÍA<br />EN ACRÍLICO / 1 AÑO EN BOMBA</span>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide whitespace-nowrap">GARANTÍA<br />5 AÑOS EN ACRÍLICO<br />1 AÑO EN BOMBA</span>
             </div>
-            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-              <div className="text-accent-deep">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+
+            <div className="w-[1.5px] h-6 bg-slate-200 shrink-0"></div>
+
+            <div className="flex items-center gap-1.5">
+              <div className="text-accent-deep shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <span className="text-[9.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">REPUESTOS<br />PERMANENTES</span>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">REPUESTOS<br />PERMANENTES</span>
             </div>
-            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-              <div className="text-accent-deep">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+
+            <div className="w-[1.5px] h-6 bg-slate-200 shrink-0"></div>
+
+            <div className="flex items-center gap-1.5">
+              <div className="text-accent-deep shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <span className="text-[9.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">FABRICACIÓN<br />NACIONAL</span>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">FABRICACIÓN<br />NACIONAL</span>
             </div>
-            <div className="flex items-center gap-2 border-l-[1.5px] border-slate-200 pl-4">
-              <div className="text-accent-deep">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+
+            <div className="w-[1.5px] h-6 bg-slate-200 shrink-0"></div>
+
+            <div className="flex items-center gap-1.5">
+              <div className="text-accent-deep shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 3l-6 6m0 0V4m0 5h5M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
                 </svg>
               </div>
-              <span className="text-[9.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">SOPORTE Y<br />ASESORAMIENTO</span>
+              <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">SOPORTE Y<br />ASESORAMIENTO</span>
             </div>
           </div>
           {renderFooter(undefined, "")}
@@ -1331,9 +1343,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               Opcionales Disponibles
             </h3>
             <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-              {spaOpcionalesData
-                .filter((opc) => opc.name !== "Estructura metalica autoportante")
-                .map((opc, oIdx) => (
+              {spaOpcionalesData.map((opc, oIdx) => (
                 <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
                   <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
                   <div className="flex items-center gap-3 shrink-0">

@@ -218,8 +218,7 @@ export const spaOpcionalesData = [
   { name: "Cromoterapia", code: "FSSPAZCRT", price: "$ 477 000" },
   { name: "Cobertor térmico", code: "FSSPAZCT", price: "$ 743 000" },
   { name: "Calefactor eléctrico", code: "FSSPAZC", price: "$ 2 601 000" },
-  { name: "Equipo de filtrado c/bomba", code: "FSSPAZF", price: "$ 1 069 000" },
-  { name: "Estructura metalica autoportante", code: "FSSPAZMEM", price: "$ 1 072 000" }
+  { name: "Equipo de filtrado c/bomba", code: "FSSPAZF", price: "$ 1 069 000" }
 ];
 
 export const spaDataPage1: SpaModel[] = [
@@ -284,17 +283,18 @@ export const spaDataPage1: SpaModel[] = [
 export const spaDataPage2: SpaModel[] = [
   {
     name: "Relax",
-    dimensions: "Ancho: 195 cm / Largo: 205 cm\nProf.: 65 cm / Cap.: 300 lts.",
+    dimensions: "Ancho: 195 cm / Largo: 205 cm\nProf.: 65 cm / Cap.: 450 lts.",
     columns: ["Cantidad"],
     features: [
       { label: "Casco acrílico sanitario", values: [1] },
-      { label: "Jets de caudal regulable individual", values: [5] },
+      { label: "Jets AGUA/AIRE", values: [5] },
       { label: "Jets punzantes", values: [3] },
       { label: "Succión", values: [1] },
-      { label: "Bomba autodrenante", values: [1] },
+      { label: "Bomba", values: [1] },
       { label: "Encendido neumático", values: [1] },
       { label: "Desagüe de 1 1/2\"", values: [1] },
-      { label: "Llenado interno", values: [1] }
+      { label: "Llenado interno", values: [1] },
+      { label: "Estructura metálica autoportante", values: [1] }
     ],
     prices: [
       { code: "FSSPA4RB", price: "$ 6 044 000" }
@@ -307,14 +307,15 @@ export const spaDataPage2: SpaModel[] = [
     columns: ["Cantidad"],
     features: [
       { label: "Casco acrílico sanitario", values: [1] },
-      { label: "Jets de caudal regulable individual", values: [8] },
+      { label: "Jets AGUA/AIRE", values: [8] },
       { label: "Jets punzantes", values: [3] },
       { label: "Succión", values: [1] },
-      { label: "Bomba autodrenante", values: [1] },
+      { label: "Bomba", values: [1] },
       { label: "Encendido neumático", values: [1] },
       { label: "Desagüe de 1 1/2\"", values: [1] },
       { label: "Jets cervicales", values: [4] },
-      { label: "Llenado interno", values: [1] }
+      { label: "Llenado interno", values: [1] },
+      { label: "Estructura metálica autoportante", values: [1] }
     ],
     prices: [
       { code: "FSSPA3PB", price: "$ 6 044 000" }
@@ -351,8 +352,8 @@ export const platosDuchaData: PlatosCategory[] = [
       { code: "FSPD02", largo: "120", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 547 000" },
       { code: "FSPD03", largo: "130", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 557 000" },
       { code: "FSPD04", largo: "140", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 610 000" },
-      { code: "FSPD05", largo: "150", ancho: "70", altura: "5", profundidad: "3,6", price: "$ 654 000" },
-      { code: "FSPD06", largo: "160", ancho: "70", altura: "5", profundidad: "3,6", price: "$ 686 700" }
+      { code: "FSPD05", largo: "150", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 654 000" },
+      { code: "FSPD06", largo: "160", ancho: "70", altura: "5", profundidad: "3,5", price: "$ 686 700" }
     ]
   },
   {
