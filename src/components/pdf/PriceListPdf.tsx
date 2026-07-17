@@ -199,7 +199,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="border-b border-slate-200 pb-2 mb-0 shrink-0 flex justify-between items-end px-10 pt-8 bg-white relative z-20">
           <div>
             <h1 className="text-[22px] font-black text-accent-deep uppercase tracking-wide">
-              Guía del Catálogo
+              Lista de Precios
             </h1>
           </div>
           <div className="flex items-center gap-4">
@@ -230,7 +230,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </svg>
           </div>
           <p className="text-[13.5px] text-slate-700 leading-relaxed font-medium">
-            Este catálogo fue desarrollado para facilitar la <strong className="text-accent-deep font-black">búsqueda de productos</strong>, <strong className="text-accent-deep font-black">comparar configuraciones y acompañarlos en la cotización</strong> de cada proyecto de forma rápida y sencilla.
+            Esta lista fue desarrollada para facilitar la <strong className="text-accent-deep font-black">búsqueda de productos</strong>, <strong className="text-accent-deep font-black">comparar configuraciones y acompañarlos en la cotización</strong> de cada proyecto de forma rápida y sencilla.
           </p>
         </div>
 
@@ -259,7 +259,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 </div>
-                <p className="text-[12px] text-slate-700 font-medium leading-snug">Los Sistemas Hidroterapéuticos están compuestos de: casco con soporte para bomba, jets, succión, pulsador neumático y bomba.</p>
+                <p className="text-[12px] text-slate-700 font-medium leading-snug">Acrílico sanitario con protección UV.</p>
               </div>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 shadow-inner shrink-0 border border-slate-300"></div>
@@ -360,7 +360,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <div className="flex-grow">
-                  <h4 className="text-[11px] font-black text-accent-deep uppercase leading-tight">LÍNEA SPA Y MINIPISCINAS</h4>
+                  <h4 className="text-[11px] font-black text-accent-deep uppercase leading-tight">SPA Y MINIPISCINAS</h4>
                   <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Soluciones para espacios interiores y exteriores.</p>
                 </div>
               </div>
@@ -390,8 +390,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   </svg>
                 </div>
                 <div className="flex-grow">
-                  <h4 className="text-[11px] font-black text-accent-deep uppercase leading-tight">VAPOR Y SAUNAS</h4>
-                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Columnas escocesas, saunas secos y generadores de vapor.</p>
+                  <h4 className="text-[11px] font-black text-accent-deep uppercase leading-tight">COLUMNAS DE DUCHA Y SAUNAS</h4>
+                  <p className="text-[10px] text-slate-600 leading-snug mt-0.5">Duchas escocesas, generadores de vapor y saunas.</p>
                 </div>
               </div>
             </div>
