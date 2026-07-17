@@ -843,21 +843,31 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
         );
 
-        const renderGroupedCard = (group: typeof groupedModels[0]) => (
+        const renderGroupedCard = (group: typeof groupedModels[0], isSingle = false) => (
           <div key={group.name} className="shrink-0">
             <div className="flex items-baseline gap-1.5 mb-0.5 shrink-0">
-              <h2 className="text-[14px] font-black text-accent-deep uppercase tracking-wide leading-none">{group.name}</h2>
+              <h2 className="text-[13px] font-black text-accent-deep uppercase tracking-wide leading-none">{group.name}</h2>
             </div>
 
-            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm flex items-center bg-white py-1.5 px-3 gap-4">
+            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm flex items-center bg-white py-1 px-2.5 gap-3">
               {/* Left Image Section */}
-              <div className="w-[30%] flex items-center justify-center bg-slate-50/50 rounded-lg p-2 border border-slate-100 shrink-0 h-[86px]">
-                <img src={group.image} alt={group.name} className="w-full h-full object-contain mix-blend-multiply" />
+              <div className="w-[30%] flex items-center justify-center bg-slate-50/50 rounded-lg p-1.5 border border-slate-100 shrink-0 h-[74px]">
+                {group.image ? (
+                  <img src={group.image} alt={group.name} className="w-full h-full object-contain mix-blend-multiply" />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Sin Foto</span>
+                  </div>
+                )}
               </div>
 
               {/* Right Table Section */}
               <div className="flex-grow flex flex-col justify-center">
-                <h4 className="text-[10.5px] font-black uppercase text-accent-deep tracking-wider mb-1">Varias medidas para adaptarse a tu espacio</h4>
+                {!isSingle && (
+                  <h4 className="text-[9.5px] font-black uppercase text-accent-deep tracking-wider mb-0.5">
+                    VARIAS MEDIDAS PARA ADAPTARSE A TU ESPACIO
+                  </h4>
+                )}
                 <div className="rounded-lg overflow-hidden border border-slate-200 bg-white">
                   <table className="w-full text-left border-collapse text-[10px]">
                     <thead>
@@ -913,72 +923,17 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
         );
 
-        // Helper to render the single-measure models table (enlarged)
+        // Helper to render the single-measure models using the same grouped card design
         const renderSingleModelsTable = (models: typeof singleModels, isContinuation = false) => (
-          <div className="mt-4">
-            <div className="flex items-baseline gap-1.5 mb-2 shrink-0">
-              <h2 className="text-[14px] font-black text-accent-deep uppercase tracking-wide leading-none">
-                Modelos de Medida Fija
-              </h2>
-            </div>
-
-            <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-white">
-              <table className="w-full text-left border-collapse">
-                <thead className="bg-accent-deep text-white">
-                  <tr>
-                    <th className="py-3 px-4 font-bold uppercase tracking-wider text-[11px] w-[30%]">Modelo</th>
-                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[11%]">Medidas</th>
-                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[11%]">Casco</th>
-                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[16%]">4 Jets</th>
-                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[16%]">6 Jets</th>
-                    <th className="py-3 px-2 font-bold uppercase tracking-wider text-[11px] text-center w-[16%]">8 Jets</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {models.map((p, idx) => (
-                    <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                      <td className="py-3.5 px-4 font-bold text-slate-700">
-                        <div className="flex items-center gap-4">
-                          {p.image ? (
-                            <img src={p.image} alt={p.name} className="w-16 h-16 object-contain mix-blend-multiply rounded-lg border border-slate-150 bg-slate-50/50 p-1 shrink-0" />
-                          ) : (
-                            <div className="w-16 h-16 bg-accent-soft/30 rounded-lg flex items-center justify-center shrink-0 border border-slate-150">
-                              <span className="text-accent-gold/40 font-bold text-[13px]">FS</span>
-                            </div>
-                          )}
-                          <span className="text-accent-deep text-[15px] font-black">{p.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-2 text-slate-750 font-mono text-[13px] font-semibold text-center whitespace-nowrap">{formatMedida(p.medidas)}</td>
-                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
-                        <div className="flex flex-col items-center">
-                          <span className="font-bold text-[13.5px] text-slate-800">{p.cascos || '-'}</span>
-                          {p.cascosCode && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.cascosCode}</span>}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
-                        <div className="flex flex-col items-center">
-                          {renderPrice(p.jet4, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
-                          {p.jet4Code && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.jet4Code}</span>}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
-                        <div className="flex flex-col items-center">
-                          {renderPrice(p.jet6, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
-                          {p.jet6Code && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.jet6Code}</span>}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-2 text-center whitespace-nowrap">
-                        <div className="flex flex-col items-center">
-                          {renderPrice(p.jet8, "text-[13.5px]", "font-bold text-slate-800", "text-[10px]")}
-                          {p.jet8Code && <span className="text-[10.5px] font-mono text-slate-500 font-semibold mt-0.5 leading-none">{p.jet8Code}</span>}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="mt-1 flex flex-col gap-1">
+            {models.map((p, idx) => {
+              const fakeGroup = {
+                name: p.name,
+                image: p.image || '',
+                items: [p]
+              };
+              return renderGroupedCard(fakeGroup, true);
+            })}
           </div>
         );
 
@@ -1009,7 +964,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   {renderGroupedCard(groupedModels[5])} {/* Martina */}
                 </div>
 
-                {renderSingleModelsTable(singleModels.slice(0, 5), false)}
+                {renderSingleModelsTable(singleModels.slice(0, 4), false)}
               </div>
               {/* Footer */}
               {renderFooter(banerasExtraNote, "")}
@@ -1019,7 +974,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div key="baneras-page-3" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(true)}
-                {renderSingleModelsTable(singleModels.slice(5), true)}
+                {renderSingleModelsTable(singleModels.slice(4), true)}
               </div>
               {/* Footer */}
               {renderFooter(banerasExtraNote, "")}
