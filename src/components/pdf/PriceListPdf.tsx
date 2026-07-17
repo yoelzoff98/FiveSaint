@@ -1020,8 +1020,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
 
           {/* Listado en dos columnas */}
-          <div className="px-10 pt-2 flex-grow flex flex-col justify-center">
-            <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+          <div className="px-10 pt-4 flex-grow flex flex-col justify-between">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
               {(() => {
                 const N = equipamientosData.length;
                 const half = Math.ceil(N / 2);
@@ -1033,37 +1033,44 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   }
                 }
                 return reordered.map((e, idx) => (
-                  <div key={idx} className="flex flex-col justify-between border-b border-slate-100 pb-0.5 hover:bg-slate-50 transition-colors">
-                    <div>
-                      <div className="flex justify-between items-baseline gap-2">
-                        <h3 className="text-[10px] font-black text-accent-deep leading-none uppercase">{e.nombre}</h3>
-                        <span className="text-accent-gold font-black text-[11px] whitespace-nowrap shrink-0">{e.precio}</span>
+                  <div key={idx} className="flex items-center gap-3 border-b border-slate-100 py-1 hover:bg-slate-50 transition-colors h-[54px]">
+                    <div className="w-11 h-11 shrink-0 bg-white border border-slate-200 rounded flex items-center justify-center p-0.5 shadow-[inset_0_0_4px_rgba(0,0,0,0.05)]">
+                      {e.image ? (
+                        <img src={e.image} alt={e.nombre} className="w-full h-full object-cover rounded-[2px]" />
+                      ) : (
+                        <div className="w-full h-full bg-slate-50 flex items-center justify-center rounded-[2px]">
+                          <span className="text-[7px] text-slate-300 uppercase font-bold text-center leading-none">Sin<br/>Img</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <div className="flex justify-between items-end gap-2">
+                        <h3 className="text-[9.5px] font-black text-accent-deep leading-tight uppercase line-clamp-2 pr-1">{e.nombre}</h3>
+                        <span className="text-accent-gold font-black text-[11px] whitespace-nowrap shrink-0 leading-none">{e.precio}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 mt-0 mb-0.5">
-                        <span className="text-[9.5px] text-slate-600 font-mono tracking-tighter bg-slate-150 px-1 rounded font-medium">Ref: {e.codigo}</span>
+                      <div className="flex justify-between items-center mt-1 gap-2">
+                        <p className="text-[8.5px] text-slate-600 leading-none truncate flex-1 font-medium">{e.descripcion || " "}</p>
+                        <span className="text-[9px] text-slate-600 font-mono tracking-tighter bg-slate-150 px-1.5 py-[1px] rounded font-bold shrink-0 leading-none">Ref: {e.codigo}</span>
                       </div>
                     </div>
-                    {e.descripcion && (
-                      <p className="text-[9px] text-slate-700 leading-normal line-clamp-1 pr-1 font-medium">{e.descripcion}</p>
-                    )}
                   </div>
                 ));
               })()}
             </div>
 
-            {/* Mensaje de Asesoramiento */}
-            <div className="mt-6 mx-2 border-[1.5px] border-slate-200 bg-slate-50 rounded-2xl p-5 shadow-sm flex items-center gap-5">
-              <div className="w-12 h-12 rounded-full bg-accent-deep text-white flex items-center justify-center shrink-0">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            {/* Mensaje de Asesoramiento Reducido */}
+            <div className="mt-4 mx-0 border border-slate-200 bg-slate-50 rounded-xl p-3 shadow-sm flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-accent-deep text-white flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <div className="flex flex-col gap-1.5 text-left pr-4">
-                <p className="text-[12px] text-slate-700 leading-relaxed font-semibold">
-                  Los equipamientos y accesorios incluidos en esta sección permiten desarrollar configuraciones personalizadas para los Sistemas Hidroterapéuticos Five Saint.
+              <div className="flex flex-col gap-1 text-left pr-2">
+                <p className="text-[10px] text-slate-700 leading-tight font-semibold">
+                  Los equipamientos y accesorios de esta sección permiten configurar Sistemas Hidroterapéuticos a medida.
                 </p>
-                <p className="text-[12px] text-slate-700 leading-relaxed font-semibold">
-                  Nuestro equipo comercial te puede asesorar en la selección de los componentes más adecuados para cada proyecto.
+                <p className="text-[10px] text-slate-700 leading-tight font-semibold">
+                  Nuestro equipo comercial te asesorará en la selección de los componentes ideales para tu proyecto.
                 </p>
               </div>
             </div>
