@@ -409,9 +409,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">ACRÍLICO<br />SANITARIO</span>
             </div>
-            
+
             <div className="w-[1.5px] h-6 bg-slate-200 shrink-0"></div>
-            
+
             <div className="flex items-center gap-1.5">
               <div className="text-accent-deep shrink-0">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -536,7 +536,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                               <circle cx="12" cy="12" r="4" />
                               <path d="M12 3v18M3 12h18" />
                             </svg>
-                            Sopapa
+                            Sopapa Metálica
                           </td>
                           <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#006d9c" size={13} /></div></td>
                           <td className="py-1 text-center"><div className="flex justify-center"><CheckIcon color="#d0a65c" size={13} /></div></td>
@@ -723,8 +723,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         const banerasExtraNote = (
           <>
-            <p className="mt-1 text-[9.5px] font-medium text-slate-500 leading-snug">En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de: casco con soporte para bomba, jet, succión, pulsador neumático y bomba.</p>
-            <p className="mt-0.5 text-[9.5px] font-medium text-slate-500 leading-snug">Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.</p>
+            <p className="mt-1 text-[9.5px] font-medium text-slate-500 leading-snug">
+              En los Sistemas Hidroterapéuticos las vistas son cromo y están compuestos de:
+            </p>
+            <p className="mt-0.5 text-[9.5px] font-medium text-slate-500 leading-snug pl-2">
+              · Casco con soporte para bomba, jet, succión, pulsador neumático y bomba.
+            </p>
+            <p className="mt-0.5 text-[9.5px] font-medium text-slate-500 leading-snug pl-2">
+              · Las medidas y las imágenes son ilustrativas sujetas a variaciones sin previo aviso.
+            </p>
           </>
         );
 
@@ -1039,7 +1046,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         <img src={e.image} alt={e.nombre} className="w-full h-full object-cover rounded-[2px]" />
                       ) : (
                         <div className="w-full h-full bg-slate-50 flex items-center justify-center rounded-[2px]">
-                          <span className="text-[7px] text-slate-300 uppercase font-bold text-center leading-none">Sin<br/>Img</span>
+                          <span className="text-[7px] text-slate-300 uppercase font-bold text-center leading-none">Sin<br />Img</span>
                         </div>
                       )}
                     </div>
@@ -1111,13 +1118,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     {/* Imagen de la bañera */}
                     <div className="w-[48%] relative h-[250px] bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center shrink-0">
 
-                      {/* Zoom/Viewport bracket icon on the top right */}
-                      <div className="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-xs border border-accent-deep rounded-full flex items-center justify-center z-20 shadow-xs">
-                        <svg className="w-4 h-4 text-accent-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2" />
-                          <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                        </svg>
-                      </div>
 
                       {oferta.image ? (
                         <img src={oferta.image} alt={oferta.name} className="w-full h-full object-cover" />
@@ -1258,110 +1258,110 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       {/* SPA Página 1 (Space y Design) */}
       <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between">
         <div className="flex flex-col flex-grow">
-        {/* Banner Superior Premium (Igual al resto) */}
-        <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-          <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
+          {/* Banner Superior Premium (Igual al resto) */}
+          <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+            <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
 
-          <div className="absolute inset-0 flex items-center justify-between px-10">
-            <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
-              SPA
-            </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            <div className="absolute inset-0 flex items-center justify-between px-10">
+              <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
+                SPA
+              </h1>
+              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            </div>
           </div>
-        </div>
 
-        {/* Contenido SPA Page 1 */}
-        <div className="flex-grow px-10 pt-4 flex gap-8">
-          {spaDataPage1.map((spa, idx) => (
-            <div key={idx} className="w-1/2 flex flex-col">
-              {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
-              <div className="mb-2 flex flex-col gap-1.5">
-                <div className="flex justify-between items-baseline">
-                  <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
+          {/* Contenido SPA Page 1 */}
+          <div className="flex-grow px-10 pt-4 flex gap-8">
+            {spaDataPage1.map((spa, idx) => (
+              <div key={idx} className="w-1/2 flex flex-col">
+                {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
+                <div className="mb-2 flex flex-col gap-1.5">
+                  <div className="flex justify-between items-baseline">
+                    <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
+                  </div>
+                  {/* Espacio para la imagen del SPA */}
+                  <div className="w-full h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
+                    {spa.image ? (
+                      <img src={spa.image} alt={spa.name} className="w-full h-full object-cover drop-shadow-md" />
+                    ) : (
+                      <div className="text-center">
+                        <span className="text-slate-300 font-bold text-[8px] uppercase block">Falta Foto</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Dimensiones y descripción */}
+                  <p className="text-[10px] text-slate-500 font-mono whitespace-pre-line leading-tight">{formatMedida(spa.dimensions)}</p>
                 </div>
-                {/* Espacio para la imagen del SPA */}
-                <div className="w-full h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
-                  {spa.image ? (
-                    <img src={spa.image} alt={spa.name} className="w-full h-full object-cover drop-shadow-md" />
-                  ) : (
-                    <div className="text-center">
-                      <span className="text-slate-300 font-bold text-[8px] uppercase block">Falta Foto</span>
-                    </div>
-                  )}
-                </div>
-                {/* Dimensiones y descripción */}
-                <p className="text-[10px] text-slate-500 font-mono whitespace-pre-line leading-tight">{formatMedida(spa.dimensions)}</p>
-              </div>
 
-              {/* Tabla de características */}
-              <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-grow flex flex-col">
-                <table className="w-full text-left border-collapse bg-white">
-                  <thead className="bg-accent-deep text-white">
-                    <tr>
-                      <th className="py-0.5 px-3 font-semibold text-[10.5px] uppercase w-[40%]">Características</th>
-                      {spa.columns.map((col, cIdx) => (
-                        <th key={cIdx} className="py-0.5 px-1 text-center font-semibold text-[10px] uppercase leading-tight">
-                          {col}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {spa.features.map((feat, fIdx) => (
-                      <tr key={fIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td className="py-0.5 px-3 text-slate-700 leading-tight">
-                          <span className="font-bold text-[10px]">{feat.label}</span>
-                          {feat.sublabel && (
-                            <span className="text-[9px] text-slate-500 block leading-tight mt-0.5 whitespace-pre-line">{feat.sublabel}</span>
-                          )}
-                        </td>
-                        {feat.values.map((val, vIdx) => (
-                          <td key={vIdx} className="py-0.5 px-1 text-center font-medium text-slate-600 text-[10px]">
-                            {val}
-                          </td>
+                {/* Tabla de características */}
+                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-grow flex flex-col">
+                  <table className="w-full text-left border-collapse bg-white">
+                    <thead className="bg-accent-deep text-white">
+                      <tr>
+                        <th className="py-0.5 px-3 font-semibold text-[10.5px] uppercase w-[40%]">Características</th>
+                        {spa.columns.map((col, cIdx) => (
+                          <th key={cIdx} className="py-0.5 px-1 text-center font-semibold text-[10px] uppercase leading-tight">
+                            {col}
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {spa.features.map((feat, fIdx) => (
+                        <tr key={fIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                          <td className="py-0.5 px-3 text-slate-700 leading-tight">
+                            <span className="font-bold text-[10px]">{feat.label}</span>
+                            {feat.sublabel && (
+                              <span className="text-[9px] text-slate-500 block leading-tight mt-0.5 whitespace-pre-line">{feat.sublabel}</span>
+                            )}
+                          </td>
+                          {feat.values.map((val, vIdx) => (
+                            <td key={vIdx} className="py-0.5 px-1 text-center font-medium text-slate-600 text-[10px]">
+                              {val}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
-                {/* Precios (Footer de tabla) */}
-                <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-2">
-                  <div className="flex justify-between items-center gap-2">
-                    {spa.prices.map((p, pIdx) => (
-                      <div key={pIdx} className="flex-1 flex flex-col items-center bg-white border border-slate-200 rounded p-1 shadow-sm">
-                        <span className="text-[9px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
-                        <span className="text-[11px] font-black text-accent-deep">{p.price}</span>
-                      </div>
-                    ))}
+                  {/* Precios (Footer de tabla) */}
+                  <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-2">
+                    <div className="flex justify-between items-center gap-2">
+                      {spa.prices.map((p, pIdx) => (
+                        <div key={pIdx} className="flex-1 flex flex-col items-center bg-white border border-slate-200 rounded p-1 shadow-sm">
+                          <span className="text-[9px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
+                          <span className="text-[11px] font-black text-accent-deep">{p.price}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Opcionales Page 1 */}
-        <div className="px-10 pb-1.5 mt-0.5 shrink-0">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-sm">
-            <h3 className="text-[12px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
-              <span className="w-2 h-2 bg-accent-deep rounded-full"></span>
-              Opcionales Disponibles
-            </h3>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-              {spaOpcionalesData.map((opc, oIdx) => (
-                <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
-                  <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
-                    <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+          {/* Opcionales Page 1 */}
+          <div className="px-10 pb-1.5 mt-0.5 shrink-0">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-sm">
+              <h3 className="text-[12px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
+                <span className="w-2 h-2 bg-accent-deep rounded-full"></span>
+                Opcionales Disponibles
+              </h3>
+              <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                {spaOpcionalesData.map((opc, oIdx) => (
+                  <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
+                    <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
+                      <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
         </div>
 
@@ -1372,104 +1372,104 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       {/* SPA Página 2 (Relax y Party) */}
       <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between">
         <div className="flex flex-col flex-grow">
-        {/* Banner Superior Premium */}
-        <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-          <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
+          {/* Banner Superior Premium */}
+          <div className="relative w-full h-24 bg-accent-deep overflow-hidden shrink-0">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+            <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-accent-gold opacity-20 rounded-full blur-3xl"></div>
 
-          <div className="absolute inset-0 flex items-center justify-between px-10">
-            <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
-              SPA
-            </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            <div className="absolute inset-0 flex items-center justify-between px-10">
+              <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
+                SPA
+              </h1>
+              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            </div>
           </div>
-        </div>
 
-        {/* Contenido SPA Page 2 */}
-        <div className="flex-grow px-10 pt-4 flex gap-8">
-          {spaDataPage2.map((spa, idx) => (
-            <div key={idx} className="w-1/2 flex flex-col">
-              {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
-              <div className="mb-2 flex flex-col gap-1.5">
-                <div className="flex justify-between items-baseline">
-                  <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
+          {/* Contenido SPA Page 2 */}
+          <div className="flex-grow px-10 pt-4 flex gap-8">
+            {spaDataPage2.map((spa, idx) => (
+              <div key={idx} className="w-1/2 flex flex-col">
+                {/* Título de Modelo, Dimensiones y Espacio para Imagen */}
+                <div className="mb-2 flex flex-col gap-1.5">
+                  <div className="flex justify-between items-baseline">
+                    <h2 className="text-2xl font-black text-accent-deep uppercase tracking-wide leading-none">{spa.name}</h2>
+                  </div>
+                  {/* Espacio para la imagen del SPA */}
+                  <div className="w-full h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
+                    {spa.image ? (
+                      <img src={spa.image} alt={spa.name} className="w-full h-full object-cover drop-shadow-md" />
+                    ) : (
+                      <div className="text-center">
+                        <span className="text-slate-300 font-bold text-[10px] uppercase block">Falta Foto</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Dimensiones y descripción */}
+                  <p className="text-[10px] text-slate-500 font-mono whitespace-pre-line leading-tight">{formatMedida(spa.dimensions)}</p>
                 </div>
-                {/* Espacio para la imagen del SPA */}
-                <div className="w-full h-32 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 shrink-0 shadow-inner relative">
-                  {spa.image ? (
-                    <img src={spa.image} alt={spa.name} className="w-full h-full object-cover drop-shadow-md" />
-                  ) : (
-                    <div className="text-center">
-                      <span className="text-slate-300 font-bold text-[10px] uppercase block">Falta Foto</span>
-                    </div>
-                  )}
-                </div>
-                {/* Dimensiones y descripción */}
-                <p className="text-[10px] text-slate-500 font-mono whitespace-pre-line leading-tight">{formatMedida(spa.dimensions)}</p>
-              </div>
 
-              {/* Tabla de características */}
-              <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-grow flex flex-col">
-                <table className="w-full text-left border-collapse bg-white">
-                  <thead className="bg-accent-deep text-white">
-                    <tr>
-                      <th className="py-1.5 px-3 font-bold text-[11.5px] uppercase w-[70%]">Características</th>
-                      <th className="py-1.5 px-2 text-center font-bold text-[11.5px] uppercase">
-                        {spa.columns[0]}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {spa.features.map((feat, fIdx) => (
-                      <tr key={fIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                        <td className="py-1 px-3 text-slate-700 leading-tight">
-                          <span className="font-bold text-[11.5px]">{feat.label}</span>
-                          {feat.sublabel && (
-                            <span className="text-[10px] text-slate-500 block leading-tight mt-0.5 whitespace-pre-line">{feat.sublabel}</span>
-                          )}
-                        </td>
-                        <td className="py-1 px-2 text-center font-black text-accent-deep text-[12.5px]">
-                          {feat.values[0]}
-                        </td>
+                {/* Tabla de características */}
+                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-grow flex flex-col">
+                  <table className="w-full text-left border-collapse bg-white">
+                    <thead className="bg-accent-deep text-white">
+                      <tr>
+                        <th className="py-1.5 px-3 font-bold text-[11.5px] uppercase w-[70%]">Características</th>
+                        <th className="py-1.5 px-2 text-center font-bold text-[11.5px] uppercase">
+                          {spa.columns[0]}
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {spa.features.map((feat, fIdx) => (
+                        <tr key={fIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                          <td className="py-1 px-3 text-slate-700 leading-tight">
+                            <span className="font-bold text-[11.5px]">{feat.label}</span>
+                            {feat.sublabel && (
+                              <span className="text-[10px] text-slate-500 block leading-tight mt-0.5 whitespace-pre-line">{feat.sublabel}</span>
+                            )}
+                          </td>
+                          <td className="py-1 px-2 text-center font-black text-accent-deep text-[12.5px]">
+                            {feat.values[0]}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
-                {/* Precios (Footer de tabla) */}
-                <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-4">
-                  <div className="flex justify-center items-center gap-2">
-                    <div className="w-full flex items-center justify-between bg-white border border-slate-200 rounded p-3 shadow-md">
-                      <span className="text-[9.5px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
-                      <span className="text-[16px] font-black text-accent-deep">{spa.prices[0].price}</span>
+                  {/* Precios (Footer de tabla) */}
+                  <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-4">
+                    <div className="flex justify-center items-center gap-2">
+                      <div className="w-full flex items-center justify-between bg-white border border-slate-200 rounded p-3 shadow-md">
+                        <span className="text-[9.5px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
+                        <span className="text-[16px] font-black text-accent-deep">{spa.prices[0].price}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Opcionales Page 2 */}
-        <div className="px-10 pb-1.5 mt-0.5 shrink-0">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-sm">
-            <h3 className="text-[12px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
-              <span className="w-2 h-2 bg-accent-deep rounded-full"></span>
-              Opcionales Disponibles
-            </h3>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-              {spaOpcionalesData.map((opc, oIdx) => (
-                <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
-                  <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
-                    <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+          {/* Opcionales Page 2 */}
+          <div className="px-10 pb-1.5 mt-0.5 shrink-0">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-1.5 shadow-sm">
+              <h3 className="text-[12px] font-bold text-accent-gold uppercase mb-1 flex items-center gap-2">
+                <span className="w-2 h-2 bg-accent-deep rounded-full"></span>
+                Opcionales Disponibles
+              </h3>
+              <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                {spaOpcionalesData.map((opc, oIdx) => (
+                  <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
+                    <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
+                      <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
         </div>
 
@@ -1819,6 +1819,19 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           "px-10 pb-8 mx-10"
         )}
       </div>
+
+      {/* 
+        MIS NOTAS (Página extra para sumar múltiplo de 4)
+      */}
+      <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col p-10 pt-16">
+        <h2 className="text-3xl font-black text-accent-deep uppercase tracking-widest mb-10">Mis Notas</h2>
+        <div className="flex-grow flex flex-col gap-6 mt-4">
+          {Array.from({ length: 22 }).map((_, i) => (
+            <div key={i} className="border-b border-slate-200/60 w-full h-1"></div>
+          ))}
+        </div>
+      </div>
+
       {/* 
         CONTRA TAPA
       */}

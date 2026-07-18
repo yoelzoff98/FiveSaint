@@ -102,34 +102,34 @@ export interface Equipamiento {
 }
 
 export const equipamientosData: Equipamiento[] = [
-  { codigo: "FSE111E", nombre: "Apoya cab. c/2 cervicales plus", descripcion: "Almohadilla de relax y 2 microjet cervicales", precio: "$ 167 400", image: "/images/Equipamiento/FSE111E_APOYA CAB.C_2 CERVICALES PLUS.jpg" },
+  { codigo: "FSE111E", nombre: "Almohadilla c/2 jet", descripcion: "Almohadilla de relax y 2 microjet cervicales", precio: "$ 167 400", image: "/images/Equipamiento/FSE111E_APOYA CAB.C_2 CERVICALES PLUS.jpg" },
   { codigo: "FSE110", nombre: "Almohadilla de relax", descripcion: "Aplicable a cualquier bañera", precio: "$ 83 300", image: "/images/Equipamiento/FSE110 ALMOHADILLA DE RELAX.jpg" },
-  { codigo: "FSE114", nombre: "Jet adicional", descripcion: "De caudal regulable individual", precio: "$ 293 800", image: "/images/Equipamiento/FSE114P_JET PUNZANTE_.jpg" },
+  { codigo: "FSE114", nombre: "Solo jet", descripcion: "De caudal regulable individual", precio: "$ 293 800", image: "/images/Equipamiento/FSE114P_JET PUNZANTE_.jpg" },
   { codigo: "FSE114P", nombre: "Jet punzante adicional", descripcion: "Mini jet adicional de masaje punzante", precio: "$ 38 600", image: "/images/Equipamiento/FSE114P_JET PUNZANTE_.jpg" },
-  { codigo: "FSE119", nombre: "Potenciación de jets", descripcion: "Instalación de turbo soplador para inyectar aire a alta velocidad", precio: "$ 734 400", image: "/images/Equipamiento/FSE119_POTENCIACION DE JETS.jpg" },
-  { codigo: "FSE115", nombre: "Sistema Air Pool", descripcion: "Burbujeador de piso", precio: "$ 900 100", image: "/images/Equipamiento/FSE115_SISTEMA AIR POOL.jpg" },
+  { codigo: "FSE119", nombre: "Potenciación de jets", descripcion: "Turbo soplador de aire a alta velocidad", precio: "$ 734 400", image: "/images/Equipamiento/FSE119_POTENCIACION DE JETS.jpg" },
+  { codigo: "FSE115", nombre: "Sistema Air Pool", descripcion: "Burbujeador de piso", precio: "$ 900 100", image: "/images/Equipamiento/FSE116_SISTEMA AIR POOL _ FSE117 OZONO OZONO.jpg" },
   { codigo: "FSE116", nombre: "Sistema Air Pool / ozono", descripcion: "Burbujeador de piso con lámpara de ozonización", precio: "$ 1 323 000", image: "/images/Equipamiento/FSE116_SISTEMA AIR POOL _ FSE117 OZONO OZONO.jpg" },
   { codigo: "FSE117", nombre: "Equipo ozono de 1 lámpara", descripcion: "Aplicable a sistema de aire en los jets", precio: "$ 445 200", image: "/images/Equipamiento/FSE116_SISTEMA AIR POOL _ FSE117 OZONO OZONO.jpg" },
   { codigo: "FSE104M", nombre: "Desborde y desagüe metal cromo", descripcion: "Sistema anti-derrame y sopapa de desagüe", precio: "$ 181 400", image: "/images/Equipamiento/FSE104M_DESBORDE Y DESAGUE METAL CROMO.jpg" },
   { codigo: "FSE101M", nombre: "Tapa inspección metal 30x40 p/revestir", descripcion: "Para revestir 30 x 40 cm (con marco para amurar)", precio: "$ 164 600", image: "/images/Equipamiento/FSE101M_TAPA INSPECCION METAL 30X40 P_REVESTIR.jpg" },
   { codigo: "FSE106C", nombre: "Iluminadores par leds var. colores", descripcion: "2 iluminadores leds con variador de colores", precio: "$ 477 000", image: "/images/Equipamiento/FSE106C_ILUMINADORES PAR  LEDS.VAR.COLORES.jpg" },
   { codigo: "FSE112", nombre: "Control de nivel", descripcion: "Impide el encendido del motor sin el nivel de agua suficiente", precio: "$ 314 300", image: "/images/Equipamiento/FSE112_CONTROL DE NIVEL.jpg" },
-  { codigo: "FSE124C", nombre: "Comando digital", descripcion: "Comando digital para encendido de bomba, turbo soplador y accesorios", precio: "$ 729 000", image: "/images/Equipamiento/FSE124C_COMANDO DIGITAL.jpg" },
-  { codigo: "FSE102", nombre: "Calefactor c/control de nivel", descripcion: "Con control de nivel para mantener la temperatura", precio: "$ 1 635 600", image: "/images/Equipamiento/FSE102_CALEFACTOR C_CONTROL DE NIVEL.jpg" },
-  { codigo: "FSE118", nombre: "Estructura bañera simple incluye piso reforzado", descripcion: "Estructura metálica autoportante, incluye piso reforzado", precio: "$ 628 700", image: "/images/Equipamiento/FSE118_ FSE118R_ESTRUCTURA BAÑERA SIMPLE_DOBLE INCLUYE PISO REFORZADO.jpg" },
-  { codigo: "FSE118R", nombre: "Estructura bañera doble incluye piso reforzado", descripcion: "Estructura metálica autoportante para bañeras dobles", precio: "$ 828 700", image: "/images/Equipamiento/FSE118_ FSE118R_ESTRUCTURA BAÑERA SIMPLE_DOBLE INCLUYE PISO REFORZADO.jpg" },
-  { codigo: "FSE108LA", nombre: "Pico ola cromo", descripcion: "Pico ola de llenado en acabado cromo", precio: "$ 1 239 000", image: "/images/Equipamiento/FSE108LA_PICO OLA CROMO.jpg" },
-  { codigo: "FSE108MC", nombre: "Pico cascada metal cromo", descripcion: "Pico cascada de metal cromo para llenado o recirculación", precio: "$ 242 900", image: "/images/Equipamiento/FSE108MC_PICO CASCADA METAL CROMO.jpg" },
+  { codigo: "FSE124C", nombre: "Comando digital", descripcion: "Comando digital p/ bomba, soplador y accesor.", precio: "$ 729 000", image: "/images/Equipamiento/FSE124C_COMANDO DIGITAL.jpg" },
+  { codigo: "FSE102", nombre: "Calefactor", descripcion: "Con control de nivel para mantener la temperatura", precio: "$ 1 635 600", image: "/images/Equipamiento/FSE102_CALEFACTOR C_CONTROL DE NIVEL.jpg" },
+  { codigo: "FSE118", nombre: "Estructura bañera simple", descripcion: "Estructura metálica con piso reforzado", precio: "$ 628 700", image: "/images/Equipamiento/FSE118_ FSE118R_ESTRUCTURA BAÑERA SIMPLE_DOBLE INCLUYE PISO REFORZADO.jpg" },
+  { codigo: "FSE118R", nombre: "Estructura bañera doble", descripcion: "Estructura metálica para bañeras dobles", precio: "$ 828 700", image: "/images/Equipamiento/FSE118_ FSE118R_ESTRUCTURA BAÑERA SIMPLE_DOBLE INCLUYE PISO REFORZADO.jpg" },
+  { codigo: "FSE108LA", nombre: "Pico ola cromo", descripcion: "Pico ola de llenado o recirculación", precio: "$ 1 239 000", image: "/images/Equipamiento/FSE108LA_PICO OLA CROMO.jpg" },
+  { codigo: "FSE108MC", nombre: "Pico cascada metal cromo", descripcion: "Pico cascada cromo p/ llenado o recirculación", precio: "$ 242 900", image: "/images/Equipamiento/FSE108MC_PICO CASCADA METAL CROMO.jpg" },
   { codigo: "FSE108R", nombre: "Pico llenado redondo cromo", descripcion: "Pico de llenado redondo cromo", precio: "$ 200 600", image: "/images/Equipamiento/FSE108R_PICO LLENADO REDONDO CROMO.jpg" },
-  { codigo: "FSE120A", nombre: "Grif. p/ llenado - 2 llav. 3/4 c/pico cas", descripcion: "2 llaves laterales H 3/4\" con pico cascada", precio: "$ 921 800", image: "/images/Equipamiento/FSE120A_FSE120C.jpg" },
-  { codigo: "FSE120B", nombre: "Grif.llen. - 2 llav.3/4 - pic.c. - duch-trans", descripcion: "2 llaves lat., 1 transf., pico cascada y duchador", precio: "$ 1 865 900", image: "/images/Equipamiento/FSE120B FSE120D.jpg" },
-  { codigo: "FSE120C", nombre: "Grif.llen. - 2 llav.3/4 - llen int.", descripcion: "2 llaves laterales H 3/4\", llenado interno", precio: "$ 759 500", image: "/images/Equipamiento/FSE120A_FSE120C.jpg" },
-  { codigo: "FSE120D", nombre: "Grif.llen. - 2llav.3/4 - trnsf-llen.int-du", descripcion: "2 llaves lat., llave transf., llenado interno y duchador", precio: "$ 1 700 200", image: "/images/Equipamiento/FSE120B FSE120D.jpg" },
+  { codigo: "FSE120A", nombre: "Grif. p/ llenado", descripcion: "2 llaves laterales H 3/4\" con pico cascada", precio: "$ 921 800", image: "/images/Equipamiento/FSE120A_FSE120C.jpg" },
+  { codigo: "FSE120B", nombre: "Grif. llen. con transf. y duchador", descripcion: "2 llaves lat., 1 transf., pico cascada y duchador", precio: "$ 1 865 900", image: "/images/Equipamiento/FSE120B FSE120D.jpg" },
+  { codigo: "FSE120C", nombre: "Grif. llenado interno", descripcion: "2 llaves laterales H 3/4\", llenado interno", precio: "$ 759 500", image: "/images/Equipamiento/FSE120A_FSE120C.jpg" },
+  { codigo: "FSE120D", nombre: "Grif. llenado interno y duchador", descripcion: "2 llaves lat., llave transf., llenado interno y duchador", precio: "$ 1 700 200", image: "/images/Equipamiento/FSE120B FSE120D.jpg" },
   { codigo: "FSE123", nombre: "Tablero de seguridad", descripcion: "Caja con disyuntor y térmica", precio: "$ 262 900", image: "/images/Equipamiento/FSE123_TABLERO DE SEGURIDAD.jpg" },
-  { codigo: "FSE125", nombre: "Succión llenado", descripcion: "Llenado silencioso y de mayor caudal", precio: "$ 94 300", image: "/images/Equipamiento/FSE125_SUCCION LLENADO.jpg" },
-  { codigo: "FSE126", nombre: "Llenado interno", descripcion: "Conexión para llenado por el circuito de la bañera", precio: "$ 94 300", image: "/images/Equipamiento/FSE126_LLENADO INTERNO.jpg" },
-  { codigo: "FSE127", nombre: "Frente de acrílico 140 a 190", descripcion: "De acrílico blanco para bañeras rectas", precio: "$ 617 200", image: "/images/Equipamiento/FSE127_FRENTE DE ACRÍLICO 140 A 190.jpg" },
-  { codigo: "FSE129C", nombre: "Manijas Alfa cromo", descripcion: "Asideros para instalar en los laterales interiores", precio: "$ 197 200", image: "/images/Equipamiento/FSE129C_MANIJAS ALFA CROMO.jpg" }
+  { codigo: "FSE125", nombre: "Succión de llenado", descripcion: "Llenado silencioso y de mayor caudal (no incluye grifería)", precio: "$ 94 300", image: "/images/Equipamiento/FSE125_SUCCION LLENADO.jpg" },
+  { codigo: "FSE126", nombre: "Llenado interno", descripcion: "Conexión para llenado por el circuito de la bañera (no incluye grifería)", precio: "$ 94 300", image: "/images/Equipamiento/FSE126_LLENADO INTERNO.jpg" },
+  { codigo: "FSE127", nombre: "Frente de acrílico", descripcion: "De acrílico blanco para bañeras rectas de 1,40 a 1,90 m", precio: "$ 617 200", image: "/images/Equipamiento/FSE127_FRENTE DE ACRÍLICO 140 A 190.jpg" },
+  { codigo: "FSE129C", nombre: "Manijas Alfa", descripcion: "Asideros para instalar en los laterales interiores", precio: "$ 197 200", image: "/images/Equipamiento/FSE129C_MANIJAS ALFA CROMO.jpg" }
 ];
 
 export interface OfertaBañera {
@@ -228,9 +228,9 @@ export const spaDataPage1: SpaModel[] = [
     columns: ["Basic", "Confort", "Confort Plus"],
     features: [
       { label: "Casco acrílico sanitario", sublabel: "Termoformado y reforzado con PRFV.", values: [1, 1, 1] },
-      { label: "Jets de caudal", sublabel: "Regulable individual", values: [1, 8, 15] },
-      { label: "Jets de caudal", sublabel: "En camilla", values: [3, 3, 3] },
-      { label: "Jets de caudal", sublabel: "En asientos zona lumbar", values: [2, 2, 2] },
+      { label: "Jets agua/aire", sublabel: "Regulable individual", values: [1, 8, 15] },
+      { label: "Jets agua/aire", sublabel: "En camilla", values: [3, 3, 3] },
+      { label: "Jets agua/aire", sublabel: "En asientos zona lumbar", values: [2, 2, 2] },
       { label: "Mini jets", sublabel: "en camilla", values: [3, 3, 3] },
       { label: "Mini jets", sublabel: "en asiento zona de columna", values: [3, 3, 3] },
       { label: "Succiones", values: [2, 2, 4] },
@@ -257,8 +257,8 @@ export const spaDataPage1: SpaModel[] = [
     columns: ["Basic", "Confort", "Confort Plus"],
     features: [
       { label: "Casco acrílico sanitario", sublabel: "Termoformado y reforzado con PRFV.", values: [1, 1, 1] },
-      { label: "Jets de caudal", sublabel: "Regulable individual", values: [6, 6, 6] },
-      { label: "Jets de caudal", sublabel: "En camilla", values: [8, 8, 16] },
+      { label: "Jets agua/aire", sublabel: "Regulable individual", values: [6, 6, 6] },
+      { label: "Jets agua/aire", sublabel: "En camilla", values: [8, 8, 16] },
       { label: "Mini jets punzantes", sublabel: "en camilla", values: ["-", 32, 50] },
       { label: "Succiones", values: [2, 2, 4] },
       { label: "Llenado interno", values: [1, 1, 1] },
@@ -517,7 +517,7 @@ export const saunaData = {
   ],
   opcionales: [
     { code: "FSSAUV", name: "Ventana" },
-    { code: "FSSAUB", name: "Puerta de blindex con marco de madera" }
+    { code: "FSSAUB", name: "Puerta vidriada con marco de madera" }
   ],
   note: "Los Saunas se realizan a medida.\nLos gráficos mostrados son solo a modo de ejemplo.",
   contact: "Solicitar cotización a: fivesaint@fivesaint.com"
