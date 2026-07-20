@@ -485,10 +485,13 @@ export interface SaunaModel {
 
 export const saunaData = {
   title: "Sauna",
-  images: {
-    main: "/images/Sauna/Sauna 1.png",
-    secondary: "/images/Sauna/Sauna 2.png"
-  },
+  images: [
+    "/images/Sauna/Sauna 1.png",
+    "/images/Sauna/Sauna 2.png",
+    "/images/Sauna/Sauna 3.jpeg",
+    "/images/Sauna/Sauna 4.jpeg",
+    "/images/Sauna/Sauna 5.jpeg"
+  ],
   models: [
     {
       capacidad: "3 a 4 personas",
