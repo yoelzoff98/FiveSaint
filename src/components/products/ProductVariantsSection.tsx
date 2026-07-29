@@ -25,11 +25,11 @@ export function ProductVariantsSection({ variants }: ProductVariantsSectionProps
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {variants.map((variant) => (
             <div 
               key={variant.id} 
-              className={`bg-white rounded-2xl shadow-sm border p-6 md:p-8 flex flex-col transition-all duration-300 hover:shadow-md ${
+              className={`w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.4rem)] max-w-lg bg-white rounded-2xl shadow-sm border p-6 md:p-8 flex flex-col transition-all duration-300 hover:shadow-md ${
                 variant.isDefault ? "border-accent-deep/50 ring-1 ring-accent-deep/20" : "border-stone-200"
               }`}
             >
