@@ -23,7 +23,7 @@ export function HeroSection() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center scale-x-[-1]"
+          className="object-cover object-center"
         />
       </div>
 
