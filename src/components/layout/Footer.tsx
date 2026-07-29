@@ -23,7 +23,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 overflow-hidden rounded-lg shadow-md border border-stone-800 bg-[#007299] shrink-0 group-hover:scale-105 transition-all duration-300">
                 <Image
-                  src="/logo.png"
+                  src="/LOGO.svg"
                   alt="Five Saint Logo"
                   fill
                   className="object-cover"

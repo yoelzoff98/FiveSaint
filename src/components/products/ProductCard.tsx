@@ -15,6 +15,8 @@ interface ProductCardProps {
  * listado de especificaciones (features) y llamado a la acción "Ver detalle".
  */
 export function ProductCard({ product }: ProductCardProps) {
+  const isPlatoDucha = product.categorySlug === 'platos-de-duchas' || product.categoryName?.toLowerCase().includes('plato');
+
   return (
     <Card
       hoverable
@@ -22,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
       padding="none"
     >
       {/* 1. Contenedor de la Imagen Placeholder o Real con Gradiente */}
-      <div className="relative w-full h-48 sm:h-56 bg-gradient-to-br from-stone-100 via-white to-stone-50 flex items-center justify-center overflow-hidden">
+      <div className={`relative w-full bg-gradient-to-br from-stone-100 via-white to-stone-50 flex items-center justify-center overflow-hidden ${isPlatoDucha ? 'aspect-[3/4] sm:aspect-[4/5]' : 'h-48 sm:h-56'}`}>
         
         {/* Imagen real si existe */}
         {product.image ? (

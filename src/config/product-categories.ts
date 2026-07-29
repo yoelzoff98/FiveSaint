@@ -70,16 +70,5 @@ export const productCategories: ProductCategory[] = [
     tagline: "Calor purificador en maderas selectas",
     highlights: ["Madera noble seleccionada", "Generador de calor seguro homologado", "Termómetro e higrómetro analógico"],
     featured: false
-  },
-  {
-    id: "adicionales",
-    name: "Adicionales",
-    slug: "adicionales",
-    sortOrder: 7,
-    description: "Accesorios y complementos para perfeccionar tu experiencia.",
-    href: "/productos?categoria=adicionales",
-    tagline: "El toque final para tu espacio",
-    highlights: ["Diseño exclusivo", "Materiales de alta durabilidad", "Fácil instalación"],
-    featured: false
   }
 ];

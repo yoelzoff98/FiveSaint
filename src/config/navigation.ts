@@ -49,7 +49,6 @@ export const footerNavigation = {
     { title: "Columnas de Ducha", href: "/productos?categoria=columnas-de-ducha" },
     { title: "Ducha Escocesa", href: "/productos?categoria=ducha-escocesa" },
     { title: "Sauna", href: "/productos?categoria=sauna" },
-    { title: "Adicionales", href: "/productos?categoria=adicionales" },
   ] as FooterNavItem[],
 
   legal: [

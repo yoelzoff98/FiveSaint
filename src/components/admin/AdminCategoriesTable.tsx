@@ -18,8 +18,8 @@ export function AdminCategoriesTable({ categories }: { categories: TableCategory
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleDeactivate = async (id: string, name: string) => {
-    if (!confirm(`¿Estás seguro de que deseás desactivar la categoría "${name}"? Los productos no se borrarán, pero la categoría dejará de ser visible como filtro.`)) {
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`¿Estás seguro de que deseás eliminar permanentemente la categoría "${name}"?`)) {
       return;
     }
 
@@ -28,11 +28,15 @@ export function AdminCategoriesTable({ categories }: { categories: TableCategory
     
     const { error } = await supabase
       .from("product_categories")
-      .update({ is_active: false })
+      .delete()
       .eq("id", id);
       
     if (error) {
-      alert("Error al desactivar: " + error.message);
+      if (error.code === '23503') { // Foreign key constraint violation
+        alert("No se puede eliminar la categoría porque tiene productos asociados. Primero debes cambiar la categoría de esos productos o eliminarlos.");
+      } else {
+        alert("Error al eliminar: " + error.message);
+      }
     } else {
       router.refresh();
     }
@@ -91,12 +95,10 @@ export function AdminCategoriesTable({ categories }: { categories: TableCategory
                     <Edit className="w-4 h-4" />
                   </Link>
                   <button
-                    onClick={() => handleDeactivate(c.id, c.name)}
-                    disabled={loading === c.id || !c.isActive}
-                    className={`p-2 transition-colors ${
-                      !c.isActive ? "text-stone-200 cursor-not-allowed" : "text-stone-400 hover:text-red-600"
-                    }`}
-                    title={c.isActive ? "Desactivar" : "Ya desactivado"}
+                    onClick={() => handleDelete(c.id, c.name)}
+                    disabled={loading === c.id}
+                    className={`p-2 transition-colors text-stone-400 hover:text-red-600`}
+                    title="Eliminar permanentemente"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

@@ -55,7 +55,7 @@ export default function Header() {
           >
             <div className="relative w-10 h-10 overflow-hidden rounded-lg shadow-sm border border-stone-200/40 bg-[#007299] shrink-0 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
               <Image
-                src="/logo.png"
+                src="/LOGO.svg"
                 alt="Five Saint Logo"
                 fill
                 className="object-cover"

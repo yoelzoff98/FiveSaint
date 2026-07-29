@@ -13,7 +13,7 @@ import { ArrowRight, Sparkles, Shield, Compass } from "lucide-react";
  */
 export function HeroSection() {
   return (
-    <section className="relative isolate overflow-hidden min-h-[550px] lg:min-h-[650px] flex items-center py-20 lg:py-32 border-b border-stone-800 text-white">
+    <section className="relative isolate overflow-hidden min-h-[calc(100vh-90px)] flex flex-col justify-center py-10 lg:py-12 border-b border-stone-800 text-white">
       
       {/* Imagen de fondo real (Wellness / Jacuzzi) */}
       <div className="absolute inset-0 -z-20 w-full h-full">
@@ -23,41 +23,35 @@ export function HeroSection() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-center scale-x-[-1]"
         />
       </div>
 
       {/* Capa de superposición para legibilidad (Spa Oscuro) */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#01161d]/90 via-[#01161d]/75 to-black/30" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#01161d] via-[#01161d]/80 to-transparent" />
       
       {/* Resplandores visuales de luz */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#087d9f]/20 filter blur-3xl opacity-50 -z-10 animate-pulse-slow" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#087d9f]/10 filter blur-3xl opacity-40 -z-10 animate-pulse-slow pointer-events-none" />
 
-      <Container className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
+      <Container className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 my-auto w-full">
         
         {/* Columna Izquierda: Información de Marca y CTAs */}
-        <div className="lg:col-span-7 flex flex-col gap-6 text-left items-start">
-          <Badge 
-            variant="outline" 
-            className="uppercase tracking-widest text-[9px] font-bold px-3.5 py-1.5 bg-[#087d9f]/20 border-[#c5a880] text-[#e3c498] shadow-xs"
-          >
-            30 años de experiencia | Calidad Industrial
-          </Badge>
+        <div className="lg:col-span-6 flex flex-col gap-4 lg:gap-5 text-left items-start">
           
-          <h1 className="text-4xl font-extralight tracking-tight text-white sm:text-5xl lg:text-6xl leading-tight max-w-2xl">
-            Diseño, confort e innovación para{" "}
-            <span className="font-bold text-[#9de6f2] relative inline-block">
-              espacios de baño y bienestar
-              <span className="absolute bottom-1.5 left-0 w-full h-[6px] bg-[#087d9f]/30 -z-10 rounded-full" />
+          <h1 className="text-4xl font-extralight tracking-tight text-white sm:text-5xl lg:text-5xl leading-tight max-w-xl">
+            Diseño, confort e innovación <br className="hidden lg:block" />
+            para{" "}
+            <span className="font-bold text-[#9de6f2] underline decoration-[#087d9f]/50 decoration-[4px] sm:decoration-[6px] underline-offset-4 sm:underline-offset-8">
+              espacios de bienestar
             </span>
           </h1>
           
-          <p className="text-base sm:text-lg font-light text-stone-300 leading-relaxed max-w-xl">
-            Fabricamos bañeras, hidromasajes, spas, platos de ducha, columnas, saunas y duchas escocesas con foco en calidad, funcionalidad y diseño.
+          <p className="text-base sm:text-lg lg:text-xl font-light text-stone-300 leading-relaxed max-w-lg">
+            Fabricamos hidromasajes, spas y equipamiento premium. Transformamos tu baño con calidad industrial y diseño de vanguardia.
           </p>
 
           {/* Acciones principales - Botón "¡Contactanos!" estilo pill */}
-          <div className="mt-4 flex flex-wrap gap-4 w-full sm:w-auto">
+          <div className="mt-1 flex flex-wrap gap-4 w-full sm:w-auto">
             <Button
               variant="primary"
               size="lg"
@@ -80,13 +74,13 @@ export function HeroSection() {
           </div>
 
           {/* Estadísticas de Confianza */}
-          <div className="mt-10 pt-10 border-t border-white/10 grid grid-cols-3 gap-6 sm:gap-12 w-full">
+          <div className="mt-4 pt-4 lg:mt-6 lg:pt-6 border-t border-white/10 grid grid-cols-3 gap-4 sm:gap-8 w-full max-w-2xl">
             <div className="flex flex-col gap-1">
               <span className="text-2xl sm:text-3xl font-extrabold text-white leading-none">
                 +30
               </span>
               <span className="text-[10px] sm:text-xs font-semibold text-stone-400 uppercase tracking-wider">
-                Años en el mercado
+                Años
               </span>
             </div>
             <div className="flex flex-col gap-1">
@@ -107,36 +101,11 @@ export function HeroSection() {
             </div>
           </div>
         </div>
- 
-        {/* Columna Derecha: Imagen Destacada del Producto */}
-        <div className="lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[420px] rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-white/5 flex items-center justify-center animate-float-slow group">
-          
-          {/* Círculo decorativo difuso en el interior de fondo */}
-          <div className="absolute top-1/4 left-1/4 w-56 h-56 rounded-full bg-[#087d9f]/20 filter blur-3xl -z-10" />
-
-          {/* Imagen Romana */}
-          <Image
-            src="/romana.png"
-            alt="Bañera Romana Five Saint"
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-          />
-          
-          {/* Micro-insignia flotante de Bienestar */}
-          <div className="absolute bottom-4 left-4 bg-[#01161d]/85 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-sm z-10">
-            <Compass className="h-3.5 w-3.5 text-[#9de6f2] animate-spin-slow" />
-            <span className="text-[9px] uppercase tracking-widest font-bold text-stone-300">
-              Wellness Design
-            </span>
-          </div>
-        </div>
-
       </Container>
 
       {/* Ola decorativa inferior para transicionar fluidamente */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10 translate-y-px pointer-events-none">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[40px] text-white fill-current">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[30px] lg:h-[40px] text-white fill-current">
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C26.9,8.75,57.05,18.3,90.54,26.83,161.76,45,248.8,69.91,321.39,56.44Z" className="fill-[#087d9f]" />
         </svg>
       </div>

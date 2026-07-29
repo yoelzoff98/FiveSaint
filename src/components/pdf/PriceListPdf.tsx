@@ -171,7 +171,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="relative z-10 flex flex-col items-center">
           {/* Imagen del Logo */}
           <div className="mb-20 relative z-10 w-64 h-64 flex justify-center items-center">
-            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-xl" />
+            <img src="/LOGO.svg" alt="Five Saint" className="w-full h-full object-contain drop-shadow-xl" />
           </div>
 
           {/* Título Principal */}
@@ -205,7 +205,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
@@ -457,7 +457,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <span className="text-[8.5px] font-black text-slate-700 leading-[1.1] uppercase tracking-wide">SOPORTE Y<br />ASESORAMIENTO</span>
             </div>
           </div>
-          {renderFooter(undefined, "")}
+          {renderFooter(undefined, "", true, true)}
         </div>
       </div>
 
@@ -466,18 +466,18 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       */}
       {(() => {
         const premiumModels = [
-          { name: "Romana", imagePath: "/images/Beñeras/romana.jpg" },
-          { name: "Perla", imagePath: "/images/Beñeras/Perla.jpg" },
-          { name: "Yaquelin", imagePath: "/images/Beñeras/Yaqueline.jpg" },
-          { name: "Agustar", imagePath: "/images/Beñeras/Agustar.jpg" },
-          { name: "Quadra", imagePath: "/images/Beñeras/quadra.jpg" },
-          { name: "Modena", imagePath: "/images/Beñeras/Modena.jpg" },
-          { name: "Veneto", imagePath: "/images/Beñeras/Veneto.jpg" },
-          { name: "Parma", imagePath: "/images/Beñeras/Parma.jpg" },
-          { name: "Laguna", imagePath: "/images/Beñeras/Laguna.jpg" },
-          { name: "Circular", imagePath: "/images/Beñeras/Circular.jpg" },
-          { name: "Esquinero", imagePath: "/images/Beñeras/Esquinero.jpg" },
-          { name: "Quarzo", imagePath: "/images/Beñeras/Quarzo.jpg" }
+          { name: "Romana", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Romana 160x75.png" },
+          { name: "Perla", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Perla 180x120.png" },
+          { name: "Yaquelin", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/yaquelin 165x120.png" },
+          { name: "Agustar", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Agustar 18.png" },
+          { name: "Quadra", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/quadra.png" },
+          { name: "Modena", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Modena.png" },
+          { name: "Veneto", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/veneto.png" },
+          { name: "Parma", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Parma 180x80.png" },
+          { name: "Laguna", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Laguna.png" },
+          { name: "Circular", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Circular 150x150.png" },
+          { name: "Esquinero", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Esquinero 150x150.png" },
+          { name: "Quarzo", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Quarzo170x83.png" }
         ].map(model => ({
           ...model,
           items: banerasPremiumData.filter(item => item.name === model.name)
@@ -494,7 +494,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <h1 className="text-2xl font-black text-accent-deep uppercase tracking-wide">Bañeras: Configuraciones Premium </h1>
                   </div>
                   <div className="flex items-center gap-4">
-                    <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+                    <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
                   </div>
                 </div>
 
@@ -611,9 +611,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                             </div>
 
                             {/* Bathtub Image */}
-                            <div className={`${pageIndex === 1 ? 'h-[160px]' : 'h-[96px]'} w-full border border-slate-200 bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center relative mb-2 shrink-0`}>
+                            <div className={`${pageIndex === 1 ? 'h-[160px]' : 'h-[96px]'} w-full border border-slate-200 bg-[#06485c] rounded-lg overflow-hidden flex items-center justify-center relative mb-2 shrink-0`}>
                               {group.imagePath ? (
-                                <img src={group.imagePath} alt={group.name} className="w-full h-full object-contain mix-blend-multiply p-2" />
+                                <img src={group.imagePath} alt={group.name} className="w-full h-full object-contain p-2" />
                               ) : (
                                 <div className="flex flex-col items-center justify-center p-2 text-slate-300 h-full w-full">
                                   <svg className="w-6 h-6 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -740,32 +740,32 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         const groupedModels = [
           {
             name: "Romana",
-            image: "/images/Beñeras/romana.jpg",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Romana 160x75.png",
             items: products.filter(p => p.name === "Romana")
           },
           {
             name: "Perla",
-            image: "/images/Beñeras/Perla.jpg",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Perla 180x120.png",
             items: products.filter(p => p.name === "Perla")
           },
           {
             name: "Lady",
-            image: "/images/Beñeras/Lady.jpg",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Lady 160x70.png",
             items: products.filter(p => p.name === "Lady")
           },
           {
             name: "Yaquelin",
-            image: "/images/Beñeras/Yaqueline.jpg",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/yaquelin 165x120.png",
             items: products.filter(p => p.name === "Yaquelin")
           },
           {
             name: "Joya",
-            image: "/images/Beñeras/Joya.jpg",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Joya 160x75.png",
             items: products.filter(p => p.name === "Joya")
           },
           {
             name: "Martina",
-            image: "/images/Beñeras/martina.jpg",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Martina.png",
             items: products.filter(p => p.name.includes("Martina"))
           }
         ];
@@ -859,7 +859,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <span className="text-[10px] font-black uppercase text-accent-deep mt-1 leading-none">8 Jets</span>
               </div>
 
-              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain ml-2 border-l border-slate-200 pl-4" />
+              <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain ml-2 border-l border-slate-200 pl-4" />
             </div>
           </div>
         );
@@ -872,9 +872,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
             <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm flex items-center bg-white py-1 px-2.5 gap-3">
               {/* Left Image Section */}
-              <div className="w-[30%] flex items-center justify-center bg-slate-50/50 rounded-lg p-1.5 border border-slate-100 shrink-0 h-[74px]">
+              <div className={`w-[30%] flex items-center justify-center bg-[#06485c] rounded-lg p-1.5 border border-slate-100 shrink-0 ${isSingle ? 'h-[74px]' : 'self-stretch min-h-[74px]'}`}>
                 {group.image ? (
-                  <img src={group.image} alt={group.name} className="w-full h-full object-contain mix-blend-multiply" />
+                  <img src={group.image} alt={group.name} className="w-full h-full object-contain" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
                     <span className="text-[10px] uppercase font-bold tracking-wider">Sin Foto</span>
@@ -946,7 +946,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         // Helper to render the single-measure models using the same grouped card design
         const renderSingleModelsTable = (models: typeof singleModels, isContinuation = false) => (
-          <div className="mt-1 flex flex-col gap-1">
+          <div className="flex flex-col gap-2 flex-grow justify-between">
             {models.map((p, idx) => {
               const fakeGroup = {
                 name: p.name,
@@ -964,7 +964,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div key="baneras-page-1" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(false)}
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col gap-2.5 flex-grow justify-between pb-2">
                   {renderGroupedCard(groupedModels[0])} {/* Romana */}
                   {renderGroupedCard(groupedModels[1])} {/* Perla */}
                   {renderGroupedCard(groupedModels[2])} {/* Lady */}
@@ -980,12 +980,18 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(true)}
 
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col flex-grow justify-between pb-2">
                   {renderGroupedCard(groupedModels[4])} {/* Joya */}
                   {renderGroupedCard(groupedModels[5])} {/* Martina */}
+                  {singleModels.slice(0, 4).map((p) => {
+                    const fakeGroup = {
+                      name: p.name,
+                      image: p.image || '',
+                      items: [p]
+                    };
+                    return renderGroupedCard(fakeGroup, true);
+                  })}
                 </div>
-
-                {renderSingleModelsTable(singleModels.slice(0, 4), false)}
               </div>
               {/* Footer */}
               {renderFooter(banerasExtraNote, "")}
@@ -995,7 +1001,16 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <div key="baneras-page-3" className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col justify-between p-8">
               <div className="flex flex-col flex-grow">
                 {renderHeaderAndLevels(true)}
-                {renderSingleModelsTable(singleModels.slice(4), true)}
+                <div className="flex flex-col flex-grow justify-between pb-2">
+                  {singleModels.slice(4).map((p) => {
+                    const fakeGroup = {
+                      name: p.name,
+                      image: p.image || '',
+                      items: [p]
+                    };
+                    return renderGroupedCard(fakeGroup, true);
+                  })}
+                </div>
               </div>
               {/* Footer */}
               {renderFooter(banerasExtraNote, "")}
@@ -1024,7 +1039,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   Pensado para una Experiencia Superior
                 </p>
               </div>
-              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+              <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
             </div>
           </div>
 
@@ -1103,7 +1118,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <h1 className="text-2xl font-black text-accent-deep uppercase tracking-wide">OFERTAS</h1>
               </div>
               <div className="flex items-center gap-4">
-                <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+                <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
               </div>
             </div>
 
@@ -1194,7 +1209,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                                 </div>
                               </td>
                             </tr>
-                            <tr className="border-b border-slate-100">
+                            <tr>
                               <td className="py-[2px] text-left font-bold">
                                 <div className="flex items-center gap-1.5">
                                   <EncendidoIcon className="w-3.5 h-3.5 text-accent-deep" />
@@ -1202,29 +1217,6 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                                 </div>
                               </td>
                               <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.encendido}</td>
-                            </tr>
-
-                            <tr className="border-b border-slate-100">
-                              <td className="py-[2px] text-left font-bold">
-                                <div className="flex items-center gap-1.5">
-                                  <SopapaIcon className="w-3.5 h-3.5 text-accent-deep" />
-                                  <span>Sopapa</span>
-                                </div>
-                              </td>
-                              <td className="py-[2px] text-right align-middle">
-                                <div className="flex justify-end">
-                                  {specs.sopapa ? <CheckedCircleIcon size={12} /> : <DashIcon size={12} />}
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="py-[2px] text-left font-bold">
-                                <div className="flex items-center gap-1.5">
-                                  <DesbordeIcon className="w-3.5 h-3.5 text-accent-deep" />
-                                  <span>Desborde</span>
-                                </div>
-                              </td>
-                              <td className="py-[2px] text-right font-medium text-slate-600 align-middle">{specs.desborde}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -1269,7 +1261,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
                 SPA
               </h1>
-              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+              <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
             </div>
           </div>
 
@@ -1383,7 +1375,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               <h1 className="text-5xl font-bold text-white uppercase tracking-widest drop-shadow-md">
                 SPA
               </h1>
-              <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+              <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
             </div>
           </div>
 
@@ -1505,7 +1497,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <>Platos y Columnas <span className="text-xl text-white/70 ml-2"></span></>
                   )}
                 </h1>
-                <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+                <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
               </div>
             </div>
 
@@ -1646,7 +1638,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             <h1 className="text-4xl font-bold text-white uppercase tracking-widest drop-shadow-md">
               {duchaEscocesaData.title}
             </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
@@ -1723,19 +1715,19 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
       */}
       <div className="page-break-after p-0 h-[297mm] max-h-[297mm] w-[210mm] mx-auto bg-white shadow-xl print:shadow-none relative overflow-hidden flex flex-col">
         {/* Banner Superior */}
-        <div className="relative w-full h-32 bg-accent-deep overflow-hidden shrink-0">
+        <div className="relative w-full h-28 bg-accent-deep overflow-hidden shrink-0">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
 
           <div className="absolute inset-0 flex items-center justify-between px-10">
             <h1 className="text-5xl font-bold text-white tracking-widest drop-shadow-md uppercase">
               {saunaData.title}
             </h1>
-            <img src="/logo.png" alt="Five Saint Logo" className="h-16 object-contain" />
+            <img src="/LOGO.svg" alt="Five Saint Logo" className="h-16 object-contain" />
           </div>
         </div>
 
         {/* Imágenes Superiores */}
-        <div className="grid grid-cols-3 grid-rows-2 gap-3 px-10 pt-6 shrink-0 h-[400px]">
+        <div className="grid grid-cols-3 grid-rows-2 gap-3 px-10 pt-4 shrink-0 h-[340px]">
           <div className="col-span-2 row-span-2 bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
             <img src={saunaData.images[0]} alt="Sauna 1" className="w-full h-full object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
           </div>
@@ -1748,7 +1740,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         </div>
 
         {/* Galería Inferior Pequeña */}
-        <div className="grid grid-cols-2 gap-3 px-10 pt-3 shrink-0 h-[100px]">
+        <div className="grid grid-cols-2 gap-3 px-10 pt-2 shrink-0 h-[90px]">
           <div className="bg-slate-50 border border-slate-200 shadow-inner rounded-xl overflow-hidden flex items-center justify-center relative">
             <img src={saunaData.images[3]} alt="Sauna 4" className="w-full h-full object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
           </div>
@@ -1758,9 +1750,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         </div>
 
         {/* Tabla Modelos */}
-        <div className="px-10 pt-4 flex-grow flex flex-col">
+        <div className="px-10 pt-2 flex-grow flex flex-col">
           {/* Cabecera Tabla */}
-          <div className="flex font-bold text-slate-800 text-[13px] mb-2 px-4 border-b-2 border-accent-deep pb-1.5">
+          <div className="flex font-bold text-slate-800 text-[13px] mb-1 px-4 border-b-2 border-accent-deep pb-1.5">
             <div className="w-[25%]">Capacidad</div>
             <div className="w-[20%]">Consumo</div>
             <div className="w-[25%]">Línea</div>
@@ -1768,9 +1760,9 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
 
           {/* Filas */}
-          <div className="flex flex-col gap-2 mt-1">
+          <div className="flex flex-col gap-2 mt-0">
             {saunaData.models.map((model, idx) => (
-              <div key={idx} className="flex bg-slate-50 border border-slate-200 rounded-xl p-3 items-center shadow-sm relative overflow-hidden">
+              <div key={idx} className="flex bg-slate-50 border border-slate-200 rounded-xl p-2 items-center shadow-sm relative overflow-hidden">
                 <div className="w-[25%] flex flex-col gap-1.5 text-[12.5px] text-slate-700 font-medium z-10">
                   <span className="text-[14px] font-bold text-slate-800">{model.capacidad}</span>
                   <div className="flex flex-col">
@@ -1806,10 +1798,10 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
           </div>
 
           {/* Opcionales y Notas */}
-          <div className="flex justify-between items-end mt-4 mb-2">
+          <div className="flex justify-between items-end mt-2 mb-1">
             {/* Opcionales */}
             <div className="w-1/2">
-              <h3 className="text-[16px] font-bold text-slate-800 border-b-2 border-accent-deep pb-1 mb-2 inline-block">Opcionales</h3>
+              <h3 className="text-[16px] font-bold text-slate-800 border-b-2 border-accent-deep pb-1 mb-1 inline-block">Opcionales</h3>
               <div className="flex flex-col gap-1">
                 {saunaData.opcionales.map((opc, idx) => (
                   <div key={idx} className="flex gap-6 text-[13px] text-slate-700">
@@ -1869,7 +1861,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="relative z-10 flex flex-col items-center">
           {/* Imagen del Logo */}
           <div className="mb-20 relative z-10 w-64 h-64 flex justify-center items-center">
-            <img src="/logo.png" alt="Five Saint" className="w-full h-full object-contain drop-shadow-xl" />
+            <img src="/LOGO.svg" alt="Five Saint" className="w-full h-full object-contain drop-shadow-xl" />
           </div>
 
           {/* Título Invisible (Mantiene el logo en la posición exacta que la portada) */}
@@ -1883,10 +1875,10 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
         {/* Contacto */}
         <div className="absolute bottom-16 w-full flex flex-col items-center gap-12 z-10">
-          <div className="flex flex-row justify-center items-start gap-12 w-full max-w-4xl px-8">
+          <div className="flex flex-wrap justify-center items-start gap-y-10 gap-x-8 w-full max-w-4xl px-8">
 
             {/* Contacto 1 - Dirección */}
-            <div className="flex flex-col items-center text-center gap-3 w-48">
+            <div className="flex flex-col items-center text-center gap-3 w-44">
               <div className="w-14 h-14 rounded-full border border-white bg-white/10 flex items-center justify-center text-white shrink-0 shadow-md backdrop-blur-md">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -1895,12 +1887,38 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               <div className="flex flex-col items-center">
                 <span className="font-bold text-white tracking-[0.2em] uppercase text-[10px] mb-1.5">Dirección</span>
-                <span className="text-[12px] font-semibold text-white leading-relaxed">Baradero 1520, B1708 Morón<br />Provincia de Buenos Aires</span>
+                <span className="text-[11.5px] font-semibold text-white leading-relaxed">Baradero 1520, B1708 Morón<br />Provincia de Buenos Aires</span>
               </div>
             </div>
 
-            {/* Contacto 2 - Web */}
-            <div className="flex flex-col items-center text-center gap-3 w-48">
+            {/* Contacto 2 - Teléfono */}
+            <div className="flex flex-col items-center text-center gap-3 w-44">
+              <div className="w-14 h-14 rounded-full border border-white bg-white/10 flex items-center justify-center text-white shrink-0 shadow-md backdrop-blur-md">
+                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="font-bold text-white tracking-[0.2em] uppercase text-[10px] mb-1.5">Teléfono</span>
+                <span className="text-[12.5px] font-bold text-white">011 4697-8966/2900</span>
+              </div>
+            </div>
+
+            {/* Contacto 3 - Correo */}
+            <div className="flex flex-col items-center text-center gap-3 w-44">
+              <div className="w-14 h-14 rounded-full border border-white bg-white/10 flex items-center justify-center text-white shrink-0 shadow-md backdrop-blur-md">
+                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="font-bold text-white tracking-[0.2em] uppercase text-[10px] mb-1.5">Correo</span>
+                <span className="text-[12.5px] font-bold text-white">fivesaint@fivesaint.com</span>
+              </div>
+            </div>
+
+            {/* Contacto 4 - Web */}
+            <div className="flex flex-col items-center text-center gap-3 w-44">
               <div className="w-14 h-14 rounded-full border border-white bg-white/10 flex items-center justify-center text-white shrink-0 shadow-md backdrop-blur-md">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -1908,12 +1926,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
               <div className="flex flex-col items-center">
                 <span className="font-bold text-white tracking-[0.2em] uppercase text-[10px] mb-1.5">Sitio Web</span>
-                <span className="text-[13px] font-bold text-white">www.fivesaint.com</span>
+                <span className="text-[12.5px] font-bold text-white">www.fivesaint.com</span>
               </div>
             </div>
 
-            {/* Contacto 3 - Instagram */}
-            <div className="flex flex-col items-center text-center gap-3 w-48">
+            {/* Contacto 5 - Instagram */}
+            <div className="flex flex-col items-center text-center gap-3 w-44">
               <div className="w-14 h-14 rounded-full border border-white bg-white/10 flex items-center justify-center text-white shrink-0 shadow-md backdrop-blur-md">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.88z" />
@@ -1925,8 +1943,8 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
               </div>
             </div>
 
-            {/* Contacto 4 - YouTube */}
-            <div className="flex flex-col items-center text-center gap-3 w-48">
+            {/* Contacto 6 - YouTube */}
+            <div className="flex flex-col items-center text-center gap-3 w-44">
               <div className="w-14 h-14 rounded-full border border-white bg-white/10 flex items-center justify-center text-white shrink-0 shadow-md backdrop-blur-md">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.498 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
