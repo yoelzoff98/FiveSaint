@@ -71,22 +71,7 @@ const formatMedida = (medida: string) => {
     .trim();
 };
 
-// Helper to render unified footer on content pages
-const renderFooter = (extraNote?: React.ReactNode, paddingClass = "", hideDefaultText = false, hideIvaBadge = false) => {
-  return (
-    <div className={`flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-auto ${paddingClass}`}>
-      <div className="text-[11.5px] font-bold text-slate-700 leading-relaxed max-w-[520px]">
-        {!hideDefaultText && <p>Los precios publicados corresponden a la versión en color blanco.</p>}
-        {extraNote}
-      </div>
-      {!hideIvaBadge && (
-        <div className="bg-accent-gold text-white font-bold px-2.5 py-1 rounded text-[10.5px] uppercase tracking-wider shrink-0">
-          LOS PRECIOS NO INCLUYEN IVA
-        </div>
-      )}
-    </div>
-  );
-};
+// Helper to render unified footer on content pages will be defined inside the component to capture hidePrices.
 
 // Icons for the offer specs table
 const HydroJetsIcon = ({ className = "w-3.5 h-3.5 text-slate-500" }: { className?: string }) => (
@@ -147,7 +132,23 @@ const CheckedCircleIcon = ({ size = 14 }: { size?: number }) => (
   </div>
 );
 
-export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
+export const PriceListPdf = forwardRef<HTMLDivElement, { hidePrices?: boolean }>(({ hidePrices = false }, ref) => {
+  const renderFooter = (extraNote?: React.ReactNode, paddingClass = "", hideDefaultText = false, hideIvaBadge = false) => {
+    return (
+      <div className={`flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-auto ${paddingClass}`}>
+        <div className="text-[11.5px] font-bold text-slate-700 leading-relaxed max-w-[520px]">
+          {!hidePrices && !hideDefaultText && <p>Los precios publicados corresponden a la versión en color blanco.</p>}
+          {extraNote}
+        </div>
+        {!hidePrices && !hideIvaBadge && (
+          <div className="bg-accent-gold text-white font-bold px-2.5 py-1 rounded text-[10.5px] uppercase tracking-wider shrink-0">
+            LOS PRECIOS NO INCLUYEN IVA
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div ref={ref} className="bg-white w-full print:bg-white text-slate-800 text-sm font-sans">
 
@@ -184,7 +185,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         {/* Footer Portada */}
         <div className="absolute bottom-20 w-full flex justify-center z-10">
           <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium px-10 py-4 rounded-full shadow-xl tracking-widest uppercase text-sm flex items-center gap-4">
-            Lista de Precios N°
+            {hidePrices ? 'Catálogo N°' : 'Lista de Precios N°'}
             <div className="bg-accent-gold text-white font-black px-4 py-1 rounded-full shadow-inner text-base">
               17/26
             </div>
@@ -201,7 +202,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
         <div className="border-b border-slate-200 pb-2 mb-0 shrink-0 flex justify-between items-end px-10 pt-8 bg-white relative z-20">
           <div>
             <h1 className="text-[22px] font-black text-accent-deep uppercase tracking-wide">
-              Lista de Precios
+              {hidePrices ? 'Catálogo de Productos' : 'Lista de Precios'}
             </h1>
           </div>
           <div className="flex items-center gap-4">
@@ -251,10 +252,12 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
             </div>
 
             <div className="flex flex-col gap-7 mt-1">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full border-[2.5px] border-accent-deep shrink-0 bg-white"></div>
-                <p className="text-[12px] text-slate-700 font-medium leading-snug pt-1.5">Los precios corresponden a productos en color blanco.</p>
-              </div>
+              {!hidePrices && (
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full border-[2.5px] border-accent-deep shrink-0 bg-white"></div>
+                  <p className="text-[12px] text-slate-700 font-medium leading-snug pt-1.5">Los precios corresponden a productos en color blanco.</p>
+                </div>
+              )}
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 shrink-0 flex items-center justify-center text-accent-deep">
                   <svg className="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -639,15 +642,27 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                                     <tr key={idx} className="hover:bg-slate-50 transition-colors">
                                       <td className="py-1 font-bold text-slate-700 whitespace-nowrap text-[9.5px]">{formatMedida(item.medidas)}</td>
                                       <td className="py-1 text-center">
-                                        <div className="flex flex-col items-center">
-                                          <span className="font-black text-[#006d9c] leading-none text-[9.5px]">{item.confortPrice}</span>
-                                          <span className="text-[9.5px] font-mono text-slate-700 font-bold mt-0.5 leading-none">{item.confortCode}</span>
+                                        <div className="flex flex-col items-center justify-center min-h-[22px]">
+                                          {!hidePrices ? (
+                                            <>
+                                              <span className="font-black text-[#006d9c] leading-none text-[9.5px]">{item.confortPrice}</span>
+                                              <span className="text-[9.5px] font-mono text-slate-700 font-bold mt-0.5 leading-none">{item.confortCode}</span>
+                                            </>
+                                          ) : (
+                                            <span className="text-[13px] font-mono text-[#006d9c] font-black leading-none">{item.confortCode}</span>
+                                          )}
                                         </div>
                                       </td>
                                       <td className="py-1 text-center">
-                                        <div className="flex flex-col items-center">
-                                          <span className="font-black text-slate-800 leading-none text-[9.5px]">{item.confortPlusPrice}</span>
-                                          <span className="text-[9.5px] font-mono text-slate-700 font-bold mt-0.5 leading-none">{item.confortPlusCode}</span>
+                                        <div className="flex flex-col items-center justify-center min-h-[22px]">
+                                          {!hidePrices ? (
+                                            <>
+                                              <span className="font-black text-slate-800 leading-none text-[9.5px]">{item.confortPlusPrice}</span>
+                                              <span className="text-[9.5px] font-mono text-slate-700 font-bold mt-0.5 leading-none">{item.confortPlusCode}</span>
+                                            </>
+                                          ) : (
+                                            <span className="text-[13px] font-mono text-[#d0a65c] font-black leading-none">{item.confortPlusCode}</span>
+                                          )}
                                         </div>
                                       </td>
                                     </tr>
@@ -911,27 +926,67 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                             )}
                           </td>
                           <td className="py-1 px-2 font-medium text-slate-600 text-center border-r border-slate-200 text-[9px]">
-                            <div className="flex flex-col items-center">
-                              <span className="text-[10px] font-black text-slate-900">{item.cascos || '-'}</span>
-                              {item.cascosCode && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.cascosCode}</span>}
+                            <div className="flex flex-col items-center justify-center min-h-[22px]">
+                              {!hidePrices ? (
+                                <>
+                                  <span className="text-[10px] font-black text-slate-900">{item.cascos || '-'}</span>
+                                  {item.cascosCode && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.cascosCode}</span>}
+                                </>
+                              ) : (
+                                item.cascosCode ? (
+                                  <span className="text-[13px] font-mono text-slate-800 font-black leading-none">{item.cascosCode}</span>
+                                ) : (
+                                  <span className="text-slate-350 font-bold leading-none select-none">—</span>
+                                )
+                              )}
                             </div>
                           </td>
                           <td className="py-1 px-2 text-center border-r border-slate-200 text-[9px]">
-                            <div className="flex flex-col items-center">
-                              {renderPrice(item.jet4, "text-[10px]", "font-black text-slate-900")}
-                              {item.jet4Code && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet4Code}</span>}
+                            <div className="flex flex-col items-center justify-center min-h-[22px]">
+                              {!hidePrices ? (
+                                <>
+                                  {renderPrice(item.jet4, "text-[10px]", "font-black text-slate-900")}
+                                  {item.jet4Code && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet4Code}</span>}
+                                </>
+                              ) : (
+                                item.jet4Code ? (
+                                  <span className="text-[13px] font-mono text-slate-800 font-black leading-none">{item.jet4Code}</span>
+                                ) : (
+                                  <span className="text-slate-350 font-bold leading-none select-none">—</span>
+                                )
+                              )}
                             </div>
                           </td>
                           <td className="py-1 px-2 text-center border-r border-slate-200 text-[9px]">
-                            <div className="flex flex-col items-center">
-                              {renderPrice(item.jet6, "text-[10px]", "font-black text-slate-900")}
-                              {item.jet6Code && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet6Code}</span>}
+                            <div className="flex flex-col items-center justify-center min-h-[22px]">
+                              {!hidePrices ? (
+                                <>
+                                  {renderPrice(item.jet6, "text-[10px]", "font-black text-slate-900")}
+                                  {item.jet6Code && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet6Code}</span>}
+                                </>
+                              ) : (
+                                item.jet6Code ? (
+                                  <span className="text-[13px] font-mono text-slate-800 font-black leading-none">{item.jet6Code}</span>
+                                ) : (
+                                  <span className="text-slate-350 font-bold leading-none select-none">—</span>
+                                )
+                              )}
                             </div>
                           </td>
                           <td className="py-1 px-2 bg-accent-deep/5 text-center text-[9px]">
-                            <div className="flex flex-col items-center">
-                              {renderPrice(item.jet8, "text-[10px]", "font-black text-accent-deep")}
-                              {item.jet8Code && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet8Code}</span>}
+                            <div className="flex flex-col items-center justify-center min-h-[22px]">
+                              {!hidePrices ? (
+                                <>
+                                  {renderPrice(item.jet8, "text-[10px]", "font-black text-accent-deep")}
+                                  {item.jet8Code && <span className="text-[9.5px] font-mono text-slate-600 font-semibold mt-0.5 leading-none">{item.jet8Code}</span>}
+                                </>
+                              ) : (
+                                item.jet8Code ? (
+                                  <span className="text-[13px] font-mono text-accent-deep font-black leading-none">{item.jet8Code}</span>
+                                ) : (
+                                  <span className="text-slate-350 font-bold leading-none select-none">—</span>
+                                )
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -1070,11 +1125,17 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <div className="flex justify-between items-end gap-2">
                         <h3 className="text-[9.5px] font-black text-accent-deep leading-tight uppercase line-clamp-2 pr-1">{e.nombre}</h3>
-                        <span className="text-accent-gold font-black text-[11px] whitespace-nowrap shrink-0 leading-none">{e.precio}</span>
+                        {hidePrices ? (
+                          <span className="text-[11px] font-mono text-slate-800 font-black whitespace-nowrap shrink-0 leading-none">{e.codigo}</span>
+                        ) : (
+                          <span className="text-accent-gold font-black text-[11px] whitespace-nowrap shrink-0 leading-none">{e.precio}</span>
+                        )}
                       </div>
                       <div className="flex justify-between items-center mt-1 gap-2">
                         <p className="text-[8.5px] text-slate-600 leading-none truncate flex-1 font-medium">{e.descripcion || " "}</p>
-                        <span className="text-[9px] text-slate-600 font-mono tracking-tighter bg-slate-150 px-1.5 py-[1px] rounded font-bold shrink-0 leading-none">Ref: {e.codigo}</span>
+                        {!hidePrices && (
+                          <span className="text-[9px] text-slate-600 font-mono tracking-tighter bg-slate-150 px-1.5 py-[1px] rounded font-bold shrink-0 leading-none">Ref: {e.codigo}</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1222,15 +1283,27 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         </table>
                       </div>
 
-                      {/* Precio */}
+                      {/* Precio o Código */}
                       <div className="flex justify-between items-center mt-1 pt-1 border-t border-slate-100 shrink-0">
                         <div className="flex flex-col">
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PRECIO PROMOCIONAL</span>
-                          {oferta.code && <span className="text-[10px] text-slate-500 font-mono mt-0.5">{oferta.code}</span>}
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                            {hidePrices ? 'CÓDIGO DE REFERENCIA' : 'PRECIO PROMOCIONAL'}
+                          </span>
+                          {!hidePrices && oferta.code && (
+                            <span className="text-[10px] text-slate-500 font-mono mt-0.5">{oferta.code}</span>
+                          )}
                         </div>
-                        <div className="bg-accent-deep text-white font-black text-sm py-1.5 px-6 rounded-full shadow-sm tracking-wider">
-                          {oferta.precio}
-                        </div>
+                        {hidePrices ? (
+                          oferta.code && (
+                            <div className="bg-slate-150 text-slate-800 font-mono font-black text-[13px] py-1 px-4 rounded-xl border border-slate-200 tracking-wider shadow-inner">
+                              {oferta.code}
+                            </div>
+                          )
+                        ) : (
+                          <div className="bg-accent-deep text-white font-black text-sm py-1.5 px-6 rounded-full shadow-sm tracking-wider">
+                            {oferta.precio}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -1324,9 +1397,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-2">
                     <div className="flex justify-between items-center gap-2">
                       {spa.prices.map((p, pIdx) => (
-                        <div key={pIdx} className="flex-1 flex flex-col items-center bg-white border border-slate-200 rounded p-1 shadow-sm">
-                          <span className="text-[9px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
-                          <span className="text-[11px] font-black text-accent-deep">{p.price}</span>
+                        <div key={pIdx} className="flex-1 flex flex-col items-center justify-center bg-white border border-slate-200 rounded p-1 shadow-sm min-h-[34px]">
+                          {!hidePrices ? (
+                            <>
+                              <span className="text-[9px] text-slate-400 font-mono font-bold mb-0.5">{p.code}</span>
+                              <span className="text-[11px] font-black text-accent-deep">{p.price}</span>
+                            </>
+                          ) : (
+                            <span className="text-[12.5px] font-mono text-slate-800 font-black leading-none py-1">{p.code}</span>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -1348,8 +1427,14 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
                     <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
-                      <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                      {hidePrices ? (
+                        <span className="text-[12px] font-mono text-slate-800 font-black w-24 text-right">{opc.code}</span>
+                      ) : (
+                        <>
+                          <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
+                          <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -1433,9 +1518,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   {/* Precios (Footer de tabla) */}
                   <div className="mt-auto bg-accent-soft/30 border-t border-slate-200 p-4">
                     <div className="flex justify-center items-center gap-2">
-                      <div className="w-full flex items-center justify-between bg-white border border-slate-200 rounded p-3 shadow-md">
-                        <span className="text-[9.5px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
-                        <span className="text-[16px] font-black text-accent-deep">{spa.prices[0].price}</span>
+                      <div className="w-full flex items-center justify-center bg-white border border-slate-200 rounded p-3 shadow-md min-h-[50px]">
+                        {!hidePrices ? (
+                          <div className="flex items-center justify-between w-full">
+                            <span className="text-[9.5px] text-slate-400 font-mono font-bold">{spa.prices[0].code}</span>
+                            <span className="text-[16px] font-black text-accent-deep">{spa.prices[0].price}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[15px] font-mono text-slate-800 font-black tracking-wider">{spa.prices[0].code}</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1456,8 +1547,14 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                   <div key={oIdx} className="flex justify-between items-center border-b border-slate-200/60 pb-0.5">
                     <span className="text-[11.5px] font-bold text-slate-700">{opc.name}</span>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
-                      <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                      {hidePrices ? (
+                        <span className="text-[12px] font-mono text-slate-800 font-black w-24 text-right">{opc.code}</span>
+                      ) : (
+                        <>
+                          <span className="text-[10px] font-mono text-slate-400">{opc.code}</span>
+                          <span className="text-[11.5px] font-black text-accent-deep w-24 text-right whitespace-nowrap">{opc.price}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -1530,23 +1627,23 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                         <table className="w-full text-left border-collapse bg-white text-[9.5px]">
                           <thead className="bg-accent-deep text-white">
                             <tr>
-                              <th className="py-1.5 px-3 font-semibold uppercase">Cód.</th>
+                              <th className={`py-1.5 px-3 font-semibold uppercase ${hidePrices ? 'text-[11px]' : ''}`}>Cód.</th>
                               <th className="py-1.5 px-2 text-center font-semibold uppercase">Largo</th>
                               <th className="py-1.5 px-2 text-center font-semibold uppercase">Ancho</th>
                               <th className="py-1.5 px-2 text-center font-semibold uppercase">Alto</th>
                               <th className="py-1.5 px-2 text-center font-semibold uppercase">Prof.</th>
-                              <th className="py-1.5 px-3 text-right font-semibold uppercase">Precio</th>
+                              {!hidePrices && <th className="py-1.5 px-3 text-right font-semibold uppercase">Precio</th>}
                             </tr>
                           </thead>
                           <tbody>
                             {cat.items.map((item, iIdx) => (
                               <tr key={iIdx} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                                <td className="py-1 px-3 text-slate-500 font-mono font-bold">{item.code}</td>
+                                <td className={`py-1 px-3 text-slate-850 font-mono font-black ${hidePrices ? 'text-[12px]' : 'text-slate-500 font-bold'}`}>{item.code}</td>
                                 <td className="py-1 px-2 text-center text-slate-700">{item.largo}</td>
                                 <td className="py-1 px-2 text-center text-slate-700">{item.ancho}</td>
                                 <td className="py-1 px-2 text-center text-slate-700">{item.altura}</td>
                                 <td className="py-1 px-2 text-center text-slate-700">{item.profundidad}</td>
-                                <td className="py-1 px-3 text-right font-black text-accent-deep">{item.price}</td>
+                                {!hidePrices && <td className="py-1 px-3 text-right font-black text-accent-deep">{item.price}</td>}
                               </tr>
                             ))}
                           </tbody>
@@ -1555,17 +1652,21 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
                       {/* Accesorio Desagüe */}
                       {cat.desagueCode && (
-                        <div className="bg-slate-50 border border-slate-200 rounded-lg p-2 flex justify-between items-center shadow-sm">
+                        <div className="bg-slate-50 border border-slate-200 rounded-lg p-2 flex justify-between items-center shadow-sm min-h-[42px]">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-white rounded-full border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
                               <img src="/images/Platos de Ducha/desague.png" alt="Desagüe" className="w-6 h-6 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
                             </div>
                             <div>
                               <h4 className="text-[10px] font-bold text-slate-800 uppercase leading-none">Desagüe</h4>
-                              <span className="text-[9.5px] font-mono text-slate-500 leading-normal">{cat.desagueCode}</span>
+                              {!hidePrices ? (
+                                <span className="text-[9.5px] font-mono text-slate-500 leading-normal">{cat.desagueCode}</span>
+                              ) : (
+                                <span className="text-[12px] font-mono text-slate-800 font-black leading-normal">{cat.desagueCode}</span>
+                              )}
                             </div>
                           </div>
-                          <span className="text-[11px] font-black text-accent-deep">{cat.desaguePrice}</span>
+                          {!hidePrices && <span className="text-[11px] font-black text-accent-deep">{cat.desaguePrice}</span>}
                         </div>
                       )}
                     </div>
@@ -1598,9 +1699,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
 
                         {/* Tarjeta de Información */}
                         <div className="w-full flex flex-col items-center text-center">
-                          <span className="text-accent-deep font-mono font-bold text-[9.5px] bg-accent-soft px-1.5 py-0.5 rounded-full mb-1 tracking-wider leading-none">
-                            {columna.code}
-                          </span>
+                          {!hidePrices ? (
+                            <span className="text-accent-deep font-mono font-bold text-[9.5px] bg-accent-soft px-1.5 py-0.5 rounded-full mb-1 tracking-wider leading-none">
+                              {columna.code}
+                            </span>
+                          ) : (
+                            <span className="text-slate-850 font-mono font-black text-[12.5px] bg-slate-200 border border-slate-350 px-2 py-1 rounded-md mb-2 tracking-wider leading-none">
+                              {columna.code}
+                            </span>
+                          )}
 
                           <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-wide leading-none mb-0.5">
                             {columna.name}
@@ -1609,9 +1716,11 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                             {columna.description}
                           </p>
 
-                          <div className="w-full bg-accent-deep text-white font-black text-[9.5px] py-0.5 rounded-lg shadow-sm tracking-wider">
-                            {columna.price}
-                          </div>
+                          {!hidePrices && (
+                            <div className="w-full bg-accent-deep text-white font-black text-[9.5px] py-0.5 rounded-lg shadow-sm tracking-wider">
+                              {columna.price}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -1673,9 +1782,15 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {}>((props, ref) => {
                 <p className="text-[13.5px] text-slate-600 leading-relaxed whitespace-pre-line text-justify mb-6 min-h-[100px]">
                   {model.description}
                 </p>
-                <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-inner flex justify-between gap-2 shrink-0 items-center">
-                  <span className="text-[13.5px] font-mono font-bold text-slate-500">{model.code}</span>
-                  <span className="text-[19px] font-black text-slate-800">{model.price}</span>
+                <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-inner flex justify-center gap-2 shrink-0 items-center min-h-[50px]">
+                  {!hidePrices ? (
+                    <div className="flex justify-between w-full items-center">
+                      <span className="text-[13.5px] font-mono font-bold text-slate-500">{model.code}</span>
+                      <span className="text-[19px] font-black text-slate-800">{model.price}</span>
+                    </div>
+                  ) : (
+                    <span className="text-[17px] font-mono font-black text-slate-800 tracking-wider">{model.code}</span>
+                  )}
                 </div>
               </div>
             ))}
