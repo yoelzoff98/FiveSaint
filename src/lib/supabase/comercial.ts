@@ -670,48 +670,59 @@ export async function getPublicBudgetById(id: string) {
  * y añade una anotación de seguimiento automática en el CRM.
  */
 export async function incrementBudgetViewCount(id: string) {
-  const supabase = createSupabaseAdminClient();
-
-  // 1. Obtener datos actuales del presupuesto
-  const { data: current, error: getErr } = await supabase
-    .from("budgets")
-    .select("view_count, viewed_at, client_id, seller_id, budget_number")
-    .eq("id", id)
-    .single();
-
-  if (getErr || !current) return null;
-
-  const nextCount = (current.view_count || 0) + 1;
-  const firstViewedAt = current.viewed_at || new Date().toISOString();
-
-  // 2. Actualizar analíticas del presupuesto
-  const { data: updated, error: updateErr } = await supabase
-    .from("budgets")
-    .update({
-      view_count: nextCount,
-      viewed_at: firstViewedAt,
-      updated_at: new Date().toISOString()
-    })
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (updateErr) return null;
-
   try {
-    // 3. Registrar nota de seguimiento automática en el CRM
-    await supabase
-      .from("client_notes")
-      .insert([{
-        client_id: current.client_id,
-        seller_id: current.seller_id,
-        content: `El cliente visualizó el presupuesto online N° ${current.budget_number} (Visita #${nextCount}).`,
-        contacted_at: new Date().toISOString()
-      }]);
-  } catch (noteErr) {
-    console.error("Error al guardar nota automática de visualización:", noteErr);
-  }
+    const supabase = createSupabaseAdminClient();
 
-  return updated;
+    // 1. Obtener datos actuales del presupuesto
+    const { data: current, error: getErr } = await supabase
+      .from("budgets")
+      .select("view_count, viewed_at, client_id, seller_id, budget_number")
+      .eq("id", id)
+      .single();
+
+    if (getErr || !current) {
+      console.error("Error al consultar vistas de presupuesto:", getErr);
+      return null;
+    }
+
+    const nextCount = (current.view_count || 0) + 1;
+    const firstViewedAt = current.viewed_at || new Date().toISOString();
+
+    // 2. Actualizar analíticas del presupuesto
+    const { data: updated, error: updateErr } = await supabase
+      .from("budgets")
+      .update({
+        view_count: nextCount,
+        viewed_at: firstViewedAt,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (updateErr) {
+      console.error("Error al actualizar vistas de presupuesto:", updateErr);
+      return null;
+    }
+
+    try {
+      // 3. Registrar nota de seguimiento automática en el CRM
+      await supabase
+        .from("client_notes")
+        .insert([{
+          client_id: current.client_id,
+          seller_id: current.seller_id,
+          content: `El cliente visualizó el presupuesto online N° ${current.budget_number} (Visita #${nextCount}).`,
+          contacted_at: new Date().toISOString()
+        }]);
+    } catch (noteErr) {
+      console.error("Error al guardar nota automática de visualización:", noteErr);
+    }
+
+    return updated;
+  } catch (err) {
+    console.error("Error catastrófico en incrementBudgetViewCount:", err);
+    return null;
+  }
 }
 
