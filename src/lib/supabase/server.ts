@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 
 /**
  * Cliente de Supabase para su uso en Server Components, Server Actions o Route Handlers.
@@ -31,3 +32,21 @@ export async function createSupabaseServerClient() {
     }
   )
 }
+
+/**
+ * Cliente de Supabase con privilegios de Administrador (Bypass RLS y Auth Admin API).
+ * Requiere la variable SUPABASE_SERVICE_ROLE_KEY y solo debe llamarse desde Server Actions o API Routes.
+ */
+export function createSupabaseAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
+
