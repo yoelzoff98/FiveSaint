@@ -193,34 +193,42 @@ export async function createClient(clientData: {
   phone?: string;
   address?: string;
   notes?: string;
+  status?: string;
+  source?: string;
   seller_id?: string;
 }) {
-  const ctx = await requireCommercialUser();
-  const supabase = createSupabaseAdminClient();
+  try {
+    const ctx = await requireCommercialUser();
+    const supabase = createSupabaseAdminClient();
 
-  // Si es vendedor, el cliente se le asigna automáticamente a sí mismo
-  const sellerId = ctx.isSeller ? ctx.sellerId : clientData.seller_id;
+    // Si es vendedor, el cliente se le asigna automáticamente a sí mismo
+    const sellerId = ctx.isSeller ? ctx.sellerId : clientData.seller_id;
 
-  const { data, error } = await supabase
-    .from("clients")
-    .insert([{
-      name: clientData.name,
-      company_name: clientData.company_name || null,
-      email: clientData.email || null,
-      phone: clientData.phone || null,
-      address: clientData.address || null,
-      notes: clientData.notes || null,
-      seller_id: sellerId || null,
-      status: "active"
-    }])
-    .select()
-    .single();
+    const { data, error } = await supabase
+      .from("clients")
+      .insert([{
+        name: clientData.name,
+        company_name: clientData.company_name || null,
+        email: clientData.email || null,
+        phone: clientData.phone || null,
+        address: clientData.address || null,
+        notes: clientData.notes || null,
+        seller_id: sellerId || null,
+        status: clientData.status || "nuevo",
+        source: clientData.source || "manual"
+      }])
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error createClient:", error);
-    throw new Error("Error al crear cliente");
+    if (error) {
+      console.error("Error createClient:", error);
+      return { error: `DB Error: ${error.message} - ${error.details}` };
+    }
+    return { data };
+  } catch (err: any) {
+    console.error("Exception in createClient:", err);
+    return { error: err.message || String(err) };
   }
-  return data;
 }
 
 export async function updateClient(
@@ -233,19 +241,21 @@ export async function updateClient(
     address?: string;
     notes?: string;
     status: string;
+    source?: string;
     seller_id?: string;
   }
 ) {
   const ctx = await requireCommercialUser();
   const supabase = createSupabaseAdminClient();
 
-  // Validar propiedad si es vendedor
-  if (ctx.isSeller) {
-    const existing = await getClientById(id);
-    if (existing.seller_id !== ctx.sellerId) {
-      throw new Error("No autorizado para editar este cliente");
+  try {
+    // Validar propiedad si es vendedor
+    if (ctx.isSeller) {
+      const existing = await getClientById(id);
+      if (existing.seller_id !== ctx.sellerId) {
+        return { error: "No autorizado para editar este cliente" };
+      }
     }
-  }
 
   const updateFields: Record<string, unknown> = {
     name: clientData.name,
@@ -255,6 +265,7 @@ export async function updateClient(
     address: clientData.address || null,
     notes: clientData.notes || null,
     status: clientData.status,
+    source: clientData.source || "manual",
     updated_at: new Date().toISOString()
   };
 
@@ -263,18 +274,22 @@ export async function updateClient(
     updateFields.seller_id = clientData.seller_id || null;
   }
 
-  const { data, error } = await supabase
-    .from("clients")
-    .update(updateFields)
-    .eq("id", id)
-    .select()
-    .single();
+    const { data, error } = await supabase
+      .from("clients")
+      .update(updateFields)
+      .eq("id", id)
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error updateClient:", error);
-    throw new Error("Error al actualizar cliente");
+    if (error) {
+      console.error("Error updateClient:", error);
+      return { error: `DB Error: ${error.message} - ${error.details}` };
+    }
+    return { data };
+  } catch (err: any) {
+    console.error("Exception in updateClient:", err);
+    return { error: err.message || String(err) };
   }
-  return data;
 }
 
 // =========================================================================
@@ -309,6 +324,9 @@ export async function createClientNote(noteData: {
   content: string;
   contacted_at: string;
   next_contact_date?: string;
+  note_type?: string;
+  budget_id?: string;
+  order_id?: string;
 }) {
   const ctx = await requireCommercialUser();
   const supabase = createSupabaseAdminClient();
@@ -323,7 +341,10 @@ export async function createClientNote(noteData: {
       seller_id: ctx.isSeller ? ctx.sellerId : null,
       content: noteData.content,
       contacted_at: noteData.contacted_at,
-      next_contact_date: noteData.next_contact_date || null
+      next_contact_date: noteData.next_contact_date || null,
+      note_type: noteData.note_type || "manual",
+      budget_id: noteData.budget_id || null,
+      order_id: noteData.order_id || null
     }])
     .select()
     .single();
@@ -409,13 +430,23 @@ export interface BudgetInputItem {
 export async function createBudget(
   clientId: string,
   items: BudgetInputItem[],
-  notes?: string
+  notes?: string,
+  discounts: number[] = []
 ) {
   const ctx = await requireCommercialUser();
   const supabase = createSupabaseAdminClient();
 
   const client = await getClientById(clientId);
-  const totalAmount = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+  let totalAmount = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+
+  // Aplicar descuentos en cascada
+  if (discounts && discounts.length > 0) {
+    discounts.forEach(discount => {
+      if (discount > 0) {
+        totalAmount = totalAmount * (1 - discount / 100);
+      }
+    });
+  }
 
   const { data: budget, error: budgetError } = await supabase
     .from("budgets")
@@ -424,7 +455,8 @@ export async function createBudget(
       seller_id: ctx.isSeller ? ctx.sellerId : client.seller_id,
       status: "draft",
       total_amount: totalAmount,
-      notes: notes || null
+      notes: notes || null,
+      discounts: discounts || []
     }])
     .select()
     .single();
@@ -455,14 +487,35 @@ export async function createBudget(
     throw new Error("Error al guardar ítems del presupuesto");
   }
 
+  // Registrar nota automática de creación de presupuesto en el CRM
+  try {
+    const formattedAmount = new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+    }).format(totalAmount);
+
+    await supabase
+      .from("client_notes")
+      .insert([{
+        client_id: clientId,
+        seller_id: ctx.isSeller ? ctx.sellerId : client.seller_id,
+        content: `Se creó el presupuesto borrador N° ${budget.budget_number} por un monto total de ${formattedAmount}.`,
+        contacted_at: new Date().toISOString(),
+        note_type: "budget_created",
+        budget_id: budget.id
+      }]);
+  } catch (noteErr) {
+    console.error("Error al registrar nota automática de presupuesto:", noteErr);
+  }
+
   return budget;
 }
 
 export async function updateBudgetStatus(id: string, status: string) {
-  await requireCommercialUser();
+  const ctx = await requireCommercialUser();
   const supabase = createSupabaseAdminClient();
 
-  await getBudgetById(id);
+  const budget = await getBudgetById(id);
 
   const { data, error } = await supabase
     .from("budgets")
@@ -475,6 +528,63 @@ export async function updateBudgetStatus(id: string, status: string) {
     console.error("Error updateBudgetStatus:", error);
     throw new Error("Error al actualizar estado del presupuesto");
   }
+
+  // Registrar en el CRM según el nuevo estado
+  let noteType = "system";
+  let content = "";
+  const formattedAmount = new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+  }).format(budget.total_amount);
+
+  if (status === "sent") {
+    noteType = "budget_sent";
+    content = `El presupuesto N° ${budget.budget_number} (${formattedAmount}) fue marcado como ENVIADO al cliente.`;
+  } else if (status === "accepted") {
+    noteType = "budget_accepted";
+    content = `El cliente ACEPTÓ el presupuesto N° ${budget.budget_number} (${formattedAmount}).`;
+  } else if (status === "rejected") {
+    noteType = "budget_rejected";
+    content = `El presupuesto N° ${budget.budget_number} (${formattedAmount}) fue RECHAZADO.`;
+  } else if (status === "converted") {
+    noteType = "order_created";
+    content = `El presupuesto N° ${budget.budget_number} fue CONVERTIDO a pedido de fábrica.`;
+  }
+
+  if (content) {
+    try {
+      await supabase
+        .from("client_notes")
+        .insert([{
+          client_id: budget.client_id,
+          seller_id: ctx.isSeller ? ctx.sellerId : budget.seller_id,
+          content,
+          contacted_at: new Date().toISOString(),
+          note_type: noteType,
+          budget_id: budget.id
+        }]);
+
+      // Cambiar automáticamente el estado del cliente en el CRM
+      let newClientStatus = "";
+      if (status === "sent") {
+        newClientStatus = "presupuestado";
+      } else if (status === "converted" || status === "accepted") {
+        newClientStatus = "ganado";
+      } else if (status === "rejected") {
+        newClientStatus = "negociacion";
+      }
+
+      if (newClientStatus) {
+        await supabase
+          .from("clients")
+          .update({ status: newClientStatus, updated_at: new Date().toISOString() })
+          .eq("id", budget.client_id);
+      }
+    } catch (noteErr) {
+      console.error("Error al registrar nota automática al actualizar presupuesto:", noteErr);
+    }
+  }
+
   return data;
 }
 
@@ -627,6 +737,33 @@ export async function convertBudgetToOrder(
     .update({ status: "converted", updated_at: new Date().toISOString() })
     .eq("id", budgetId);
 
+  // Registrar nota automática de pedido generado y cambiar estado del cliente a ganado en el CRM
+  try {
+    const formattedAmount = new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+    }).format(totalAmount);
+
+    await supabase
+      .from("client_notes")
+      .insert([{
+        client_id: budget.client_id,
+        seller_id: budget.seller_id,
+        content: `Se generó el pedido de fábrica N° ${order.order_number} desde el presupuesto N° ${budget.budget_number} por un monto total de ${formattedAmount}.`,
+        contacted_at: new Date().toISOString(),
+        note_type: "order_created",
+        budget_id: budget.id,
+        order_id: order.id
+      }]);
+
+    await supabase
+      .from("clients")
+      .update({ status: "ganado", updated_at: new Date().toISOString() })
+      .eq("id", budget.client_id);
+  } catch (noteErr) {
+    console.error("Error al registrar notas automáticas en convertBudgetToOrder:", noteErr);
+  }
+
   return order;
 }
 
@@ -713,7 +850,9 @@ export async function incrementBudgetViewCount(id: string) {
           client_id: current.client_id,
           seller_id: current.seller_id,
           content: `El cliente visualizó el presupuesto online N° ${current.budget_number} (Visita #${nextCount}).`,
-          contacted_at: new Date().toISOString()
+          contacted_at: new Date().toISOString(),
+          note_type: "budget_viewed",
+          budget_id: id
         }]);
     } catch (noteErr) {
       console.error("Error al guardar nota automática de visualización:", noteErr);

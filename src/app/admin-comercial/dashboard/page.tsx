@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { Users, FileText, ShoppingBag, DollarSign, PlusSquare, Receipt, ArrowRight } from "lucide-react";
+import { SellerDashboard } from "./SellerDashboard";
 
 export default async function DashboardPage() {
   const ctx = await requireCommercialUser();
@@ -94,55 +95,68 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        {/* Accesos rápidos */}
-        <div className="bg-white border border-stone-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-stone-800 mb-4">Acciones Comerciales Rápidas</h2>
-          <div className="flex flex-wrap gap-4">
-            <Button variant="primary" asChild className="cursor-pointer">
-              <Link href="/admin-comercial/presupuestos/nuevo" className="flex items-center gap-2">
-                <PlusSquare className="w-4 h-4" />
-                Crear Nuevo Presupuesto
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="cursor-pointer">
-              <Link href="/admin-comercial/clientes" className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                Registrar / Gestionar Clientes
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="cursor-pointer">
-              <Link href="/admin-comercial/lista-de-precios" className="flex items-center gap-2">
-                <Receipt className="w-4 h-4" />
-                Consultar Lista de Precios
-              </Link>
-            </Button>
+        {/* Contenido Dinámico según Rol */}
+        {!ctx.isAdmin ? (
+          <div className="mt-2">
+            <SellerDashboard 
+              clients={clients as any} 
+              budgets={budgets as any} 
+              profileName={ctx.profileName || "Vendedor"} 
+            />
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Accesos rápidos (Solo Admin) */}
+            <div className="bg-white border border-stone-200 rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-stone-800 mb-4">Acciones Comerciales Rápidas</h2>
+              <div className="flex flex-wrap gap-4">
+                <Button variant="primary" asChild className="cursor-pointer">
+                  <Link href="/admin-comercial/presupuestos/nuevo" className="flex items-center gap-2">
+                    <PlusSquare className="w-4 h-4" />
+                    Crear Nuevo Presupuesto
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild className="cursor-pointer">
+                  <Link href="/admin-comercial/clientes" className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Registrar / Gestionar Clientes
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild className="cursor-pointer">
+                  <Link href="/admin-comercial/lista-de-precios" className="flex items-center gap-2">
+                    <Receipt className="w-4 h-4" />
+                    Consultar Lista de Precios
+                  </Link>
+                </Button>
+              </div>
+            </div>
 
-        {/* Breve guía de flujo */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="border border-stone-200 rounded-xl p-6 bg-white shadow-xs">
-            <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-bold text-stone-800 mb-4">1</div>
-            <h3 className="font-bold text-stone-900">Registrar Cliente</h3>
-            <p className="text-sm text-stone-500 mt-2">
-              Ingresá al cliente en tu cartera comercial para llevar el registro de sus contactos, consultas y anotaciones.
-            </p>
-          </div>
-          <div className="border border-stone-200 rounded-xl p-6 bg-white shadow-xs">
-            <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-bold text-stone-800 mb-4">2</div>
-            <h3 className="font-bold text-stone-900">Armar Presupuesto</h3>
-            <p className="text-sm text-stone-500 mt-2">
-              Cotizá bañeras, equipamiento opcional y spas. Podés exportar el presupuesto en PDF para enviárselo directamente al cliente.
-            </p>
-          </div>
-          <div className="border border-stone-200 rounded-xl p-6 bg-white shadow-xs">
-            <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-bold text-stone-800 mb-4">3</div>
-            <h3 className="font-bold text-stone-900">Confirmar Pedido</h3>
-            <p className="text-sm text-stone-500 mt-2">
-              Cuando el cliente confirme el presupuesto, convertilo en Pedido. Podés realizar conversiones parciales si decide fabricar solo algunos productos.
-            </p>
-          </div>
-        </div>
+            {/* Breve guía de flujo (Solo Admin) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="border border-stone-200 rounded-xl p-6 bg-white shadow-xs">
+                <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-bold text-stone-800 mb-4">1</div>
+                <h3 className="font-bold text-stone-900">Registrar Cliente</h3>
+                <p className="text-sm text-stone-500 mt-2">
+                  Ingresá al cliente en tu cartera comercial para llevar el registro de sus contactos, consultas y anotaciones.
+                </p>
+              </div>
+              <div className="border border-stone-200 rounded-xl p-6 bg-white shadow-xs">
+                <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-bold text-stone-800 mb-4">2</div>
+                <h3 className="font-bold text-stone-900">Armar Presupuesto</h3>
+                <p className="text-sm text-stone-500 mt-2">
+                  Cotizá bañeras, equipamiento opcional y spas. Podés exportar el presupuesto en PDF para enviárselo directamente al cliente.
+                </p>
+              </div>
+              <div className="border border-stone-200 rounded-xl p-6 bg-white shadow-xs">
+                <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-bold text-stone-800 mb-4">3</div>
+                <h3 className="font-bold text-stone-900">Confirmar Pedido</h3>
+                <p className="text-sm text-stone-500 mt-2">
+                  Cuando el cliente confirme el presupuesto, convertilo en Pedido. Podés realizar conversiones parciales si decide fabricar solo algunos productos.
+                </p>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </CommercialShell>
   );

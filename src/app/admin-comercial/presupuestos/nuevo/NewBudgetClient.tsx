@@ -45,6 +45,11 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<BudgetItem[]>([]);
 
+  // Descuentos en cascada
+  const [discount1, setDiscount1] = useState<string>("");
+  const [discount2, setDiscount2] = useState<string>("");
+  const [discount3, setDiscount3] = useState<string>("");
+
   // Form para agregar ítem
   const [itemType, setItemType] = useState<"catalog" | "manual">("catalog");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -262,6 +267,12 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
     setError(null);
 
     try {
+      const validDiscounts = [
+        Number(discount1) || 0,
+        Number(discount2) || 0,
+        Number(discount3) || 0
+      ].filter(d => d > 0);
+
       const budget = await createBudget(
         clientId,
         items.map(item => ({
@@ -270,7 +281,8 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
           quantity: item.quantity,
           unitPrice: item.unitPrice
         })),
-        notes
+        notes,
+        validDiscounts
       );
 
       router.push(`/admin-comercial/presupuestos/${budget.id}`);
@@ -283,7 +295,19 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
     }
   };
 
-  const totalAmount = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+  const subtotal = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+
+  // Cálculo en cascada para la vista previa
+  let totalAmount = subtotal;
+  const activeDiscounts = [
+    Number(discount1) || 0,
+    Number(discount2) || 0,
+    Number(discount3) || 0
+  ].filter(d => d > 0);
+
+  activeDiscounts.forEach(d => {
+    totalAmount = totalAmount * (1 - d / 100);
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-AR", {
@@ -325,6 +349,43 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
                 className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800"
                 placeholder="Anotar formas de pago acordadas, plazos de entrega, etc..."
               />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-stone-700">Descuentos en cascada (%)</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  placeholder="Desc. 1"
+                  value={discount1}
+                  onChange={(e) => setDiscount1(e.target.value)}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 text-sm"
+                />
+                <span className="text-stone-400 text-sm font-bold">%</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  placeholder="Desc. 2"
+                  value={discount2}
+                  onChange={(e) => setDiscount2(e.target.value)}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 text-sm"
+                />
+                <span className="text-stone-400 text-sm font-bold">%</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  placeholder="Desc. 3"
+                  value={discount3}
+                  onChange={(e) => setDiscount3(e.target.value)}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 text-sm"
+                />
+                <span className="text-stone-400 text-sm font-bold">%</span>
+              </div>
+              <p className="text-xs text-stone-500">Ej: 10, 10, 5. Se aplican uno sobre otro.</p>
             </div>
           </div>
         </Card>
@@ -484,10 +545,18 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
           {/* Totales */}
           <div className="flex flex-col gap-2.5">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-stone-550 font-medium">Subtotal:</span>
-              <span className="text-stone-900 font-semibold">{formatCurrency(totalAmount)}</span>
+              <span className="text-stone-550 font-medium">Subtotal Bruto:</span>
+              <span className="text-stone-900 font-semibold">{formatCurrency(subtotal)}</span>
             </div>
-            <div className="flex justify-between items-center text-base">
+            
+            {activeDiscounts.length > 0 && (
+              <div className="flex justify-between items-center text-sm text-green-700 bg-green-50 p-2 rounded border border-green-100">
+                <span className="font-medium">Descuentos ({activeDiscounts.join("% + ")}%):</span>
+                <span className="font-bold">-{formatCurrency(subtotal - totalAmount)}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center text-base mt-2">
               <span className="text-stone-900 font-bold">Total Estimado:</span>
               <span className="text-accent-deep text-lg font-bold">{formatCurrency(totalAmount)}</span>
             </div>

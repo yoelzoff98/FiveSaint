@@ -6,8 +6,70 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
-import { Plus, Search, Eye, Phone, Mail, Building, MapPin, X, Check } from "lucide-react";
+import { 
+  Plus, Search, Eye, Phone, Mail, Building, MapPin, X, Check,
+  Globe, MessageCircle, Users as UsersIcon, FileEdit, HelpCircle
+} from "lucide-react";
 import { createClient, updateClient } from "@/lib/supabase/comercial";
+
+const STATUS_LABELS: Record<string, string> = {
+  nuevo: "Nuevo",
+  contactado: "Contactado",
+  presupuestado: "Presupuestado",
+  negociacion: "En Negociación",
+  ganado: "Ganado",
+  perdido: "Perdido",
+  inactivo: "Inactivo"
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  nuevo: "bg-blue-50 text-blue-700 border-blue-200",
+  contactado: "bg-purple-50 text-purple-700 border-purple-200",
+  presupuestado: "bg-amber-50 text-amber-700 border-amber-200",
+  negociacion: "bg-orange-50 text-orange-700 border-orange-200",
+  ganado: "bg-green-50 text-green-700 border-green-200",
+  perdido: "bg-rose-50 text-rose-700 border-rose-200",
+  inactivo: "bg-stone-100 text-stone-600 border-stone-300"
+};
+
+const SOURCE_LABELS: Record<string, string> = {
+  website: "Sitio Web",
+  whatsapp: "WhatsApp",
+  instagram: "Instagram",
+  facebook: "Facebook",
+  recommendation: "Recomendación",
+  manual: "Carga Manual",
+  other: "Otro"
+};
+
+const getSourceIcon = (source: string) => {
+  switch (source) {
+    case "website":
+      return <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />;
+    case "whatsapp":
+      return <MessageCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />;
+    case "instagram":
+      return (
+        <svg className="w-3.5 h-3.5 text-pink-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+        </svg>
+      );
+    case "facebook":
+      return (
+        <svg className="w-3.5 h-3.5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 2h-3a5 5 0 0 0 -5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+      );
+    case "recommendation":
+      return <UsersIcon className="w-3.5 h-3.5 text-indigo-500 shrink-0" />;
+    case "manual":
+      return <FileEdit className="w-3.5 h-3.5 text-stone-500 shrink-0" />;
+    default:
+      return <HelpCircle className="w-3.5 h-3.5 text-stone-400 shrink-0" />;
+  }
+};
 
 interface Client {
   id: string;
@@ -18,6 +80,7 @@ interface Client {
   address: string | null;
   notes: string | null;
   status: string;
+  source?: string;
   seller_id: string | null;
   sellers: { full_name: string } | null;
   created_at?: string;
@@ -39,6 +102,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
   const [clients, setClients] = useState<Client[]>(initialClients);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("all");
   const [dateRangeFilter, setDateRangeFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -52,7 +116,8 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState("nuevo");
+  const [source, setSource] = useState("manual");
   const [sellerId, setSellerId] = useState("");
   
   const [loading, setLoading] = useState(false);
@@ -65,7 +130,8 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
     setPhone("");
     setAddress("");
     setNotes("");
-    setStatus("active");
+    setStatus("nuevo");
+    setSource("manual");
     setSellerId("");
     setEditingClient(null);
     setShowForm(false);
@@ -81,6 +147,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
     setAddress(client.address || "");
     setNotes(client.notes || "");
     setStatus(client.status);
+    setSource(client.source || "manual");
     setSellerId(client.seller_id || "");
     setShowForm(true);
     setError(null);
@@ -99,18 +166,25 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       address: address || undefined,
       notes: notes || undefined,
       status,
+      source,
       seller_id: isAdmin ? (sellerId || undefined) : undefined
     };
 
     try {
       if (editingClient) {
         // ACTUALIZAR
-        const data = await updateClient(editingClient.id, clientPayload);
-        setClients(prev => prev.map(c => c.id === editingClient.id ? { ...c, ...data } : c));
+        const response = await updateClient(editingClient.id, clientPayload);
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        setClients(prev => prev.map(c => c.id === editingClient.id ? { ...c, ...response.data } : c));
       } else {
         // CREAR
-        const data = await createClient(clientPayload);
-        setClients(prev => [data, ...prev]);
+        const response = await createClient(clientPayload);
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        setClients(prev => [response.data, ...prev]);
       }
 
       resetForm();
@@ -132,6 +206,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       (c.phone && c.phone.includes(term));
       
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchesSource = sourceFilter === "all" || (c.source || "manual") === sourceFilter;
 
     let matchesDate = true;
     if (dateRangeFilter !== "all") {
@@ -172,7 +247,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       }
     }
 
-    return matchesSearch && matchesStatus && matchesDate;
+    return matchesSearch && matchesStatus && matchesSource && matchesDate;
   });
 
   return (
@@ -284,14 +359,28 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
             )}
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-stone-700">Estado del Cliente</label>
+              <label className="text-sm font-semibold text-stone-700">Origen de Consulta</label>
+              <select
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 bg-white cursor-pointer"
+              >
+                {Object.entries(SOURCE_LABELS).map(([val, label]) => (
+                  <option key={val} value={val}>{label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-stone-700">Estado CRM (Embudo)</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 bg-white"
+                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 bg-white cursor-pointer"
               >
-                <option value="active">Activo</option>
-                <option value="inactive">Inactivo</option>
+                {Object.entries(STATUS_LABELS).map(([val, label]) => (
+                  <option key={val} value={val}>{label}</option>
+                ))}
               </select>
             </div>
 
@@ -320,7 +409,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
 
       {/* Buscador y filtros */}
       <div className="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Búsqueda */}
           <div className="flex items-center bg-stone-50 border border-stone-300 rounded-lg px-3 py-2">
             <Search className="w-5 h-5 text-stone-400 mr-2 shrink-0" />
@@ -339,21 +428,37 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-855 text-sm bg-white cursor-pointer w-full"
+              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
             >
-              <option value="all">Todos los Clientes</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
+              <option value="all">Todos los Estados</option>
+              {Object.entries(STATUS_LABELS).map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro Origen */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Origen:</span>
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
+            >
+              <option value="all">Todos los Orígenes</option>
+              {Object.entries(SOURCE_LABELS).map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
             </select>
           </div>
 
           {/* Filtro Período */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Período de Alta:</span>
+            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Alta:</span>
             <select
               value={dateRangeFilter}
               onChange={(e) => setDateRangeFilter(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-855 text-sm bg-white cursor-pointer w-full"
+              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
             >
               <option value="all">Cualquier fecha</option>
               <option value="current_month">Mes actual</option>
@@ -412,9 +517,10 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                 <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
                   <th className="px-6 py-4">Cliente</th>
                   <th className="px-6 py-4">Contacto</th>
+                  <th className="px-6 py-4">Origen</th>
                   <th className="px-6 py-4">Ubicación</th>
                   {isAdmin && <th className="px-6 py-4">Vendedor</th>}
-                  <th className="px-6 py-4">Estado</th>
+                  <th className="px-6 py-4">Estado CRM</th>
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
@@ -449,6 +555,12 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                       </div>
                     </td>
                     <td className="px-6 py-4">
+                      <div className="flex items-center gap-1.5 text-xs text-stone-750 font-medium">
+                        {getSourceIcon(client.source || "manual")}
+                        <span>{SOURCE_LABELS[client.source || "manual"] || client.source}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
                       {client.address ? (
                         <div className="flex items-center gap-1.5 text-xs text-stone-500">
                           <MapPin className="w-3.5 h-3.5 text-stone-400 shrink-0" />
@@ -472,11 +584,9 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                       </td>
                     )}
                     <td className="px-6 py-4">
-                      {client.status === "active" ? (
-                        <Badge className="bg-green-50 text-green-700 border-green-200">Activo</Badge>
-                      ) : (
-                        <Badge className="bg-stone-100 text-stone-600 border-stone-300">Inactivo</Badge>
-                      )}
+                      <Badge className={STATUS_COLORS[client.status] || "bg-stone-100 text-stone-600 border-stone-300"}>
+                        {STATUS_LABELS[client.status] || client.status}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end items-center gap-2">

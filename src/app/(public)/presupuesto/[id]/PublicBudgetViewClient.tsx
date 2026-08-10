@@ -21,6 +21,7 @@ interface Budget {
   status: string;
   total_amount: number;
   notes: string | null;
+  discounts: number[];
   created_at: string;
   clients: {
     name: string;

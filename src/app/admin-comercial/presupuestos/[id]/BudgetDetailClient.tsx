@@ -33,6 +33,7 @@ interface Budget {
   status: string;
   total_amount: number;
   notes: string | null;
+  discounts: number[];
   created_at: string;
   clients: {
     name: string;
@@ -437,10 +438,32 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
           )}
 
           <div className="flex flex-col gap-3">
-            <div className="p-3 bg-stone-50 border border-stone-200 rounded-lg text-center mb-2">
-              <span className="text-xs text-stone-500 font-semibold uppercase block">Importe Final</span>
-              <span className="text-2xl font-bold text-accent-deep">{formatCurrency(budget.total_amount)}</span>
-            </div>
+            {budget.discounts && budget.discounts.length > 0 && (() => {
+              const subtotal = budget.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0);
+              return (
+                <div className="p-3 bg-stone-50 border border-stone-200 rounded-lg text-center mb-2">
+                  <span className="text-[10px] text-stone-500 font-semibold uppercase block mb-1">Subtotal Bruto</span>
+                  <span className="text-lg font-bold text-stone-700 block line-through mb-2">{formatCurrency(subtotal)}</span>
+                  
+                  <span className="text-[10px] text-green-700 font-bold uppercase block mb-1 bg-green-100 rounded inline-block px-2 py-0.5">
+                    Descuentos aplicados: {budget.discounts.join("% + ")}%
+                  </span>
+                  <span className="text-sm font-bold text-green-600 block mb-3">-{formatCurrency(subtotal - budget.total_amount)}</span>
+                  
+                  <div className="border-t border-stone-200 pt-2 mt-2">
+                    <span className="text-xs text-stone-500 font-semibold uppercase block">Importe Final</span>
+                    <span className="text-2xl font-bold text-accent-deep">{formatCurrency(budget.total_amount)}</span>
+                  </div>
+                </div>
+              );
+            })()}
+            
+            {(!budget.discounts || budget.discounts.length === 0) && (
+              <div className="p-3 bg-stone-50 border border-stone-200 rounded-lg text-center mb-2">
+                <span className="text-xs text-stone-500 font-semibold uppercase block">Importe Final</span>
+                <span className="text-2xl font-bold text-accent-deep">{formatCurrency(budget.total_amount)}</span>
+              </div>
+            )}
 
             {budget.status !== "converted" && (
               <>

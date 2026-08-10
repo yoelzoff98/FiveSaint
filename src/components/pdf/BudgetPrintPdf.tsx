@@ -15,6 +15,7 @@ interface Budget {
   status: string;
   total_amount: number;
   notes: string | null;
+  discounts: number[];
   created_at: string;
   clients: {
     name: string;
@@ -153,6 +154,23 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
           {/* Total del Presupuesto */}
           <div className="flex justify-end pr-2 mb-8">
             <div className="text-right bg-stone-50 border border-stone-200 p-4 rounded-lg min-w-[220px]">
+              
+              {budget.discounts && budget.discounts.length > 0 && (() => {
+                const subtotal = budget.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0);
+                return (
+                  <div className="mb-2 pb-2 border-b border-stone-200">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-stone-500 uppercase">
+                      <span>Subtotal Bruto</span>
+                      <span>{formatCurrency(subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-green-600 uppercase mt-1">
+                      <span>Desc. ({budget.discounts.join("% + ")}%)</span>
+                      <span>-{formatCurrency(subtotal - budget.total_amount)}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
               <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest block">
                 Total Presupuestado
               </span>
