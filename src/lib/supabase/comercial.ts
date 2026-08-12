@@ -696,7 +696,7 @@ export async function convertBudgetToOrder(
   const orderItemsToInsert = itemsToConvert.map(item => {
     let unitPrice = item.unitPrice;
     if (discounts && discounts.length > 0) {
-      discounts.forEach(discount => {
+      discounts.forEach((discount: number) => {
         if (discount > 0) {
           unitPrice = unitPrice * (1 - discount / 100);
         }
