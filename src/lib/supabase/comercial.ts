@@ -690,7 +690,35 @@ export async function convertBudgetToOrder(
   const supabase = createSupabaseAdminClient();
 
   const budget = await getBudgetById(budgetId);
-  const totalAmount = itemsToConvert.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+  const discounts = budget.discounts || [];
+
+  // Aplicar los descuentos del presupuesto en cascada a cada ítem para obtener los valores finales del pedido
+  const orderItemsToInsert = itemsToConvert.map(item => {
+    let unitPrice = item.unitPrice;
+    if (discounts && discounts.length > 0) {
+      discounts.forEach(discount => {
+        if (discount > 0) {
+          unitPrice = unitPrice * (1 - discount / 100);
+        }
+      });
+    }
+    // Redondear a 2 decimales
+    unitPrice = Math.round(unitPrice * 100) / 100;
+    const totalPrice = Math.round(item.quantity * unitPrice * 100) / 100;
+
+    return {
+      product_id: item.productId || null,
+      variant_id: item.variantId || null,
+      product_name: item.productName,
+      variant_name: item.variantName || null,
+      quantity: item.quantity,
+      unit_price: unitPrice,
+      total_price: totalPrice,
+      factory_notes: item.factoryNotes || null
+    };
+  });
+
+  const totalAmount = orderItemsToInsert.reduce((acc, item) => acc + item.total_price, 0);
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
@@ -710,16 +738,10 @@ export async function convertBudgetToOrder(
     throw new Error("Error al crear el pedido");
   }
 
-  const orderItems = itemsToConvert.map(item => ({
-    order_id: order.id,
-    product_id: item.productId || null,
-    variant_id: item.variantId || null,
-    product_name: item.productName,
-    variant_name: item.variantName || null,
-    quantity: item.quantity,
-    unit_price: item.unitPrice,
-    total_price: item.quantity * item.unitPrice,
-    factory_notes: item.factoryNotes || null
+  // Asociar el order_id a cada ítem
+  const orderItems = orderItemsToInsert.map(item => ({
+    ...item,
+    order_id: order.id
   }));
 
   const { error: itemsError } = await supabase

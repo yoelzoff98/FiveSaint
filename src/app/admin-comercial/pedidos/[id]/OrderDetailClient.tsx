@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +10,8 @@ import {
   Phone, MapPin, RefreshCw, AlertCircle, Check, X, Printer, Hammer, Truck
 } from "lucide-react";
 import { updateOrderStatus } from "@/lib/supabase/comercial";
+import { useReactToPrint } from "react-to-print";
+import { OrderPrintPdf } from "@/components/pdf/OrderPrintPdf";
 
 interface OrderItem {
   id: string;
@@ -52,6 +54,12 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const printRef = useRef<HTMLDivElement>(null);
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `Pedido-FS-O-${order.order_number}`,
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-AR", {
@@ -270,14 +278,18 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
             )}
 
             <button
-              onClick={() => window.print()}
-              className="flex items-center justify-center gap-2 border border-stone-300 hover:bg-stone-50 text-stone-850 px-4 py-2.5 rounded-lg text-xs font-semibold mt-4 transition-colors cursor-pointer"
+              onClick={handlePrint}
+              className="flex items-center justify-center gap-2 border border-stone-300 hover:bg-stone-50 text-stone-850 px-4 py-2.5 rounded-lg text-xs font-semibold mt-4 transition-colors cursor-pointer w-full"
             >
               <Printer className="w-4 h-4" />
               Imprimir Ficha de Pedido
             </button>
           </div>
         </Card>
+      </div>
+
+      <div className="hidden print:block">
+        <OrderPrintPdf ref={printRef} order={order} />
       </div>
     </div>
   );
