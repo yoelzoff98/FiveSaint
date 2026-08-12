@@ -285,8 +285,7 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
         validDiscounts
       );
 
-      router.push(`/admin-comercial/presupuestos/${budget.id}`);
-      router.refresh();
+      window.location.href = `/admin-comercial/presupuestos/${budget.id}`;
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Error al registrar el presupuesto.");
