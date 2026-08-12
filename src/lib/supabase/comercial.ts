@@ -729,7 +729,7 @@ export async function convertBudgetToOrder(
   if (itemsError) {
     console.error("Error convertBudgetToOrder - inserting items:", itemsError);
     await supabase.from("orders").delete().eq("id", order.id);
-    throw new Error("Error al guardar ítems del pedido");
+    throw new Error(`Error al guardar ítems del pedido: ${itemsError.message} - ${itemsError.details}`);
   }
 
   await supabase

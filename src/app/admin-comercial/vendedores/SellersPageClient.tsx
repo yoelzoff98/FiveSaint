@@ -6,7 +6,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { User, Mail, ShieldAlert, Plus, X, Power, UserCheck } from "lucide-react";
+import { User, Mail, ShieldAlert, Plus, X, Power, UserCheck, BarChart3 } from "lucide-react";
 import { registerSellerAction } from "./actions";
 import { toggleSellerActive } from "@/lib/supabase/comercial";
 
@@ -236,18 +236,29 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Button
-                        variant={s.is_active ? "ghost" : "outline"}
-                        size="sm"
-                        onClick={() => handleToggleActive(s)}
-                        disabled={loading}
-                        className={`cursor-pointer ${
-                          s.is_active ? "text-red-650 hover:bg-red-50" : "text-green-750 hover:bg-green-50"
-                        }`}
-                      >
-                        <Power className="w-3.5 h-3.5 mr-1" />
-                        {s.is_active ? "Desactivar Acceso" : "Activar Acceso"}
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => router.push(`/admin-comercial/vendedores/${s.id}`)}
+                          className="cursor-pointer text-stone-700 hover:text-stone-900"
+                        >
+                          <BarChart3 className="w-3.5 h-3.5 mr-1" />
+                          Ver Desempeño
+                        </Button>
+                        <Button
+                          variant={s.is_active ? "ghost" : "outline"}
+                          size="sm"
+                          onClick={() => handleToggleActive(s)}
+                          disabled={loading}
+                          className={`cursor-pointer ${
+                            s.is_active ? "text-red-650 hover:bg-red-50" : "text-green-750 hover:bg-green-50"
+                          }`}
+                        >
+                          <Power className="w-3.5 h-3.5 mr-1" />
+                          {s.is_active ? "Desactivar" : "Activar"}
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
