@@ -66,6 +66,7 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
   });
   
   // Conversión a pedido
+  const convertPanelRef = useRef<HTMLDivElement>(null);
   const [showConvertPanel, setShowConvertPanel] = useState(false);
   const [selectedItems, setSelectedItems] = useState<{ [id: string]: boolean }>(
     initialBudget.items.reduce((acc, item) => ({ ...acc, [item.id]: true }), {})
@@ -142,6 +143,12 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
       supabase.removeChannel(channel);
     };
   }, [budget.id]);
+
+  useEffect(() => {
+    if (showConvertPanel && convertPanelRef.current) {
+      convertPanelRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [showConvertPanel]);
 
   const handleUpdateStatus = async (newStatus: string) => {
     setLoading(true);
@@ -327,7 +334,7 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
 
         {/* Panel para conversión a Pedido (Total o Parcial) */}
         {showConvertPanel && (
-          <Card className="p-6 border-amber-200 bg-amber-50/20 shadow-md">
+          <Card ref={convertPanelRef} className="p-6 border-amber-200 bg-amber-50/20 shadow-md">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-stone-900 flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-amber-600" />
