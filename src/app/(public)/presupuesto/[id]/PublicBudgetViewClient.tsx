@@ -52,17 +52,17 @@ export function PublicBudgetViewClient({ budget }: PublicBudgetViewClientProps) 
   return (
     <div className="min-h-screen bg-stone-100 flex flex-col">
       {/* Barra superior de acciones para el cliente */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-xs px-6 py-4">
-        <div className="max-w-[210mm] mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
+      <header className="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-xs px-4 sm:px-6 py-3.5">
+        <div className="max-w-[210mm] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
             <img 
               src="/LOGO.svg" 
               alt="Five Saint Logo" 
-              className="h-10 object-contain" 
+              className="h-8 sm:h-10 object-contain" 
             />
-            <div className="border-l border-stone-300 pl-3">
-              <h1 className="text-sm font-bold text-stone-850">Presupuesto Digital</h1>
-              <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
+            <div className="border-l border-stone-300 pl-3 text-right sm:text-left">
+              <h1 className="text-xs sm:text-sm font-bold text-stone-850">Presupuesto Digital</h1>
+              <p className="text-[9px] sm:text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
                 N° FS-P-{budget.budget_number}
               </p>
             </div>
@@ -70,18 +70,18 @@ export function PublicBudgetViewClient({ budget }: PublicBudgetViewClientProps) 
 
           <Button 
             onClick={handlePrint}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-accent-deep hover:bg-accent-hover text-white font-bold cursor-pointer transition-colors shadow-sm text-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-accent-deep hover:bg-accent-hover text-white font-bold cursor-pointer transition-colors shadow-sm text-xs sm:text-sm py-2.5"
           >
-            <Download className="w-4.5 h-4.5" />
+            <Download className="w-4 h-4" />
             Descargar Presupuesto (PDF)
           </Button>
         </div>
       </header>
 
       {/* Cuerpo principal */}
-      <main className="flex-grow py-8 px-4 flex flex-col items-center">
+      <main className="flex-grow py-4 sm:py-8 px-2 sm:px-4 flex flex-col items-center w-full">
         {/* Banner informativo de bienvenida */}
-        <div className="w-full max-w-[210mm] mb-6 bg-blue-50 border border-blue-200 p-4 rounded-xl flex items-start gap-3 text-xs leading-relaxed text-blue-900 shadow-2xs">
+        <div className="w-full max-w-[210mm] mb-4 sm:mb-6 bg-blue-50 border border-blue-200 p-3.5 sm:p-4 rounded-xl flex items-start gap-3 text-xs leading-relaxed text-blue-900 shadow-2xs">
           <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold block mb-1">Estimado/a {budget.clients?.name}:</span>
@@ -89,9 +89,11 @@ export function PublicBudgetViewClient({ budget }: PublicBudgetViewClientProps) 
           </div>
         </div>
 
-        {/* Hoja A4 del presupuesto */}
-        <div className="shadow-xl bg-white rounded-xl overflow-hidden border border-stone-200 print:border-none print:shadow-none">
-          <BudgetPrintPdf ref={printRef} budget={budget} />
+        {/* Contenedor adaptativo del Presupuesto */}
+        <div className="w-full max-w-[210mm] overflow-x-auto shadow-xl bg-white rounded-xl border border-stone-200 print:border-none print:shadow-none">
+          <div className="min-w-[210mm] sm:min-w-0">
+            <BudgetPrintPdf ref={printRef} budget={budget} />
+          </div>
         </div>
       </main>
     </div>

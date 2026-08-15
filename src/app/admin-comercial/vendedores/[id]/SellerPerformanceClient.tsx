@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Briefcase, FileText, CheckCircle, Percent, DollarSign } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, Percent, DollarSign, Calendar } from "lucide-react";
 
 interface ClientRef {
   name: string;
@@ -45,16 +45,33 @@ interface SellerPerformanceClientProps {
 
 export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerformanceClientProps) {
   const [commissionRate, setCommissionRate] = useState<number>(5);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("this_month");
 
-  // Cálculos de métricas
-  const totalBudgets = budgets.length;
-  const closedBudgets = budgets.filter(b => b.status === "converted").length;
+  // Filtrar presupuestos según el período seleccionado
+  const filteredBudgets = budgets.filter((b) => {
+    if (selectedPeriod === "all") return true;
+    const date = new Date(b.created_at);
+    const now = new Date();
+
+    if (selectedPeriod === "this_month") {
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+    }
+    if (selectedPeriod === "last_month") {
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      return date.getMonth() === lastMonth.getMonth() && date.getFullYear() === lastMonth.getFullYear();
+    }
+    if (selectedPeriod === "this_year") {
+      return date.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
+
+  // Cálculos de métricas según el período filtrado
+  const totalBudgets = filteredBudgets.length;
+  const closedBudgets = filteredBudgets.filter(b => b.status === "converted").length;
   const conversionRate = totalBudgets > 0 ? (closedBudgets / totalBudgets) * 100 : 0;
   
-  // Total de ventas cerradas. Usamos el total_amount de los budgets convertidos o de orders.
-  // Es más seguro sumar de orders que no estén canceladas, o budgets convertidos.
-  // Sumaremos de budgets convertidos para reflejar el origen del vendedor.
-  const totalRevenue = budgets
+  const totalRevenue = filteredBudgets
     .filter(b => b.status === "converted")
     .reduce((acc, curr) => acc + curr.total_amount, 0);
 
@@ -68,84 +85,113 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-      {/* Columna Izquierda: Métricas Globales */}
-      <div className="flex flex-col gap-6 lg:col-span-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-5 border-stone-200 bg-white">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-blue-600" />
-              </div>
-              <h3 className="font-bold text-stone-700">Cotizaciones Enviadas</h3>
-            </div>
-            <div className="text-3xl font-black text-stone-900 mt-2">{totalBudgets}</div>
-          </Card>
+    <div className="flex flex-col gap-6">
+      {/* Selector de Período / Filtro Temporal */}
+      <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-sm font-bold text-stone-800">
+          <Calendar className="w-4 h-4 text-accent-deep" />
+          <span>Filtrar Desempeño por Período:</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {[
+            { id: "this_month", label: "Mes Actual" },
+            { id: "last_month", label: "Mes Anterior" },
+            { id: "this_year", label: "Año Actual" },
+            { id: "all", label: "Histórico Completo" },
+          ].map((period) => (
+            <button
+              key={period.id}
+              onClick={() => setSelectedPeriod(period.id)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                selectedPeriod === period.id
+                  ? "bg-accent-deep text-white shadow-xs"
+                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+              }`}
+            >
+              {period.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-          <Card className="p-5 border-stone-200 bg-white">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Columna Izquierda: Métricas Globales */}
+        <div className="flex flex-col gap-6 lg:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="p-5 border-stone-200 bg-white">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-stone-700">Cotizaciones Enviadas</h3>
               </div>
-              <h3 className="font-bold text-stone-700">Cotizaciones Cerradas</h3>
-            </div>
-            <div className="text-3xl font-black text-stone-900 mt-2">{closedBudgets}</div>
-            <p className="text-xs text-stone-500 font-medium mt-1">
-              Tasa de conversión: {conversionRate.toFixed(1)}%
-            </p>
-          </Card>
+              <div className="text-3xl font-black text-stone-900 mt-2">{totalBudgets}</div>
+            </Card>
 
-          <Card className="p-5 border-stone-200 bg-white">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-accent-deep/10 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-accent-deep" />
+            <Card className="p-5 border-stone-200 bg-white">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <h3 className="font-bold text-stone-700">Cotizaciones Cerradas</h3>
               </div>
-              <h3 className="font-bold text-stone-700">Total Ingresos</h3>
+              <div className="text-3xl font-black text-stone-900 mt-2">{closedBudgets}</div>
+              <p className="text-xs text-stone-500 font-medium mt-1">
+                Tasa de conversión: {conversionRate.toFixed(1)}%
+              </p>
+            </Card>
+
+            <Card className="p-5 border-stone-200 bg-white">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-accent-deep/10 flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-accent-deep" />
+                </div>
+                <h3 className="font-bold text-stone-700">Total Ingresos</h3>
+              </div>
+              <div className="text-2xl font-black text-accent-deep mt-2">{formatCurrency(totalRevenue)}</div>
+              <p className="text-xs text-stone-500 font-medium mt-1">Solo cotizaciones convertidas</p>
+            </Card>
+          </div>
+
+          {/* Historial Reciente de Cotizaciones (Cerradas) */}
+          <Card className="p-6 border-stone-200 bg-white">
+            <h2 className="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-stone-500" />
+              Cotizaciones Convertidas a Pedido (Filtradas)
+            </h2>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
+                    <th className="px-4 py-3">N° Presupuesto</th>
+                    <th className="px-4 py-3">Fecha</th>
+                    <th className="px-4 py-3">Cliente</th>
+                    <th className="px-4 py-3 text-right">Monto</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100 text-stone-800">
+                  {filteredBudgets.filter(b => b.status === "converted").slice(0, 10).map(b => (
+                    <tr key={b.id} className="hover:bg-stone-50/50">
+                      <td className="px-4 py-3 font-mono text-stone-900 font-bold">FS-P-{b.budget_number}</td>
+                      <td className="px-4 py-3 text-stone-500">{new Date(b.created_at).toLocaleDateString("es-AR")}</td>
+                      <td className="px-4 py-3">
+                        <div className="font-semibold text-stone-850">{b.clients?.name}</div>
+                        {b.clients?.company_name && <div className="text-xs text-stone-500">{b.clients.company_name}</div>}
+                      </td>
+                      <td className="px-4 py-3 text-right font-bold text-green-700">{formatCurrency(b.total_amount)}</td>
+                    </tr>
+                  ))}
+                  {closedBudgets === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-6 text-center text-stone-500 italic">No hay cotizaciones cerradas en este período.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-            <div className="text-2xl font-black text-accent-deep mt-2">{formatCurrency(totalRevenue)}</div>
-            <p className="text-xs text-stone-500 font-medium mt-1">Solo cotizaciones convertidas</p>
           </Card>
         </div>
-
-        {/* Historial Reciente de Cotizaciones (Cerradas) */}
-        <Card className="p-6 border-stone-200 bg-white">
-          <h2 className="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-stone-500" />
-            Últimas Cotizaciones Convertidas a Pedido
-          </h2>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
-                  <th className="px-4 py-3">N° Presupuesto</th>
-                  <th className="px-4 py-3">Fecha</th>
-                  <th className="px-4 py-3">Cliente</th>
-                  <th className="px-4 py-3 text-right">Monto</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-100 text-stone-800">
-                {budgets.filter(b => b.status === "converted").slice(0, 10).map(b => (
-                  <tr key={b.id} className="hover:bg-stone-50/50">
-                    <td className="px-4 py-3 font-mono text-stone-900 font-bold">FS-P-{b.budget_number}</td>
-                    <td className="px-4 py-3 text-stone-500">{new Date(b.created_at).toLocaleDateString("es-AR")}</td>
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-stone-850">{b.clients?.name}</div>
-                      {b.clients?.company_name && <div className="text-xs text-stone-500">{b.clients.company_name}</div>}
-                    </td>
-                    <td className="px-4 py-3 text-right font-bold text-green-700">{formatCurrency(b.total_amount)}</td>
-                  </tr>
-                ))}
-                {closedBudgets === 0 && (
-                  <tr>
-                    <td colSpan={4} className="px-4 py-6 text-center text-stone-500 italic">No hay cotizaciones cerradas todavía.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
 
       {/* Columna Derecha: Liquidador de Comisiones */}
       <div className="flex flex-col gap-6 lg:col-span-1">
@@ -187,5 +233,6 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
         </Card>
       </div>
     </div>
+  </div>
   );
 }

@@ -132,7 +132,23 @@ const CheckedCircleIcon = ({ size = 14 }: { size?: number }) => (
   </div>
 );
 
-export const PriceListPdf = forwardRef<HTMLDivElement, { hidePrices?: boolean }>(({ hidePrices = false }, ref) => {
+export const PriceListPdf = forwardRef<HTMLDivElement, { 
+  hidePrices?: boolean;
+  isDistributor?: boolean;
+  discountPercentage?: number;
+}>(({ hidePrices = false, isDistributor = false, discountPercentage = 0 }, ref) => {
+  // Helper para recalcular precios con el porcentaje de descuento del distribuidor si aplica
+  const formatPriceWithDiscount = (priceStr?: string) => {
+    if (!priceStr || priceStr === "OFERTA" || hidePrices) return priceStr;
+    if (!isDistributor || discountPercentage <= 0) return priceStr;
+
+    // Limpiar string de precio (ej. "$ 1 200 000" -> 1200000)
+    const numericVal = parseFloat(priceStr.replace(/[^0-9]/g, ""));
+    if (isNaN(numericVal)) return priceStr;
+
+    const discountedVal = Math.round(numericVal * (1 - discountPercentage / 100));
+    return "$ " + new Intl.NumberFormat("es-AR").format(discountedVal);
+  };
   const renderFooter = (extraNote?: React.ReactNode, paddingClass = "", hideDefaultText = false, hideIvaBadge = false) => {
     return (
       <div className={`flex justify-between items-end shrink-0 pt-2 border-t border-slate-100 mt-auto ${paddingClass}`}>
@@ -645,7 +661,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, { hidePrices?: boolean }>
                                         <div className="flex flex-col items-center justify-center min-h-[22px]">
                                           {!hidePrices ? (
                                             <>
-                                              <span className="font-black text-[#006d9c] leading-none text-[9.5px]">{item.confortPrice}</span>
+                                              <span className="font-black text-[#006d9c] leading-none text-[9.5px]">{formatPriceWithDiscount(item.confortPrice)}</span>
                                               <span className="text-[9.5px] font-mono text-slate-700 font-bold mt-0.5 leading-none">{item.confortCode}</span>
                                             </>
                                           ) : (
@@ -657,7 +673,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, { hidePrices?: boolean }>
                                         <div className="flex flex-col items-center justify-center min-h-[22px]">
                                           {!hidePrices ? (
                                             <>
-                                              <span className="font-black text-slate-800 leading-none text-[9.5px]">{item.confortPlusPrice}</span>
+                                              <span className="font-black text-slate-800 leading-none text-[9.5px]">{formatPriceWithDiscount(item.confortPlusPrice)}</span>
                                               <span className="text-[9.5px] font-mono text-slate-700 font-bold mt-0.5 leading-none">{item.confortPlusCode}</span>
                                             </>
                                           ) : (

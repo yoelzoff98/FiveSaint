@@ -10,7 +10,8 @@ import {
   DollarSign, 
   FileText, 
   ShoppingBag,
-  UserCheck
+  UserCheck,
+  Building2
 } from "lucide-react";
 
 interface CommercialSidebarProps {
@@ -28,9 +29,10 @@ export function CommercialSidebar({ isAdmin }: CommercialSidebarProps) {
     { href: "/admin-comercial/pedidos", label: "Pedidos", icon: ShoppingBag },
   ];
 
-  // Si es administrador, agregar la gestión de vendedores
+  // Si es administrador, agregar la gestión de vendedores y distribuidores
   if (isAdmin) {
     links.push({ href: "/admin-comercial/vendedores", label: "Vendedores", icon: UserCheck });
+    links.push({ href: "/admin-comercial/distribuidores", label: "Distribuidores", icon: Building2 });
   }
 
   return (

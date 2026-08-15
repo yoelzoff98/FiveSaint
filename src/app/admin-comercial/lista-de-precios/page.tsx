@@ -3,11 +3,15 @@ import { CommercialShell } from "@/components/comercial/CommercialShell";
 import PriceListClientPage from "./PriceListClientPage";
 
 export default async function CommercialPriceListPage() {
-  await requireCommercialUser();
+  const ctx = await requireCommercialUser();
 
   return (
     <CommercialShell>
-      <PriceListClientPage />
+      <PriceListClientPage 
+        isDistributor={ctx.isDistributor}
+        discountPercentage={ctx.discountPercentage || 0}
+        profileName={ctx.profileName}
+      />
     </CommercialShell>
   );
 }

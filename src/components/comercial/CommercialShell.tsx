@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { getCommercialUserContext } from "@/lib/supabase/comercial";
 import { CommercialSidebar } from "./CommercialSidebar";
 import { CommercialHeader } from "./CommercialHeader";
+import { RealtimeNotificationToast } from "./RealtimeNotificationToast";
 
 interface CommercialShellProps {
   children: ReactNode;
@@ -19,6 +20,7 @@ export async function CommercialShell({ children }: CommercialShellProps) {
           {children}
         </main>
       </div>
+      <RealtimeNotificationToast isAdmin={ctx.isAdmin} />
     </div>
   );
 }

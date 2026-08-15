@@ -59,7 +59,20 @@ export function CommercialLoginForm() {
       return;
     }
 
-    // 4. Si no es admin ni vendedor activo, cerrar sesión inmediatamente
+    // 4. Verificar si es distribuidor activo
+    const { data: distributorUser } = await supabase
+      .from("distributors")
+      .select("is_active")
+      .eq("user_id", userId)
+      .single();
+
+    if (distributorUser && distributorUser.is_active) {
+      router.push("/admin-comercial/dashboard");
+      router.refresh();
+      return;
+    }
+
+    // 5. Si no es admin, ni vendedor, ni distribuidor activo, cerrar sesión inmediatamente
     await supabase.auth.signOut();
     setError("No tenés permisos comerciales activos para acceder a este panel.");
     setLoading(false);

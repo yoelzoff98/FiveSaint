@@ -9,19 +9,22 @@ export interface CommercialUserContext {
   isLoggedIn: boolean;
   isAdmin: boolean;
   isSeller: boolean;
+  isDistributor: boolean;
   sellerId?: string; // id from public.sellers table
+  distributorId?: string; // id from public.distributors table
+  discountPercentage?: number;
   user?: User;
   profileName?: string;
 }
 
 /**
  * Obtiene el contexto comercial del usuario logueado.
- * Determina si es administrador global o vendedor activo.
+ * Determina si es administrador global, vendedor activo o distribuidor activo.
  */
 export async function getCommercialUserContext(): Promise<CommercialUserContext> {
   const user = await getCurrentUser();
   if (!user) {
-    return { isLoggedIn: false, isAdmin: false, isSeller: false };
+    return { isLoggedIn: false, isAdmin: false, isSeller: false, isDistributor: false };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -38,6 +41,7 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
       isLoggedIn: true,
       isAdmin: true,
       isSeller: false,
+      isDistributor: false,
       user,
       profileName: adminUser.full_name || "Administrador",
     };
@@ -55,9 +59,30 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
       isLoggedIn: true,
       isAdmin: false,
       isSeller: true,
+      isDistributor: false,
       sellerId: sellerUser.id,
       user,
       profileName: sellerUser.full_name,
+    };
+  }
+
+  // 3. Verificar si es distribuidor
+  const { data: distributorUser } = await supabase
+    .from("distributors")
+    .select("id, company_name, contact_name, discount_percentage, is_active")
+    .eq("user_id", user.id)
+    .single();
+
+  if (distributorUser && distributorUser.is_active) {
+    return {
+      isLoggedIn: true,
+      isAdmin: false,
+      isSeller: false,
+      isDistributor: true,
+      distributorId: distributorUser.id,
+      discountPercentage: Number(distributorUser.discount_percentage || 0),
+      user,
+      profileName: distributorUser.company_name || distributorUser.contact_name,
     };
   }
 
@@ -65,6 +90,7 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
     isLoggedIn: true,
     isAdmin: false,
     isSeller: false,
+    isDistributor: false,
     user,
   };
 }
@@ -74,7 +100,7 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
  */
 export async function requireCommercialUser(): Promise<CommercialUserContext> {
   const ctx = await getCommercialUserContext();
-  if (!ctx.isLoggedIn || (!ctx.isAdmin && !ctx.isSeller)) {
+  if (!ctx.isLoggedIn || (!ctx.isAdmin && !ctx.isSeller && !ctx.isDistributor)) {
     redirect("/admin-comercial/login");
   }
   return ctx;
@@ -132,6 +158,83 @@ export async function toggleSellerActive(sellerId: string, isActive: boolean) {
   if (error) {
     console.error("Error toggleSellerActive:", error);
     throw new Error("Error al actualizar estado del vendedor");
+  }
+}
+
+// =========================================================================
+// GESTION DE DISTRIBUIDORES (Solo Admin)
+// =========================================================================
+
+export async function getDistributors() {
+  const ctx = await getCommercialUserContext();
+  if (!ctx.isAdmin) throw new Error("No autorizado");
+
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("distributors")
+    .select("*")
+    .order("company_name", { ascending: true });
+
+  if (error) {
+    console.error("Error getDistributors:", error);
+    throw new Error("No se pudieron cargar los distribuidores");
+  }
+  return data;
+}
+
+export async function getDistributorById(id: string) {
+  const ctx = await getCommercialUserContext();
+  if (!ctx.isAdmin && !(ctx.isDistributor && ctx.distributorId === id)) {
+    throw new Error("No autorizado a ver este distribuidor");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("distributors")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) {
+    console.error("Error getDistributorById:", error);
+    throw new Error("Distribuidor no encontrado");
+  }
+  return data;
+}
+
+export async function toggleDistributorActive(distributorId: string, isActive: boolean) {
+  const ctx = await getCommercialUserContext();
+  if (!ctx.isAdmin) throw new Error("No autorizado");
+
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase
+    .from("distributors")
+    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .eq("id", distributorId);
+
+  if (error) {
+    console.error("Error toggleDistributorActive:", error);
+    throw new Error("Error al actualizar estado del distribuidor");
+  }
+}
+
+export async function updateDistributorDiscount(distributorId: string, discountPercentage: number) {
+  const ctx = await getCommercialUserContext();
+  if (!ctx.isAdmin) throw new Error("No autorizado");
+
+  if (discountPercentage < 0 || discountPercentage > 100) {
+    throw new Error("El porcentaje debe ser entre 0 y 100");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase
+    .from("distributors")
+    .update({ discount_percentage: discountPercentage, updated_at: new Date().toISOString() })
+    .eq("id", distributorId);
+
+  if (error) {
+    console.error("Error updateDistributorDiscount:", error);
+    throw new Error("Error al actualizar el descuento del distribuidor");
   }
 }
 
@@ -367,11 +470,14 @@ export async function getBudgets() {
   let query = supabase.from("budgets").select(`
     *,
     clients(name, company_name),
-    sellers(full_name)
+    sellers(full_name),
+    distributors(company_name, contact_name)
   `);
 
   if (ctx.isSeller && ctx.sellerId) {
     query = query.eq("seller_id", ctx.sellerId);
+  } else if (ctx.isDistributor && ctx.distributorId) {
+    query = query.eq("distributor_id", ctx.distributorId);
   }
 
   const { data, error } = await query.order("created_at", { ascending: false });
@@ -391,7 +497,8 @@ export async function getBudgetById(id: string) {
     .select(`
       *,
       clients(name, company_name, email, phone, address),
-      sellers(full_name, email)
+      sellers(full_name, email),
+      distributors(company_name, contact_name, discount_percentage)
     `)
     .eq("id", id)
     .single();
@@ -402,6 +509,9 @@ export async function getBudgetById(id: string) {
   }
 
   if (ctx.isSeller && budget.seller_id !== ctx.sellerId) {
+    throw new Error("No autorizado a ver este presupuesto");
+  }
+  if (ctx.isDistributor && budget.distributor_id !== ctx.distributorId) {
     throw new Error("No autorizado a ver este presupuesto");
   }
 
@@ -599,11 +709,14 @@ export async function getOrders() {
   let query = supabase.from("orders").select(`
     *,
     clients(name, company_name),
-    sellers(full_name)
+    sellers(full_name),
+    distributors(company_name, contact_name)
   `);
 
   if (ctx.isSeller && ctx.sellerId) {
     query = query.eq("seller_id", ctx.sellerId);
+  } else if (ctx.isDistributor && ctx.distributorId) {
+    query = query.eq("distributor_id", ctx.distributorId);
   }
 
   const { data, error } = await query.order("created_at", { ascending: false });
@@ -623,7 +736,8 @@ export async function getOrderById(id: string) {
     .select(`
       *,
       clients(name, company_name, email, phone, address),
-      sellers(full_name)
+      sellers(full_name),
+      distributors(company_name, contact_name)
     `)
     .eq("id", id)
     .single();
@@ -634,6 +748,9 @@ export async function getOrderById(id: string) {
   }
 
   if (ctx.isSeller && order.seller_id !== ctx.sellerId) {
+    throw new Error("No autorizado a ver este pedido");
+  }
+  if (ctx.isDistributor && order.distributor_id !== ctx.distributorId) {
     throw new Error("No autorizado a ver este pedido");
   }
 

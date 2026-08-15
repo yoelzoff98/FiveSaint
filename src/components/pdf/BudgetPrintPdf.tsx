@@ -49,16 +49,16 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
     return (
       <div 
         ref={ref} 
-        className="bg-white text-slate-800 font-sans p-[15mm] w-[210mm] min-h-[297mm] flex flex-col justify-between shadow-lg print:shadow-none print:p-[10mm] mx-auto box-border"
+        className="bg-white text-slate-800 font-sans p-4 sm:p-8 print:p-[10mm] w-full sm:w-[210mm] min-h-auto sm:min-h-[297mm] flex flex-col justify-between shadow-none sm:shadow-lg print:shadow-none mx-auto box-border"
       >
         {/* Cabecera del Presupuesto */}
         <div>
-          <div className="flex justify-between items-start border-b-2 border-accent-deep pb-5 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start border-b-2 border-accent-deep pb-4 sm:pb-5 mb-4 sm:mb-6 gap-4 sm:gap-0">
             <div className="flex flex-col">
               <img 
                 src="/LOGO.svg" 
                 alt="Five Saint Logo" 
-                className="h-16 object-contain object-left mb-2" 
+                className="h-12 sm:h-16 object-contain object-left mb-2" 
               />
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 Sistemas Hidroterapéuticos & Spas
@@ -69,21 +69,21 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               </span>
             </div>
             
-            <div className="text-right flex flex-col items-end">
-              <h1 className="text-lg font-black text-accent-deep tracking-wider uppercase">
+            <div className="text-left sm:text-right flex flex-col items-start sm:items-end w-full sm:w-auto">
+              <h1 className="text-base sm:text-lg font-black text-accent-deep tracking-wider uppercase">
                 Presupuesto
               </h1>
-              <div className="bg-stone-100 font-mono text-sm font-bold text-stone-800 py-1 px-3 rounded mt-2 border border-stone-200">
+              <div className="bg-stone-100 font-mono text-xs sm:text-sm font-bold text-stone-800 py-1 px-3 rounded mt-1 sm:mt-2 border border-stone-200 inline-block">
                 N° FS-P-{budget.budget_number}
               </div>
-              <div className="text-[11px] text-slate-500 font-medium mt-2">
+              <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1 sm:mt-2">
                 Fecha: {date.toLocaleDateString("es-AR")}
               </div>
             </div>
           </div>
 
           {/* Bloque de Metadatos (Cliente y Vendedor) */}
-          <div className="grid grid-cols-2 gap-6 bg-stone-50 border border-stone-200 p-4 rounded-lg text-xs leading-relaxed mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-stone-50 border border-stone-200 p-4 rounded-lg text-xs leading-relaxed mb-4 sm:mb-6">
             <div>
               <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-2">
                 Presupuestado a:
@@ -95,13 +95,13 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               {budget.clients?.email && <p className="text-stone-600 mb-0.5">{budget.clients.email}</p>}
               {budget.clients?.phone && <p className="text-stone-600 mb-0.5">Tel: {budget.clients.phone}</p>}
               {budget.clients?.address && (
-                <p className="text-stone-500 mt-1 italic max-w-[280px]">
+                <p className="text-stone-500 mt-1 italic max-w-full sm:max-w-[280px]">
                   Dirección: {budget.clients.address}
                 </p>
               )}
             </div>
 
-            <div className="border-l border-stone-200 pl-6">
+            <div className="border-t sm:border-t-0 sm:border-l border-stone-200 pt-4 sm:pt-0 sm:pl-6">
               <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-2">
                 Asesor Comercial:
               </span>
@@ -119,20 +119,20 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
           </div>
 
           {/* Tabla de Productos */}
-          <div className="border border-stone-200 rounded-lg overflow-hidden mb-6">
-            <table className="w-full text-left border-collapse text-xs">
+          <div className="border border-stone-200 rounded-lg overflow-x-auto mb-4 sm:mb-6">
+            <table className="w-full text-left border-collapse text-xs min-w-[500px] sm:min-w-0">
               <thead>
                 <tr className="bg-stone-100 text-stone-600 border-b border-stone-200 font-bold uppercase text-[10px]">
-                  <th className="px-4 py-2.5">Producto / Configuración</th>
-                  <th className="px-4 py-2.5 text-right w-20">Cant.</th>
-                  <th className="px-4 py-2.5 text-right w-32">P. Unitario</th>
-                  <th className="px-4 py-2.5 text-right w-36">Total</th>
+                  <th className="px-3 sm:px-4 py-2.5">Producto / Configuración</th>
+                  <th className="px-3 sm:px-4 py-2.5 text-right w-16 sm:w-20">Cant.</th>
+                  <th className="px-3 sm:px-4 py-2.5 text-right w-28 sm:w-32">P. Unitario</th>
+                  <th className="px-3 sm:px-4 py-2.5 text-right w-28 sm:w-36">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100 text-stone-850">
                 {budget.items.map((item) => (
                   <tr key={item.id} className="align-top">
-                    <td className="px-4 py-3 font-medium">
+                    <td className="px-3 sm:px-4 py-3 font-medium">
                       <div className="font-bold text-stone-900">{item.product_name}</div>
                       {item.variant_name && (
                         <div className="text-[10px] text-slate-500 font-normal mt-0.5">
@@ -140,9 +140,9 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right font-bold text-stone-900">{item.quantity}</td>
-                    <td className="px-4 py-3 text-right">{formatCurrency(item.unit_price)}</td>
-                    <td className="px-4 py-3 text-right font-bold text-stone-950">
+                    <td className="px-3 sm:px-4 py-3 text-right font-bold text-stone-900">{item.quantity}</td>
+                    <td className="px-3 sm:px-4 py-3 text-right">{formatCurrency(item.unit_price)}</td>
+                    <td className="px-3 sm:px-4 py-3 text-right font-bold text-stone-950">
                       {formatCurrency(item.quantity * item.unit_price)}
                     </td>
                   </tr>
@@ -152,8 +152,8 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
           </div>
 
           {/* Total del Presupuesto */}
-          <div className="flex justify-end pr-2 mb-8">
-            <div className="text-right bg-stone-50 border border-stone-200 p-4 rounded-lg min-w-[220px]">
+          <div className="flex justify-end sm:pr-2 mb-6 sm:mb-8">
+            <div className="text-right bg-stone-50 border border-stone-200 p-3.5 sm:p-4 rounded-lg w-full sm:w-auto min-w-full sm:min-w-[260px]">
               
               {budget.discounts && budget.discounts.length > 0 && (() => {
                 const subtotal = budget.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0);
@@ -174,11 +174,20 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest block">
                 Total Presupuestado
               </span>
-              <span className="text-xl font-bold text-accent-deep mt-1 block">
+              <span className="text-xl sm:text-2xl font-black text-accent-deep mt-0.5 block">
                 {formatCurrency(budget.total_amount)}
               </span>
-              <span className="text-[9px] text-stone-400 block mt-1 uppercase">
-                Los precios no incluyen IVA ni envío
+
+              {/* Total con IVA (21%) */}
+              <div className="mt-2 pt-2 border-t border-stone-200 flex flex-col items-end">
+                <div className="flex justify-between items-center w-full gap-4 text-xs font-bold text-stone-800">
+                  <span className="text-[10px] uppercase text-stone-500 font-semibold">Total con IVA (21%):</span>
+                  <span>{formatCurrency(budget.total_amount * 1.21)}</span>
+                </div>
+              </div>
+
+              <span className="text-[9px] text-stone-400 block mt-2 uppercase font-medium">
+                * Los precios no incluyen costo de envío
               </span>
             </div>
           </div>
