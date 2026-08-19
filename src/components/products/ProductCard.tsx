@@ -27,7 +27,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* 1. Contenedor de la Imagen Placeholder o Real con Gradiente */}
       <div className={`relative w-full flex items-center justify-center overflow-hidden ${
         isBanera 
-          ? 'bg-gradient-to-br from-[#111c2e] via-[#17253b] to-[#0d1524]' 
+          ? 'bg-gradient-to-br from-[#71717a] via-[#8d8d97] to-[#52525b]' 
           : 'bg-gradient-to-br from-stone-100 via-white to-stone-50'
       } ${isPlatoDucha ? 'aspect-[3/4] sm:aspect-[4/5]' : 'h-48 sm:h-56'}`}>
         
@@ -36,20 +36,20 @@ export function ProductCard({ product }: ProductCardProps) {
           <img 
             src={product.image.url} 
             alt={product.image.alt || product.name} 
-            className={`absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105 ${
-              isBanera ? 'object-contain p-4' : 'object-cover'
+            className={`absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-110 ${
+              isBanera ? 'object-contain p-1 sm:p-2 drop-shadow-[0_20px_25px_rgba(0,0,0,0.55)]' : 'object-cover'
             }`}
           />
         ) : (
           <>
             {/* Decoración Visual de Agua (solo si no hay imagen real) */}
             <Waves className={`h-9 w-9 opacity-70 group-hover:scale-110 transition-all duration-300 ${
-              isBanera ? 'text-[#9de6f2]/50 group-hover:text-[#9de6f2]' : 'text-accent-deep/30 group-hover:text-accent-deep/50'
+              isBanera ? 'text-white/80 group-hover:text-white' : 'text-accent-deep/30 group-hover:text-accent-deep/50'
             }`} aria-hidden="true" />
             
             {/* Sello de Marca de Agua */}
             <span className={`absolute bottom-3 right-3 text-[8.5px] uppercase tracking-widest font-semibold ${
-              isBanera ? 'text-slate-400/60' : 'text-stone-300'
+              isBanera ? 'text-zinc-200/70' : 'text-stone-300'
             }`}>
               Five Saint
             </span>
@@ -59,7 +59,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Badges de Categoría y Adicionales (sobre la imagen o placeholder) */}
         <div className="absolute top-4 left-4 flex gap-2 z-10">
           <Badge variant="outline" className={`text-[8.5px] uppercase tracking-widest font-bold ${
-            isBanera ? 'bg-slate-900/80 text-slate-200 border-slate-700/80 backdrop-blur-xs' : 'bg-white/95'
+            isBanera ? 'bg-zinc-900/80 text-white border-zinc-500/80 backdrop-blur-xs' : 'bg-white/95'
           }`}>
             {product.categoryName}
           </Badge>

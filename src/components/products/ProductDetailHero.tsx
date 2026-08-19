@@ -134,14 +134,14 @@ export function ProductDetailHero({ product }: ProductDetailHeroProps) {
           {/* Columna Derecha: Imagen Real o Placeholder Visual Elevado en Gradiente */}
           <div className={`lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[460px] rounded-[2rem] overflow-hidden border-[6px] border-white/80 shadow-2xl flex items-center justify-center group transform transition-transform duration-500 hover:scale-[1.01] ${
             isBanera 
-              ? 'bg-gradient-to-br from-[#111c2e] via-[#17253b] to-[#0d1524] shadow-slate-900/40' 
+              ? 'bg-gradient-to-br from-[#71717a] via-[#8d8d97] to-[#52525b] shadow-zinc-600/30' 
               : 'bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 shadow-stone-300/40'
           }`}>
             {product.image ? (
               <img
                 src={product.image.url}
                 alt={product.image.alt || product.name}
-                className={`absolute inset-0 w-full h-full ${isBanera ? 'object-contain p-6' : 'object-cover'}`}
+                className={`absolute inset-0 w-full h-full ${isBanera ? 'object-contain p-2 sm:p-4 drop-shadow-[0_25px_30px_rgba(0,0,0,0.60)]' : 'object-cover'}`}
               />
             ) : (
               <>
