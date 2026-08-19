@@ -15,6 +15,8 @@ interface ProductDetailHeroProps {
  * botones duales de contacto y un placeholder visual decorativo en gradiente a la derecha.
  */
 export function ProductDetailHero({ product }: ProductDetailHeroProps) {
+  const isBanera = product.categorySlug === 'baneras' || product.categorySlug === 'bañeras' || product.categoryName?.toLowerCase().includes('bañera') || product.categoryName?.toLowerCase().includes('banera');
+
   return (
     <section className="relative overflow-hidden bg-white py-12 sm:py-16 border-b border-stone-200/50">
       {/* Fondo difuso sutil */}
@@ -130,12 +132,16 @@ export function ProductDetailHero({ product }: ProductDetailHeroProps) {
           </div>
 
           {/* Columna Derecha: Imagen Real o Placeholder Visual Elevado en Gradiente */}
-          <div className="lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[460px] rounded-[2rem] overflow-hidden border-[6px] border-white/80 shadow-2xl shadow-stone-300/40 bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 flex items-center justify-center group transform transition-transform duration-500 hover:scale-[1.01]">
+          <div className={`lg:col-span-5 relative w-full h-[320px] sm:h-[400px] lg:h-[460px] rounded-[2rem] overflow-hidden border-[6px] border-white/80 shadow-2xl flex items-center justify-center group transform transition-transform duration-500 hover:scale-[1.01] ${
+            isBanera 
+              ? 'bg-gradient-to-br from-[#111c2e] via-[#17253b] to-[#0d1524] shadow-slate-900/40' 
+              : 'bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 shadow-stone-300/40'
+          }`}>
             {product.image ? (
               <img
                 src={product.image.url}
                 alt={product.image.alt || product.name}
-                className="absolute inset-0 w-full h-full object-cover"
+                className={`absolute inset-0 w-full h-full ${isBanera ? 'object-contain p-6' : 'object-cover'}`}
               />
             ) : (
               <>

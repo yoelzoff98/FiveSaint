@@ -43,23 +43,32 @@ export async function FeaturedProductsSection() {
 
         {/* Grilla de Productos Destacados */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
-          {featuredProducts.map((product) => (
-            <Card
-              key={product.id}
-              hoverable
-              className="flex flex-col justify-between h-full bg-white p-0 overflow-hidden"
-              padding="none"
-            >
-              {/* Contenedor del Visual del Producto */}
-              <div className="relative w-full h-48 bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 flex items-center justify-center border-b border-stone-100 group-hover:from-accent-soft/10 transition-colors overflow-hidden">
-                {product.image?.url ? (
-                  <Image
-                    src={product.image.url}
-                    alt={product.image.alt || product.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
+          {featuredProducts.map((product) => {
+            const isBanera = product.categorySlug === 'baneras' || product.categorySlug === 'bañeras' || product.categoryName?.toLowerCase().includes('bañera') || product.categoryName?.toLowerCase().includes('banera');
+
+            return (
+              <Card
+                key={product.id}
+                hoverable
+                className="flex flex-col justify-between h-full bg-white p-0 overflow-hidden"
+                padding="none"
+              >
+                {/* Contenedor del Visual del Producto */}
+                <div className={`relative w-full h-48 flex items-center justify-center border-b border-stone-100 overflow-hidden ${
+                  isBanera
+                    ? 'bg-gradient-to-br from-[#111c2e] via-[#17253b] to-[#0d1524]'
+                    : 'bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 group-hover:from-accent-soft/10 transition-colors'
+                }`}>
+                  {product.image?.url ? (
+                    <Image
+                      src={product.image.url}
+                      alt={product.image.alt || product.name}
+                      fill
+                      className={`transition-transform duration-500 group-hover:scale-105 ${
+                        isBanera ? 'object-contain p-4' : 'object-cover'
+                      }`}
+                    />
+                  ) : (
                   <Waves className="h-10 w-10 text-accent-deep/30 opacity-70 group-hover:scale-110 group-hover:text-accent-deep/50 transition-all duration-300" />
                 )}
                 
@@ -103,9 +112,9 @@ export async function FeaturedProductsSection() {
                     <ArrowRight className="ml-1 h-3.5 w-3.5" />
                   </Link>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
 
       </Container>
