@@ -15,6 +15,7 @@ import {
   ofertasData, 
   spaDataPage1, 
   spaDataPage2, 
+  spaOpcionalesData,
   platosDuchaData, 
   columnasDuchaData, 
   duchaEscocesaData 
@@ -81,6 +82,7 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
       "Bañeras Premium",
       "Bañeras Standard",
       "Equipamiento Opcional",
+      "Opcionales Spas / Minipiscinas",
       "Ofertas Especiales",
       "Spas / Hidromasajes",
       "Platos de Ducha",
@@ -151,6 +153,23 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
             price: parsePriceString(eq.precio)
           });
         });
+        spaOpcionalesData.forEach((op) => {
+          prods.push({
+            key: `equip-spa-${op.code}`,
+            name: `Equipamiento Spa: ${op.name} (${op.code})`,
+            price: parsePriceString(op.price)
+          });
+        });
+        break;
+
+      case "Opcionales Spas / Minipiscinas":
+        spaOpcionalesData.forEach((op) => {
+          prods.push({
+            key: `spa-opcion-${op.code}`,
+            name: `Opcional Spa / Minipiscina: ${op.name} (${op.code})`,
+            price: parsePriceString(op.price)
+          });
+        });
         break;
 
       case "Ofertas Especiales":
@@ -173,6 +192,13 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
               name: `Spa ${s.name} - Versión ${version}`,
               price: parsePriceString(p.price)
             });
+          });
+        });
+        spaOpcionalesData.forEach((op) => {
+          prods.push({
+            key: `spa-opcion-comb-${op.code}`,
+            name: `Opcional Spa / Minipiscina: ${op.name} (${op.code})`,
+            price: parsePriceString(op.price)
           });
         });
         break;
