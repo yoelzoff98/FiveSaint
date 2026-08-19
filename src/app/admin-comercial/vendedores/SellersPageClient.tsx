@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { User, Mail, ShieldAlert, Plus, X, Power, UserCheck, BarChart3 } from "lucide-react";
-import { registerSellerAction } from "./actions";
+import { User, Mail, Plus, X, Power, UserCheck, BarChart3, Phone, Edit } from "lucide-react";
+import { registerSellerAction, updateSellerAction } from "./actions";
 import { toggleSellerActive } from "@/lib/supabase/comercial";
 
 interface Seller {
@@ -16,6 +15,7 @@ interface Seller {
   username: string;
   full_name: string;
   email: string;
+  phone?: string | null;
   is_active: boolean;
   created_at: string;
 }
@@ -28,12 +28,19 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
   const router = useRouter();
   const [sellers, setSellers] = useState<Seller[]>(initialSellers);
   const [showForm, setShowForm] = useState(false);
+  const [editingSeller, setEditingSeller] = useState<Seller | null>(null);
 
-  // Form State
+  // Registration Form State
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
+  // Edit Form State
+  const [editFullName, setEditFullName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editPhone, setEditPhone] = useState("");
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +50,7 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
     setUsername("");
     setFullName("");
     setEmail("");
+    setPhone("");
     setShowForm(false);
     setError(null);
   };
@@ -59,7 +67,8 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
         username: username.trim(),
         fullName: fullName.trim(),
         email: email.trim(),
-        password: password.trim()
+        password: password.trim(),
+        phone: phone.trim()
       });
 
       if (res && res.success && res.seller) {
@@ -70,6 +79,41 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Error al registrar el vendedor.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startEditSeller = (seller: Seller) => {
+    setEditingSeller(seller);
+    setEditFullName(seller.full_name);
+    setEditEmail(seller.email);
+    setEditPhone(seller.phone || "");
+    setError(null);
+  };
+
+  const handleUpdateSeller = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSeller || !editFullName.trim() || !editEmail.trim()) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await updateSellerAction(editingSeller.id, {
+        fullName: editFullName.trim(),
+        email: editEmail.trim(),
+        phone: editPhone.trim()
+      });
+
+      if (res && res.success && res.seller) {
+        setSellers(prev => prev.map(s => s.id === editingSeller.id ? res.seller : s));
+        setEditingSeller(null);
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Error al actualizar el vendedor.");
     } finally {
       setLoading(false);
     }
@@ -99,14 +143,14 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
       <div className="bg-stone-900 text-white p-4 rounded-xl text-xs leading-relaxed flex items-start gap-3 border border-stone-850">
         <UserCheck className="w-5 h-5 text-accent-deep mt-0.5 shrink-0" />
         <div>
-          <span className="font-bold block mb-1">Registro Directo de Vendedores:</span>
-          Ahora podés crear las cuentas de tus vendedores directamente ingresando su email y contraseña aquí. El sistema registrará el acceso y creará las credenciales automáticamente sin necesidad de ingresar al panel de Supabase.
+          <span className="font-bold block mb-1">Registro y Edición Directa de Vendedores:</span>
+          Podés registrar vendedores asignando su usuario, contraseña y número de WhatsApp comercial. Este WhatsApp será utilizado automáticamente en las cotizaciones y presupuestos PDF oficiales de Five Saint.
         </div>
       </div>
 
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold text-stone-900">Listado de Vendedores</h2>
-        {!showForm && (
+        {!showForm && !editingSeller && (
           <Button onClick={() => setShowForm(true)} className="flex items-center gap-2 cursor-pointer">
             <Plus className="w-4 h-4" />
             Registrar Vendedor
@@ -114,7 +158,7 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
         )}
       </div>
 
-      {/* Formulario */}
+      {/* Formulario de Registro */}
       {showForm && (
         <Card className="p-6 border-stone-200 bg-white shadow-md">
           <div className="flex justify-between items-center mb-6">
@@ -151,7 +195,7 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
-                placeholder="juan_ventas"
+                placeholder="tamara_diaz"
               />
             </div>
 
@@ -163,7 +207,7 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
-                placeholder="Juan Carlos Pérez"
+                placeholder="Tamara Diaz"
               />
             </div>
 
@@ -175,7 +219,18 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
-                placeholder="juan@fivesaint.com"
+                placeholder="tamara@fivesaint.com"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-semibold text-stone-750">WhatsApp / Teléfono Comercial (Aparecerá en el PDF del Presupuesto)</label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
+                placeholder="+54 9 11 1234-5678"
               />
             </div>
 
@@ -185,6 +240,68 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
               </Button>
               <Button type="submit" variant="primary" disabled={loading} className="cursor-pointer">
                 {loading ? "Registrando..." : "Vincular Vendedor"}
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
+      {/* Formulario de Edición */}
+      {editingSeller && (
+        <Card className="p-6 border-stone-200 bg-amber-50/30 shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-bold text-stone-900">Editar Perfil de Vendedor: @{editingSeller.username}</h3>
+            <button onClick={() => setEditingSeller(null)} className="text-stone-400 hover:text-stone-600 transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-600 border border-red-200 p-4 rounded-md text-sm mb-4">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleUpdateSeller} className="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+            <div className="flex flex-col gap-1.5">
+              <label className="font-semibold text-stone-750">Nombre Completo *</label>
+              <input
+                type="text"
+                required
+                value={editFullName}
+                onChange={(e) => setEditFullName(e.target.value)}
+                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="font-semibold text-stone-750">Email de Acceso *</label>
+              <input
+                type="email"
+                required
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="font-semibold text-stone-750">WhatsApp / Teléfono (PDF)</label>
+              <input
+                type="text"
+                value={editPhone}
+                onChange={(e) => setEditPhone(e.target.value)}
+                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-850"
+                placeholder="+54 9 11 1234-5678"
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 md:col-span-3 mt-2">
+              <Button type="button" variant="outline" onClick={() => setEditingSeller(null)} disabled={loading} className="cursor-pointer">
+                Cancelar
+              </Button>
+              <Button type="submit" variant="primary" disabled={loading} className="cursor-pointer">
+                {loading ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </div>
           </form>
@@ -203,8 +320,8 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
               <thead>
                 <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
                   <th className="px-6 py-4">Vendedor</th>
+                  <th className="px-6 py-4">WhatsApp Comercial</th>
                   <th className="px-6 py-4">Usuario</th>
-                  <th className="px-6 py-4">ID de Autenticación (Supabase)</th>
                   <th className="px-6 py-4">Estado</th>
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
@@ -222,11 +339,18 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
                         {s.email}
                       </div>
                     </td>
+                    <td className="px-6 py-4">
+                      {s.phone ? (
+                        <div className="flex items-center gap-1.5 font-medium text-green-700 text-xs bg-green-50 px-2.5 py-1 rounded border border-green-200 inline-flex">
+                          <Phone className="w-3.5 h-3.5 text-green-600" />
+                          {s.phone}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-stone-400 italic">No asignado (+54 9 11 3816-1492 default)</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 font-mono text-xs text-stone-600">
                       @{s.username}
-                    </td>
-                    <td className="px-6 py-4 font-mono text-xs text-stone-400 select-all">
-                      {s.user_id}
                     </td>
                     <td className="px-6 py-4">
                       {s.is_active ? (
@@ -237,6 +361,15 @@ export function SellersPageClient({ initialSellers }: SellersPageClientProps) {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEditSeller(s)}
+                          className="cursor-pointer text-stone-700 hover:text-stone-900"
+                        >
+                          <Edit className="w-3.5 h-3.5 mr-1" />
+                          Editar
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"

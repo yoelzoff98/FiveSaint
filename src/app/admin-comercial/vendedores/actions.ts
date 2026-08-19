@@ -8,6 +8,7 @@ export async function registerSellerAction(formData: {
   fullName: string;
   email: string;
   password: string;
+  phone?: string;
 }) {
   // 1. Validar permisos de administrador
   const ctx = await requireCommercialUser();
@@ -15,7 +16,7 @@ export async function registerSellerAction(formData: {
     throw new Error("No tenés permisos para realizar esta operación.");
   }
 
-  const { username, fullName, email, password } = formData;
+  const { username, fullName, email, password, phone } = formData;
 
   // 2. Validaciones básicas
   if (!username || username.length < 3) {
@@ -60,6 +61,7 @@ export async function registerSellerAction(formData: {
         username: username.trim().toLowerCase(),
         full_name: fullName.trim(),
         email: email.trim(),
+        phone: phone ? phone.trim() : null,
         is_active: true
       }])
       .select()
@@ -79,4 +81,43 @@ export async function registerSellerAction(formData: {
     
     throw new Error(dbErr.message || "Error al registrar el perfil del vendedor.");
   }
+}
+
+export async function updateSellerAction(sellerId: string, formData: {
+  fullName: string;
+  email: string;
+  phone?: string;
+}) {
+  const ctx = await requireCommercialUser();
+  if (!ctx.isAdmin) {
+    throw new Error("No tenés permisos para realizar esta operación.");
+  }
+
+  const { fullName, email, phone } = formData;
+  if (!fullName || fullName.length < 2) {
+    throw new Error("El nombre completo debe tener al menos 2 caracteres.");
+  }
+  if (!email || !email.includes("@")) {
+    throw new Error("El email ingresado no es válido.");
+  }
+
+  const supabaseAdmin = createSupabaseAdminClient();
+  const { data: sellerData, error: dbError } = await supabaseAdmin
+    .from("sellers")
+    .update({
+      full_name: fullName.trim(),
+      email: email.trim(),
+      phone: phone ? phone.trim() : null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", sellerId)
+    .select()
+    .single();
+
+  if (dbError) throw dbError;
+
+  return {
+    success: true,
+    seller: sellerData
+  };
 }

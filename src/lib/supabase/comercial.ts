@@ -497,7 +497,7 @@ export async function getBudgetById(id: string) {
     .select(`
       *,
       clients(name, company_name, email, phone, address),
-      sellers(full_name, email),
+      sellers(full_name, email, phone),
       distributors(company_name, contact_name, discount_percentage)
     `)
     .eq("id", id)
@@ -918,7 +918,7 @@ export async function getPublicBudgetById(id: string) {
     .select(`
       *,
       clients(name, company_name, email, phone, address),
-      sellers(full_name, email)
+      sellers(full_name, email, phone)
     `)
     .eq("id", id)
     .single();
