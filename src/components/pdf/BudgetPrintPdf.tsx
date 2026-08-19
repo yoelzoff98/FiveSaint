@@ -27,6 +27,8 @@ interface Budget {
   sellers: {
     full_name: string;
     email: string;
+    phone?: string | null;
+    whatsapp?: string | null;
   } | null;
   items: BudgetItem[];
 }
@@ -108,9 +110,9 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               <p className="font-bold text-stone-900 text-sm mb-1">
                 {budget.sellers?.full_name || "Five Saint (Administración)"}
               </p>
-              {budget.sellers?.email && (
-                <p className="text-stone-600 mb-2">{budget.sellers.email}</p>
-              )}
+              <p className="text-stone-600 mb-2">
+                WhatsApp: {budget.sellers?.whatsapp || budget.sellers?.phone || "+54 9 11 3816-1492"}
+              </p>
               
               <div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 font-semibold inline-block mt-1">
                 Validez de cotización: 15 días corridos.
