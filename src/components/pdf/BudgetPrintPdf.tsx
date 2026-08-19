@@ -49,18 +49,18 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
     const date = new Date(budget.created_at);
 
     return (
-      <div 
-        ref={ref} 
+      <div
+        ref={ref}
         className="bg-white text-slate-800 font-sans p-4 sm:p-8 print:p-[10mm] w-full sm:w-[210mm] min-h-auto sm:min-h-[297mm] flex flex-col justify-between shadow-none sm:shadow-lg print:shadow-none mx-auto box-border"
       >
         {/* Cabecera del Presupuesto */}
         <div>
           <div className="flex flex-col sm:flex-row justify-between items-start border-b-2 border-accent-deep pb-4 sm:pb-5 mb-4 sm:mb-6 gap-4 sm:gap-0">
             <div className="flex flex-col">
-              <img 
-                src="/LOGO.svg" 
-                alt="Five Saint Logo" 
-                className="h-12 sm:h-16 object-contain object-left mb-2" 
+              <img
+                src="/LOGO.svg"
+                alt="Five Saint Logo"
+                className="h-12 sm:h-16 object-contain object-left mb-2"
               />
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 Sistemas Hidroterapéuticos & Spas
@@ -70,7 +70,7 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
                 info@fivesaint.com | www.fivesaint.com
               </span>
             </div>
-            
+
             <div className="text-left sm:text-right flex flex-col items-start sm:items-end w-full sm:w-auto">
               <h1 className="text-base sm:text-lg font-black text-accent-deep tracking-wider uppercase">
                 Presupuesto
@@ -113,9 +113,9 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               <p className="text-stone-600 mb-2">
                 WhatsApp: {budget.sellers?.whatsapp || budget.sellers?.phone || "+54 9 11 3816-1492"}
               </p>
-              
+
               <div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 font-semibold inline-block mt-1">
-                Validez de cotización: 15 días corridos.
+                Validez de cotización: 7 días corridos.
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
           {/* Total del Presupuesto */}
           <div className="flex justify-end sm:pr-2 mb-6 sm:mb-8">
             <div className="text-right bg-stone-50 border border-stone-200 p-3.5 sm:p-4 rounded-lg w-full sm:w-auto min-w-full sm:min-w-[260px]">
-              
+
               {budget.discounts && budget.discounts.length > 0 && (() => {
                 const subtotal = budget.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0);
                 return (
