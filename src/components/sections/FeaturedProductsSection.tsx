@@ -69,48 +69,49 @@ export async function FeaturedProductsSection() {
                       }`}
                     />
                   ) : (
-                  <Waves className="h-10 w-10 text-accent-deep/30 opacity-70 group-hover:scale-110 group-hover:text-accent-deep/50 transition-all duration-300" />
-                )}
-                
-                <div className="absolute top-4 left-4 flex gap-2 z-10">
-                  <Badge variant="outline" className="text-[8px] uppercase tracking-widest font-bold bg-white/80 backdrop-blur-sm">
-                    {product.categoryName}
-                  </Badge>
-                  {product.badge && (
-                    <Badge variant="primary" className="text-[8px] uppercase tracking-widest font-bold shadow-sm">
-                      {product.badge}
-                    </Badge>
+                    <Waves className="h-10 w-10 text-accent-deep/30 opacity-70 group-hover:scale-110 group-hover:text-accent-deep/50 transition-all duration-300" />
                   )}
-                </div>
-                
-                {/* Marca de agua elegante */}
-                <span className="absolute bottom-3 right-3 text-[9px] uppercase tracking-widest font-bold text-stone-300 z-10 drop-shadow-sm">
-                  Five Saint
-                </span>
-              </div>
-
-              {/* Contenido Informativo del Producto */}
-              <div className="p-6 flex flex-col justify-between flex-1">
-                <div>
-                  <h3 className="text-lg font-medium text-stone-900 line-clamp-1">
-                    {product.name}
-                  </h3>
-                  <p className="mt-2 text-xs font-light text-stone-600 leading-relaxed min-h-[48px] line-clamp-3">
-                    {product.shortDescription || product.description}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-accent-deep">
-                    Garantía Escrita
+                  
+                  <div className="absolute top-4 left-4 flex gap-2 z-10">
+                    <Badge variant="outline" className="text-[8px] uppercase tracking-widest font-bold bg-white/80 backdrop-blur-sm">
+                      {product.categoryName}
+                    </Badge>
+                    {product.badge && (
+                      <Badge variant="primary" className="text-[8px] uppercase tracking-widest font-bold shadow-sm">
+                        {product.badge}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {/* Marca de agua elegante */}
+                  <span className="absolute bottom-3 right-3 text-[9px] uppercase tracking-widest font-bold text-stone-300 z-10 drop-shadow-sm">
+                    Five Saint
                   </span>
-                  <Link
-                    href={product.href}
-                    className="inline-flex items-center text-xs font-semibold uppercase tracking-wider text-stone-850 hover:text-accent-deep hover:underline transition-colors"
-                  >
-                    Ver detalles
-                    <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                  </Link>
+                </div>
+
+                {/* Contenido Informativo del Producto */}
+                <div className="p-6 flex flex-col justify-between flex-1">
+                  <div>
+                    <h3 className="text-lg font-medium text-stone-900 line-clamp-1">
+                      {product.name}
+                    </h3>
+                    <p className="mt-2 text-xs font-light text-stone-600 leading-relaxed min-h-[48px] line-clamp-3">
+                      {product.shortDescription || product.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-accent-deep">
+                      Garantía Escrita
+                    </span>
+                    <Link
+                      href={product.href}
+                      className="inline-flex items-center text-xs font-semibold uppercase tracking-wider text-stone-850 hover:text-accent-deep hover:underline transition-colors"
+                    >
+                      Ver detalles
+                      <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </div>
               </Card>
             );
@@ -121,4 +122,5 @@ export async function FeaturedProductsSection() {
     </section>
   );
 }
+
 export default FeaturedProductsSection;
