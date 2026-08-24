@@ -429,9 +429,9 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
                     {saleType === "direct" && <div className="w-2.5 h-2.5 rounded-full bg-emerald-600" />}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-stone-900">Venta Directa de Fábrica</div>
+                    <div className="text-xs font-bold text-stone-900">Pedido a Fábrica</div>
                     <div className="text-[11px] text-stone-500 font-normal leading-snug mt-0.5">
-                      Genera pedido de producción. Comisionable para el vendedor.
+                      Genera orden de producción y entrega desde fábrica.
                     </div>
                   </div>
                 </button>
@@ -451,7 +451,7 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
                   <div>
                     <div className="text-xs font-bold text-stone-900">Vendido por Distribuidor</div>
                     <div className="text-[11px] text-stone-500 font-normal leading-snug mt-0.5">
-                      Cliente compró en distribuidor. Sin fabricación ni comisión.
+                      El cliente concretó la compra a través de un distribuidor.
                     </div>
                   </div>
                 </button>
