@@ -26,6 +26,16 @@ const STATUS_LABELS: Record<string, string> = {
   vendido_distribuidor: "Vendido por distribuidor"
 };
 
+const CRM_STATUS_OPTIONS = [
+  { value: "nuevo", label: "Nuevo" },
+  { value: "contactado", label: "Contactado" },
+  { value: "presupuestado", label: "Presupuestado" },
+  { value: "negociacion", label: "En negociación" },
+  { value: "ganado", label: "Vendido" },
+  { value: "perdido", label: "Perdido" },
+  { value: "inactivo", label: "Vendido por distribuidor" }
+];
+
 const STATUS_COLORS: Record<string, string> = {
   nuevo: "bg-blue-50 text-blue-700 border-blue-200",
   contactado: "bg-purple-50 text-purple-700 border-purple-200",
@@ -378,8 +388,8 @@ export function ClientDetailClient({ client }: ClientDetailClientProps) {
               disabled={updatingStatus}
               className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-800 text-xs bg-white cursor-pointer font-semibold transition-all disabled:opacity-60"
             >
-              {Object.entries(STATUS_LABELS).map(([val, label]) => (
-                <option key={val} value={val}>{label}</option>
+              {CRM_STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
           </div>
