@@ -17,6 +17,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const isPlatoDucha = product.categorySlug === 'platos-de-duchas' || product.categoryName?.toLowerCase().includes('plato');
   const isBanera = product.categorySlug === 'baneras' || product.categorySlug === 'bañeras' || product.categoryName?.toLowerCase().includes('bañera') || product.categoryName?.toLowerCase().includes('banera');
+  const isColumna = product.categorySlug === 'columnas-de-ducha' || product.categoryName?.toLowerCase().includes('columna');
 
   return (
     <Card
@@ -28,16 +29,24 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className={`relative w-full flex items-center justify-center overflow-hidden ${
         isBanera 
           ? 'bg-gradient-to-br from-[#71717a] via-[#8d8d97] to-[#52525b]' 
+          : isColumna
+          ? 'bg-gradient-to-b from-stone-100 via-stone-50 to-white'
           : 'bg-gradient-to-br from-stone-100 via-white to-stone-50'
-      } ${isPlatoDucha ? 'aspect-[3/4] sm:aspect-[4/5]' : 'h-48 sm:h-56'}`}>
+      } ${
+        isPlatoDucha ? 'aspect-[3/4] sm:aspect-[4/5]' : isColumna ? 'aspect-[3/4] h-72 sm:h-80' : 'h-48 sm:h-56'
+      }`}>
         
         {/* Imagen real si existe */}
         {product.image ? (
           <img 
             src={product.image.url} 
             alt={product.image.alt || product.name} 
-            className={`absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-110 ${
-              isBanera ? 'object-contain p-1 sm:p-2 drop-shadow-[0_20px_25px_rgba(0,0,0,0.55)]' : 'object-cover'
+            className={`absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-105 ${
+              isBanera 
+                ? 'object-contain p-1 sm:p-2 drop-shadow-[0_20px_25px_rgba(0,0,0,0.55)]' 
+                : isColumna
+                ? 'object-contain p-3 sm:p-4 drop-shadow-md'
+                : 'object-cover'
             }`}
           />
         ) : (
