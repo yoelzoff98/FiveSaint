@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Briefcase, FileText, CheckCircle, Percent, DollarSign, Calendar } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, Percent, DollarSign, Calendar, Store, Building2 } from "lucide-react";
 
 interface ClientRef {
   name: string;
   company_name: string | null;
+  status?: string;
 }
 
 interface Budget {
-  
   id: string;
   budget_number: number;
   total_amount: number;
@@ -48,6 +48,12 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   const [commissionRate, setCommissionRate] = useState<number>(5);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("this_month");
 
+  // Helper para identificar venta por distribuidor
+  const isDistributorSale = (item: Budget | Order) => {
+    const status = item.clients?.status?.toLowerCase();
+    return status === "inactivo" || status === "vendido_distribuidor" || item.status === "distributor_sale";
+  };
+
   // Filtrar presupuestos según el período seleccionado
   const filteredBudgets = budgets.filter((b) => {
     if (selectedPeriod === "all") return true;
@@ -67,16 +73,22 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
     return true;
   });
 
-  // Cálculos de métricas según el período filtrado
+  // Métricas separadas por tipo de venta
   const totalBudgets = filteredBudgets.length;
-  const closedBudgets = filteredBudgets.filter(b => b.status === "converted").length;
-  const conversionRate = totalBudgets > 0 ? (closedBudgets / totalBudgets) * 100 : 0;
-  
-  const totalRevenue = filteredBudgets
-    .filter(b => b.status === "converted")
-    .reduce((acc, curr) => acc + curr.total_amount, 0);
+  const convertedBudgets = filteredBudgets.filter((b) => b.status === "converted");
+  const totalClosedCount = convertedBudgets.length;
 
-  const calculatedCommission = totalRevenue * (commissionRate / 100);
+  const directSalesBudgets = convertedBudgets.filter((b) => !isDistributorSale(b));
+  const distributorSalesBudgets = convertedBudgets.filter((b) => isDistributorSale(b));
+
+  const directRevenue = directSalesBudgets.reduce((acc, curr) => acc + curr.total_amount, 0);
+  const distributorRevenue = distributorSalesBudgets.reduce((acc, curr) => acc + curr.total_amount, 0);
+  const totalRevenue = directRevenue + distributorRevenue;
+
+  const conversionRate = totalBudgets > 0 ? (totalClosedCount / totalBudgets) * 100 : 0;
+
+  // La comisión SE CALCULA ÚNICAMENTE sobre las Ventas Directas de Fábrica
+  const calculatedCommission = directRevenue * (commissionRate / 100);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-AR", {
@@ -118,74 +130,132 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Columna Izquierda: Métricas Globales */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="p-5 border-stone-200 bg-white">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-blue-600" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Cotizaciones Enviadas */}
+            <Card className="p-4 border-stone-200 bg-white flex flex-col justify-between">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4 text-blue-600" />
                 </div>
-                <h3 className="font-bold text-stone-700">Cotizaciones Enviadas</h3>
+                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Presupuestos</h3>
               </div>
-              <div className="text-3xl font-black text-stone-900 mt-2">{totalBudgets}</div>
+              <div>
+                <div className="text-2xl font-black text-stone-900">{totalBudgets}</div>
+                <p className="text-[11px] text-stone-400 mt-0.5">Enviados en período</p>
+              </div>
             </Card>
 
-            <Card className="p-5 border-stone-200 bg-white">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
+            {/* Ventas Directas Fábrica */}
+            <Card className="p-4 border-emerald-200 bg-emerald-50/30 flex flex-col justify-between">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                  <Building2 className="w-4 h-4 text-emerald-700" />
                 </div>
-                <h3 className="font-bold text-stone-700">Cotizaciones Cerradas</h3>
+                <h3 className="font-bold text-xs text-emerald-800 uppercase tracking-wider">Ventas Directas</h3>
               </div>
-              <div className="text-3xl font-black text-stone-900 mt-2">{closedBudgets}</div>
-              <p className="text-xs text-stone-500 font-medium mt-1">
-                Tasa de conversión: {conversionRate.toFixed(1)}%
-              </p>
+              <div>
+                <div className="text-xl font-black text-emerald-800">{formatCurrency(directRevenue)}</div>
+                <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">
+                  {directSalesBudgets.length} pedido(s) • Base comisión
+                </p>
+              </div>
             </Card>
 
-            <Card className="p-5 border-stone-200 bg-white">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full bg-accent-deep/10 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-accent-deep" />
+            {/* Ventas por Distribuidor */}
+            <Card className="p-4 border-teal-200 bg-teal-50/40 flex flex-col justify-between">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
+                  <Store className="w-4 h-4 text-teal-700" />
                 </div>
-                <h3 className="font-bold text-stone-700">Total Ingresos</h3>
+                <h3 className="font-bold text-xs text-teal-800 uppercase tracking-wider">Por Distribuidor</h3>
               </div>
-              <div className="text-2xl font-black text-accent-deep mt-2">{formatCurrency(totalRevenue)}</div>
-              <p className="text-xs text-stone-500 font-medium mt-1">Solo cotizaciones convertidas</p>
+              <div>
+                <div className="text-xl font-black text-teal-800">{formatCurrency(distributorRevenue)}</div>
+                <p className="text-[11px] text-teal-600 font-semibold mt-0.5">
+                  {distributorSalesBudgets.length} venta(s) • Sin comisión
+                </p>
+              </div>
+            </Card>
+
+            {/* Total Ingresos Combinado */}
+            <Card className="p-4 border-stone-200 bg-white flex flex-col justify-between">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-accent-deep/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="w-4 h-4 text-accent-deep" />
+                </div>
+                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Total Ventas</h3>
+              </div>
+              <div>
+                <div className="text-xl font-black text-stone-900">{formatCurrency(totalRevenue)}</div>
+                <p className="text-[11px] text-stone-500 font-medium mt-0.5">
+                  Conversión: {conversionRate.toFixed(1)}%
+                </p>
+              </div>
             </Card>
           </div>
 
           {/* Historial Reciente de Cotizaciones (Cerradas) */}
           <Card className="p-6 border-stone-200 bg-white">
-            <h2 className="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-stone-500" />
-              Cotizaciones Convertidas a Pedido (Filtradas)
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-stone-500" />
+                Ventas Cerradas en el Período
+              </h2>
+              <Badge variant="outline" className="text-xs">
+                {totalClosedCount} cerradas
+              </Badge>
+            </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
-                    <th className="px-4 py-3">N° Presupuesto</th>
+                    <th className="px-4 py-3">Presupuesto</th>
                     <th className="px-4 py-3">Fecha</th>
                     <th className="px-4 py-3">Cliente</th>
+                    <th className="px-4 py-3">Canal de Venta</th>
                     <th className="px-4 py-3 text-right">Monto</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100 text-stone-800">
-                  {filteredBudgets.filter(b => b.status === "converted").slice(0, 10).map(b => (
-                    <tr key={b.id} className="hover:bg-stone-50/50">
-                      <td className="px-4 py-3 font-mono text-stone-900 font-bold">FS-P-{b.budget_number}</td>
-                      <td className="px-4 py-3 text-stone-500">{new Date(b.created_at).toLocaleDateString("es-AR")}</td>
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-stone-850">{b.clients?.name}</div>
-                        {b.clients?.company_name && <div className="text-xs text-stone-500">{b.clients.company_name}</div>}
-                      </td>
-                      <td className="px-4 py-3 text-right font-bold text-green-700">{formatCurrency(b.total_amount)}</td>
-                    </tr>
-                  ))}
-                  {closedBudgets === 0 && (
+                  {convertedBudgets.slice(0, 15).map((b) => {
+                    const isDist = isDistributorSale(b);
+                    return (
+                      <tr key={b.id} className="hover:bg-stone-50/50">
+                        <td className="px-4 py-3 font-mono text-stone-900 font-bold">
+                          FS-P-{b.budget_number}
+                        </td>
+                        <td className="px-4 py-3 text-stone-500 text-xs">
+                          {new Date(b.created_at).toLocaleDateString("es-AR")}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="font-semibold text-stone-850">{b.clients?.name}</div>
+                          {b.clients?.company_name && (
+                            <div className="text-xs text-stone-500">{b.clients.company_name}</div>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          {isDist ? (
+                            <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[10px]">
+                              Vendido por distribuidor
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
+                              Directa Fábrica
+                            </Badge>
+                          )}
+                        </td>
+                        <td className={`px-4 py-3 text-right font-bold ${isDist ? "text-teal-700" : "text-emerald-700"}`}>
+                          {formatCurrency(b.total_amount)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {totalClosedCount === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-4 py-6 text-center text-stone-500 italic">No hay cotizaciones cerradas en este período.</td>
+                      <td colSpan={5} className="px-4 py-6 text-center text-stone-500 italic">
+                        No hay cotizaciones cerradas en este período.
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -194,46 +264,52 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
           </Card>
         </div>
 
-      {/* Columna Derecha: Liquidador de Comisiones */}
-      <div className="flex flex-col gap-6 lg:col-span-1">
-        <Card className="p-6 border-stone-200 bg-stone-50 shadow-md sticky top-6">
-          <div className="flex items-center gap-2 mb-4 text-stone-900">
-            <Percent className="w-5 h-5" />
-            <h2 className="text-lg font-bold">Liquidador de Comisiones</h2>
-          </div>
-          <p className="text-xs text-stone-600 mb-6 leading-relaxed">
-            Calculá rápidamente cuánto debe percibir el vendedor en función del volumen total de ventas cerradas.
-          </p>
+        {/* Columna Derecha: Liquidador de Comisiones */}
+        <div className="flex flex-col gap-6 lg:col-span-1">
+          <Card className="p-6 border-stone-200 bg-stone-50 shadow-md sticky top-6">
+            <div className="flex items-center gap-2 mb-4 text-stone-900">
+              <Percent className="w-5 h-5 text-accent-deep" />
+              <h2 className="text-lg font-bold">Liquidador de Comisiones</h2>
+            </div>
+            <p className="text-xs text-stone-600 mb-6 leading-relaxed">
+              Las comisiones se liquidan exclusivamente sobre las **Ventas Directas a Fábrica**. Las ventas por distribuidor quedan desglosadas al 0%.
+            </p>
 
-          <div className="flex flex-col gap-2 mb-6">
-            <label className="text-sm font-semibold text-stone-750">Porcentaje de Comisión (%)</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="0"
-                max="100"
-                step="0.5"
-                value={commissionRate}
-                onChange={(e) => setCommissionRate(Number(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-900 font-bold"
-              />
-              <span className="text-stone-500 font-bold">%</span>
+            <div className="flex flex-col gap-2 mb-6">
+              <label className="text-xs font-semibold uppercase tracking-wider text-stone-600">Porcentaje de Comisión (%)</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value={commissionRate}
+                  onChange={(e) => setCommissionRate(Number(e.target.value) || 0)}
+                  className="w-full px-4 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-900 font-bold bg-white"
+                />
+                <span className="text-stone-500 font-bold">%</span>
+              </div>
             </div>
-          </div>
 
-          <div className="bg-white border border-stone-200 p-4 rounded-xl flex flex-col gap-4">
-            <div className="flex justify-between items-center text-sm border-b border-stone-100 pb-2">
-              <span className="text-stone-500 font-medium">Base Imponible (Ventas cerradas):</span>
-              <span className="text-stone-900 font-bold">{formatCurrency(totalRevenue)}</span>
+            <div className="bg-white border border-stone-200 p-4 rounded-xl flex flex-col gap-3">
+              <div className="flex justify-between items-center text-xs pb-2 border-b border-stone-100">
+                <span className="text-stone-600 font-semibold">Ventas Directas (Comisionable):</span>
+                <span className="text-emerald-700 font-bold">{formatCurrency(directRevenue)}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs pb-2 border-b border-stone-100">
+                <span className="text-stone-500 font-medium">Ventas por Distribuidor:</span>
+                <span className="text-teal-700 font-bold">{formatCurrency(distributorRevenue)}</span>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-stone-900 font-bold text-sm">Total Comisión Vendedor:</span>
+                <span className="text-2xl font-black text-emerald-700">{formatCurrency(calculatedCommission)}</span>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-stone-900 font-bold">Total a Liquidar:</span>
-              <span className="text-2xl font-black text-green-700">{formatCurrency(calculatedCommission)}</span>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
+
+export default SellerPerformanceClient;

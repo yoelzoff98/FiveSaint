@@ -12,13 +12,8 @@ interface Order {
   status: string;
   total_amount: number;
   created_at: string;
-  clients: { name: string; company_name: string | null } | null;
+  clients: { name: string; company_name: string | null; status?: string } | null;
   sellers: { full_name: string } | null;
-}
-
-interface OrdersListClientProps {
-  initialOrders: Order[];
-  isAdmin: boolean;
 }
 
 export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientProps) {
@@ -36,6 +31,15 @@ export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientPro
     }).format(amount);
   };
 
+  const isDistributorOrder = (o: Order) => {
+    return (
+      o.status === "distributor_sale" ||
+      o.status === "vendido_distribuidor" ||
+      o.clients?.status === "inactivo" ||
+      o.clients?.status === "vendido_distribuidor"
+    );
+  };
+
   const filteredOrders = orders.filter((o) => {
     const term = searchTerm.toLowerCase();
     const clientName = o.clients?.name.toLowerCase() || "";
@@ -43,7 +47,15 @@ export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientPro
     const orderNum = o.order_number.toString();
 
     const matchesSearch = clientName.includes(term) || companyName.includes(term) || orderNum.includes(term);
-    const matchesStatus = statusFilter === "all" || o.status === statusFilter;
+    
+    let matchesStatus = false;
+    if (statusFilter === "all") {
+      matchesStatus = true;
+    } else if (statusFilter === "distributor_sale") {
+      matchesStatus = isDistributorOrder(o);
+    } else {
+      matchesStatus = o.status === statusFilter && !isDistributorOrder(o);
+    }
 
     let matchesDate = true;
     if (dateRangeFilter !== "all") {
@@ -87,8 +99,16 @@ export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientPro
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
+  const getStatusBadge = (o: Order) => {
+    if (isDistributorOrder(o)) {
+      return (
+        <Badge className="bg-teal-50 text-teal-700 border-teal-200 font-semibold">
+          Vendido por distribuidor
+        </Badge>
+      );
+    }
+
+    switch (o.status) {
       case "pending":
         return <Badge className="bg-amber-50 text-amber-700 border-amber-200">Pendiente de Aprobación</Badge>;
       case "processing":
@@ -98,7 +118,7 @@ export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientPro
       case "cancelled":
         return <Badge className="bg-red-50 text-red-700 border-red-200">Cancelado</Badge>;
       default:
-        return <Badge className="bg-stone-100 text-stone-600 border-stone-300">{status}</Badge>;
+        return <Badge className="bg-stone-100 text-stone-600 border-stone-300">{o.status}</Badge>;
     }
   };
 
@@ -131,6 +151,7 @@ export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientPro
               <option value="pending">Pendientes</option>
               <option value="processing">En Fabricación</option>
               <option value="delivered">Entregados</option>
+              <option value="distributor_sale">Vendidos por Distribuidor</option>
               <option value="cancelled">Cancelados</option>
             </select>
           </div>
@@ -239,7 +260,7 @@ export function OrdersListClient({ initialOrders, isAdmin }: OrdersListClientPro
                         {formatCurrency(o.total_amount)}
                       </td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(o.status)}
+                        {getStatusBadge(o)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Button 

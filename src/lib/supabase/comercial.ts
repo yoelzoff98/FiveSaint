@@ -708,7 +708,7 @@ export async function getOrders() {
 
   let query = supabase.from("orders").select(`
     *,
-    clients(name, company_name),
+    clients(id, name, company_name, status),
     sellers(full_name),
     distributors(company_name, contact_name)
   `);
