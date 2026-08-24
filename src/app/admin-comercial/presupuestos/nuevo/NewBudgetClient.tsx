@@ -81,6 +81,7 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
     setCatalogCategories([
       "Bañeras Premium",
       "Bañeras Standard",
+      "Cascos (Bañeras sin jets)",
       "Equipamiento Opcional",
       "Opcionales Spas / Minipiscinas",
       "Ofertas Especiales",
@@ -109,6 +110,18 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
             name: `Bañera Premium ${bp.name} (${bp.medidas}) - Confort Plus`,
             price: parsePriceString(bp.confortPlusPrice)
           });
+        });
+        break;
+
+      case "Cascos (Bañeras sin jets)":
+        banerasData.products.forEach((bp) => {
+          if (bp.cascos) {
+            prods.push({
+              key: `casco-only-${bp.name}-${bp.medidas}`,
+              name: `Bañera ${bp.name} (${bp.medidas}) - Casco (Sin Jets)`,
+              price: parsePriceString(bp.cascos)
+            });
+          }
         });
         break;
 

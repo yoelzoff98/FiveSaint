@@ -11,6 +11,7 @@ interface ClientRef {
 }
 
 interface Budget {
+  
   id: string;
   budget_number: number;
   total_amount: number;
