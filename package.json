@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "optimize-images": "node scripts/optimize-images.mjs",
-    "seed-columnas": "node scripts/seed-columnas-ducha.mjs"
+    "seed-columnas": "node scripts/seed-columnas-ducha.mjs",
+    "seed-baneras": "node scripts/seed-baneras-info.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
