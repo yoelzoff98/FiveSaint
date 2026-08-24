@@ -32,6 +32,30 @@ interface Budget {
   clients: { name: string; company_name: string | null } | null;
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  nuevo: "Nuevo",
+  contactado: "Contactado",
+  presupuestado: "Presupuestado",
+  negociacion: "En negociación",
+  ganado: "Vendido",
+  vendido: "Vendido",
+  perdido: "Perdido",
+  inactivo: "Vendido por distribuidor",
+  vendido_distribuidor: "Vendido por distribuidor"
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  nuevo: "bg-blue-50 text-blue-700 border-blue-200",
+  contactado: "bg-purple-50 text-purple-700 border-purple-200",
+  presupuestado: "bg-amber-50 text-amber-700 border-amber-200",
+  negociacion: "bg-orange-50 text-orange-700 border-orange-200",
+  ganado: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  vendido: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  perdido: "bg-rose-50 text-rose-700 border-rose-200",
+  inactivo: "bg-teal-50 text-teal-700 border-teal-200",
+  vendido_distribuidor: "bg-teal-50 text-teal-700 border-teal-200"
+};
+
 interface SellerDashboardProps {
   clients: Client[];
   budgets: Budget[];
@@ -155,7 +179,9 @@ export function SellerDashboard({ clients, budgets, profileName }: SellerDashboa
                           <p className="font-bold text-stone-800 group-hover:text-black transition-colors">{c.name}</p>
                           <p className="text-xs text-stone-500 mt-1">{c.phone || "Sin teléfono"}</p>
                         </div>
-                        <Badge variant="outline" className="bg-stone-50">{c.status}</Badge>
+                        <Badge className={STATUS_COLORS[c.status] || "bg-stone-50 text-stone-600 border-stone-200"}>
+                          {STATUS_LABELS[c.status] || c.status}
+                        </Badge>
                       </div>
                     </Link>
                   ))

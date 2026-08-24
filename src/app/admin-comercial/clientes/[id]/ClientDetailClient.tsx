@@ -18,10 +18,12 @@ const STATUS_LABELS: Record<string, string> = {
   nuevo: "Nuevo",
   contactado: "Contactado",
   presupuestado: "Presupuestado",
-  negociacion: "En Negociación",
-  ganado: "Ganado",
+  negociacion: "En negociación",
+  ganado: "Vendido",
+  vendido: "Vendido",
   perdido: "Perdido",
-  inactivo: "Inactivo"
+  inactivo: "Vendido por distribuidor",
+  vendido_distribuidor: "Vendido por distribuidor"
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -29,9 +31,11 @@ const STATUS_COLORS: Record<string, string> = {
   contactado: "bg-purple-50 text-purple-700 border-purple-200",
   presupuestado: "bg-amber-50 text-amber-700 border-amber-200",
   negociacion: "bg-orange-50 text-orange-700 border-orange-200",
-  ganado: "bg-green-50 text-green-700 border-green-200",
+  ganado: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  vendido: "bg-emerald-50 text-emerald-700 border-emerald-200",
   perdido: "bg-rose-50 text-rose-700 border-rose-200",
-  inactivo: "bg-stone-100 text-stone-600 border-stone-300"
+  inactivo: "bg-teal-50 text-teal-700 border-teal-200",
+  vendido_distribuidor: "bg-teal-50 text-teal-700 border-teal-200"
 };
 
 const SOURCE_LABELS: Record<string, string> = {
