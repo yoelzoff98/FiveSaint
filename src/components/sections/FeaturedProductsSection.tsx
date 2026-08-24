@@ -1,6 +1,9 @@
+import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/supabase/products";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { Button } from "@/components/ui/Button";
+import { ArrowRight } from "lucide-react";
 import { FeaturedProductsCarousel } from "./FeaturedProductsCarousel";
 
 /**
