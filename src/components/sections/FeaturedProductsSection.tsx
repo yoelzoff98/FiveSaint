@@ -23,6 +23,17 @@ export async function FeaturedProductsSection() {
             align="left"
             className="max-w-2xl"
           />
+          <Button
+            variant="outline"
+            size="md"
+            className="uppercase tracking-wider font-semibold group cursor-pointer shrink-0 md:mb-2 rounded-xl"
+            asChild
+          >
+            <Link href="/productos" className="flex items-center gap-2">
+              Ver catálogo completo
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
         </div>
 
         {/* Carrusel Interactivo de Productos Destacados */}

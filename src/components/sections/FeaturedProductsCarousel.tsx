@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowRight, ChevronLeft, ChevronRight, Waves } from "lucide-react";
 
@@ -27,8 +26,7 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
 
-    // Calcular índice activo para los indicadores
-    const cardWidth = el.firstElementChild ? (el.firstElementChild as HTMLElement).offsetWidth + 24 : 320;
+    const cardWidth = el.firstElementChild ? (el.firstElementChild as HTMLElement).offsetWidth + 24 : 330;
     const index = Math.round(scrollLeft / cardWidth);
     setActiveIndex(Math.min(index, products.length - 1));
   };
@@ -51,7 +49,7 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
     const el = scrollContainerRef.current;
     if (!el) return;
 
-    const scrollAmount = el.clientWidth * 0.75;
+    const scrollAmount = el.clientWidth * 0.8;
     el.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
@@ -70,48 +68,28 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* 1. Header Controls: Botones de navegación del carrusel */}
-      <div className="flex items-center justify-between gap-4">
-        {/* Controles de navegación de flechas */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => scroll("left")}
-            disabled={!canScrollLeft}
-            aria-label="Anterior producto"
-            className="h-10 w-10 rounded-full border-stone-200 bg-white hover:bg-stone-50 disabled:opacity-30 cursor-pointer shadow-xs transition-all duration-300"
-          >
-            <ChevronLeft className="h-5 w-5 text-stone-700" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => scroll("right")}
-            disabled={!canScrollRight}
-            aria-label="Siguiente producto"
-            className="h-10 w-10 rounded-full border-stone-200 bg-white hover:bg-stone-50 disabled:opacity-30 cursor-pointer shadow-xs transition-all duration-300"
-          >
-            <ChevronRight className="h-5 w-5 text-stone-700" />
-          </Button>
-        </div>
+    <div className="relative w-full flex flex-col gap-6 group/carousel">
+      {/* 1. Flecha Izquierda Flotante */}
+      <button
+        onClick={() => scroll("left")}
+        disabled={!canScrollLeft}
+        aria-label="Anterior producto"
+        className={`absolute left-0 sm:-left-5 top-[40%] -translate-y-1/2 z-30 h-12 w-12 rounded-full border border-stone-200 bg-white/95 text-stone-850 shadow-xl hover:bg-accent-deep hover:text-white hover:border-accent-deep hover:scale-110 disabled:opacity-0 disabled:pointer-events-none transition-all duration-300 flex items-center justify-center backdrop-blur-md cursor-pointer`}
+      >
+        <ChevronLeft className="h-6 w-6 stroke-[2.5]" />
+      </button>
 
-        {/* Botón Ver Catálogo Completo */}
-        <Button
-          variant="outline"
-          size="md"
-          className="uppercase tracking-wider font-semibold group cursor-pointer shrink-0 rounded-xl"
-          asChild
-        >
-          <Link href="/productos" className="flex items-center gap-2">
-            Ver catálogo completo
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </Button>
-      </div>
+      {/* 2. Flecha Derecha Flotante */}
+      <button
+        onClick={() => scroll("right")}
+        disabled={!canScrollRight}
+        aria-label="Siguiente producto"
+        className={`absolute right-0 sm:-right-5 top-[40%] -translate-y-1/2 z-30 h-12 w-12 rounded-full border border-stone-200 bg-white/95 text-stone-850 shadow-xl hover:bg-accent-deep hover:text-white hover:border-accent-deep hover:scale-110 disabled:opacity-0 disabled:pointer-events-none transition-all duration-300 flex items-center justify-center backdrop-blur-md cursor-pointer`}
+      >
+        <ChevronRight className="h-6 w-6 stroke-[2.5]" />
+      </button>
 
-      {/* 2. Track del Carrusel (Desplazamiento horizontal fluido y snap) */}
+      {/* 3. Track del Carrusel (Desplazamiento horizontal fluido) */}
       <div
         ref={scrollContainerRef}
         className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-4 px-1 no-scrollbar select-none"
@@ -130,7 +108,7 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
           return (
             <div
               key={product.id}
-              className="snap-start shrink-0 w-[290px] sm:w-[330px] md:w-[350px] lg:w-[360px]"
+              className="snap-start shrink-0 w-[280px] sm:w-[320px] md:w-[340px] lg:w-[350px]"
             >
               <Card
                 hoverable
@@ -218,7 +196,7 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
         })}
       </div>
 
-      {/* 3. Indicadores de Paginación Dots */}
+      {/* 4. Paginación de Puntos Dots */}
       {products.length > 1 && (
         <div className="flex justify-center items-center gap-2 mt-2">
           {products.map((_, idx) => (
