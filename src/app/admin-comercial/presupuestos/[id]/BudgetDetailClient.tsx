@@ -179,11 +179,13 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
     setConvertQuantities((prev) => ({ ...prev, [itemId]: qty }));
   };
 
+  const [saleType, setSaleType] = useState<"direct" | "distributor">("direct");
+
   const handleConvertToOrder = async () => {
     const activeItems = budget.items.filter((item) => selectedItems[item.id]);
     
     if (activeItems.length === 0) {
-      setError("Tenés que seleccionar al menos un producto para convertir en pedido.");
+      setError("Tenés que seleccionar al menos un producto para confirmar la venta.");
       return;
     }
 
@@ -201,11 +203,15 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
         factoryNotes: factoryNotes[item.id] || undefined
       }));
 
-      const order = await convertBudgetToOrder(budget.id, itemsToConvert, orderNotes);
+      const order = await convertBudgetToOrder(budget.id, itemsToConvert, orderNotes, saleType);
 
       setBudget((prev) => ({ ...prev, status: "converted" }));
       setShowConvertPanel(false);
-      setSuccess("¡El presupuesto se ha convertido a Pedido con éxito!");
+      setSuccess(
+        saleType === "distributor"
+          ? "¡El presupuesto se ha registrado como Vendido por Distribuidor!"
+          : "¡El presupuesto se ha convertido a Pedido de Fábrica con éxito!"
+      );
       
       // Redirigir al listado de pedidos después de unos segundos
       setTimeout(() => {
@@ -404,6 +410,54 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
               ))}
             </div>
 
+            {/* Selector de Canal / Tipo de Venta */}
+            <div className="flex flex-col gap-2 mb-6 p-4 bg-stone-50 border border-stone-200 rounded-xl">
+              <label className="text-xs font-bold text-stone-700 uppercase tracking-wider">
+                Tipo de Venta / Canal de Confirmación:
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setSaleType("direct")}
+                  className={`p-3 rounded-lg border text-left flex items-start gap-3 transition-all cursor-pointer ${
+                    saleType === "direct"
+                      ? "border-emerald-500 bg-emerald-50/60 ring-2 ring-emerald-500/20 text-emerald-950 font-semibold"
+                      : "border-stone-200 bg-white hover:border-stone-300 text-stone-700"
+                  }`}
+                >
+                  <div className="w-5 h-5 rounded-full border border-emerald-600 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                    {saleType === "direct" && <div className="w-2.5 h-2.5 rounded-full bg-emerald-600" />}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-stone-900">Venta Directa de Fábrica</div>
+                    <div className="text-[11px] text-stone-500 font-normal leading-snug mt-0.5">
+                      Genera pedido de producción. Comisionable para el vendedor.
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSaleType("distributor")}
+                  className={`p-3 rounded-lg border text-left flex items-start gap-3 transition-all cursor-pointer ${
+                    saleType === "distributor"
+                      ? "border-teal-500 bg-teal-50/60 ring-2 ring-teal-500/20 text-teal-950 font-semibold"
+                      : "border-stone-200 bg-white hover:border-stone-300 text-stone-700"
+                  }`}
+                >
+                  <div className="w-5 h-5 rounded-full border border-teal-600 flex items-center justify-center shrink-0 mt-0.5 bg-white">
+                    {saleType === "distributor" && <div className="w-2.5 h-2.5 rounded-full bg-teal-600" />}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-stone-900">Vendido por Distribuidor</div>
+                    <div className="text-[11px] text-stone-500 font-normal leading-snug mt-0.5">
+                      Cliente compró en distribuidor. Sin fabricación ni comisión.
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-1.5 mb-6">
               <label className="text-xs font-bold text-stone-600">Notas específicas del pedido (ej. dirección de envío, seña recibida)</label>
               <textarea
@@ -418,9 +472,17 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
               <Button variant="outline" onClick={() => setShowConvertPanel(false)} disabled={loading} className="cursor-pointer">
                 Cancelar
               </Button>
-              <Button onClick={handleConvertToOrder} disabled={loading} className="cursor-pointer flex items-center gap-2">
+              <Button 
+                onClick={handleConvertToOrder} 
+                disabled={loading} 
+                className={`cursor-pointer flex items-center gap-2 ${
+                  saleType === "distributor" 
+                    ? "bg-teal-700 hover:bg-teal-600 text-white" 
+                    : "bg-emerald-700 hover:bg-emerald-600 text-white"
+                }`}
+              >
                 <Check className="w-4 h-4" />
-                Confirmar y Generar Pedido
+                {saleType === "distributor" ? "Confirmar Vendido por Distribuidor" : "Confirmar y Generar Pedido"}
               </Button>
             </div>
           </Card>
