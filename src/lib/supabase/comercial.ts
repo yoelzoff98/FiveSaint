@@ -810,7 +810,7 @@ export async function convertBudgetToOrder(
   const budget = await getBudgetById(budgetId);
   const discounts = budget.discounts || [];
 
-  // Aplicar los descuentos del presupuesto en cascada a cada ítem para obtener los valores finales del pedido
+  // Aplicar los descuentos del presupuesto en cascada a cada ítem
   const orderItemsToInsert = itemsToConvert.map(item => {
     let unitPrice = item.unitPrice;
     if (discounts && discounts.length > 0) {
@@ -820,7 +820,6 @@ export async function convertBudgetToOrder(
         }
       });
     }
-    // Redondear a 2 decimales
     unitPrice = Math.round(unitPrice * 100) / 100;
     const totalPrice = Math.round(item.quantity * unitPrice * 100) / 100;
 
@@ -837,20 +836,51 @@ export async function convertBudgetToOrder(
   });
 
   const totalAmount = orderItemsToInsert.reduce((acc, item) => acc + item.total_price, 0);
+  const formattedAmount = new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+  }).format(totalAmount);
 
-  const initialOrderStatus = saleType === "distributor" ? "distributor_sale" : "pending";
+  if (saleType === "distributor") {
+    // VENTA POR DISTRIBUIDOR: No pasa a Pedidos de Fábrica. Se actualiza el presupuesto y el cliente.
+    await supabase
+      .from("budgets")
+      .update({ status: "distributor_sale", updated_at: new Date().toISOString() })
+      .eq("id", budgetId);
 
+    await supabase
+      .from("clients")
+      .update({ status: "inactivo", updated_at: new Date().toISOString() })
+      .eq("id", budget.client_id);
+
+    try {
+      await supabase
+        .from("client_notes")
+        .insert([{
+          client_id: budget.client_id,
+          seller_id: budget.seller_id,
+          content: `Se registró la venta por distribuidor desde el presupuesto N° ${budget.budget_number} por un monto total de ${formattedAmount}.`,
+          contacted_at: new Date().toISOString(),
+          note_type: "distributor_sale",
+          budget_id: budget.id
+        }]);
+    } catch (noteErr) {
+      console.error("Error al registrar nota en venta por distribuidor:", noteErr);
+    }
+
+    return { id: budgetId, isDistributorSale: true };
+  }
+
+  // VENTA DIRECTA A FÁBRICA: Genera Pedido de Fábrica
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert([{
       budget_id: budgetId,
       client_id: budget.client_id,
       seller_id: budget.seller_id,
-      status: initialOrderStatus,
+      status: "pending",
       total_amount: totalAmount,
-      notes: notes || (saleType === "distributor" 
-        ? `Venta realizada a través de distribuidor desde el presupuesto #${budget.budget_number}.`
-        : `Pedido generado desde el presupuesto #${budget.budget_number}.`)
+      notes: notes || `Pedido generado desde el presupuesto #${budget.budget_number}.`
     }])
     .select()
     .single();
@@ -883,22 +913,12 @@ export async function convertBudgetToOrder(
 
   // Registrar nota automática de pedido generado y cambiar estado del cliente en el CRM
   try {
-    const formattedAmount = new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(totalAmount);
-
-    const targetClientStatus = saleType === "distributor" ? "inactivo" : "ganado";
-    const noteContent = saleType === "distributor"
-      ? `Se registró la venta por distribuidor (N° Pedido ${order.order_number}) desde el presupuesto N° ${budget.budget_number} por ${formattedAmount}.`
-      : `Se generó el pedido de fábrica N° ${order.order_number} desde el presupuesto N° ${budget.budget_number} por ${formattedAmount}.`;
-
     await supabase
       .from("client_notes")
       .insert([{
         client_id: budget.client_id,
         seller_id: budget.seller_id,
-        content: noteContent,
+        content: `Se generó el pedido de fábrica N° ${order.order_number} desde el presupuesto N° ${budget.budget_number} por un monto total de ${formattedAmount}.`,
         contacted_at: new Date().toISOString(),
         note_type: "order_created",
         budget_id: budget.id,
@@ -907,7 +927,7 @@ export async function convertBudgetToOrder(
 
     await supabase
       .from("clients")
-      .update({ status: targetClientStatus, updated_at: new Date().toISOString() })
+      .update({ status: "ganado", updated_at: new Date().toISOString() })
       .eq("id", budget.client_id);
   } catch (noteErr) {
     console.error("Error al registrar notas automáticas en convertBudgetToOrder:", noteErr);

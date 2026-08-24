@@ -26,7 +26,7 @@ export function CommercialSidebar({ isAdmin }: CommercialSidebarProps) {
     { href: "/admin-comercial/clientes", label: "Clientes", icon: Users },
     { href: "/admin-comercial/lista-de-precios", label: "Lista de Precios", icon: DollarSign },
     { href: "/admin-comercial/presupuestos", label: "Presupuestos", icon: FileText },
-    { href: "/admin-comercial/pedidos", label: "Pedidos", icon: ShoppingBag },
+    { href: "/admin-comercial/pedidos", label: "Ventas", icon: ShoppingBag },
   ];
 
   // Si es administrador, agregar la gestión de vendedores y distribuidores

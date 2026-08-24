@@ -205,7 +205,10 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
 
       const order = await convertBudgetToOrder(budget.id, itemsToConvert, orderNotes, saleType);
 
-      setBudget((prev) => ({ ...prev, status: "converted" }));
+      setBudget((prev) => ({ 
+        ...prev, 
+        status: saleType === "distributor" ? "distributor_sale" : "converted" 
+      }));
       setShowConvertPanel(false);
       setSuccess(
         saleType === "distributor"
@@ -213,9 +216,12 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
           : "¡El presupuesto se ha convertido a Pedido de Fábrica con éxito!"
       );
       
-      // Redirigir al listado de pedidos después de unos segundos
       setTimeout(() => {
-        router.push(`/admin-comercial/pedidos/${order.id}`);
+        if (saleType === "distributor") {
+          router.push(`/admin-comercial/pedidos`);
+        } else {
+          router.push(`/admin-comercial/pedidos/${(order as any).id}`);
+        }
         router.refresh();
       }, 1500);
     } catch (err: any) {
