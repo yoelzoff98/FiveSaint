@@ -41,6 +41,7 @@ interface Budget {
     email: string | null;
     phone: string | null;
     address: string | null;
+    status?: string;
   } | null;
   sellers: {
     full_name: string;
