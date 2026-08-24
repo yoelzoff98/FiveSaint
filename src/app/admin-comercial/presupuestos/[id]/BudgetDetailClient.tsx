@@ -227,9 +227,16 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
   };
 
   const getStatusBadge = (status: string) => {
+    const clientStatus = budget.clients?.status?.toLowerCase();
+    const isDistributor = clientStatus === "inactivo" || clientStatus === "vendido_distribuidor";
+
     switch (status) {
       case "converted":
-        return <Badge className="bg-green-50 text-green-700 border-green-200 text-sm py-1 px-3">Confirmado (Pedido)</Badge>;
+        return isDistributor ? (
+          <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-sm py-1 px-3">Vendido por distribuidor</Badge>
+        ) : (
+          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-sm py-1 px-3">Vendido</Badge>
+        );
       case "sent":
         return <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-sm py-1 px-3">Enviado al Cliente</Badge>;
       case "draft":

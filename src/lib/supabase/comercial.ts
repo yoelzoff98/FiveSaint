@@ -469,7 +469,7 @@ export async function getBudgets() {
 
   let query = supabase.from("budgets").select(`
     *,
-    clients(name, company_name),
+    clients(name, company_name, status),
     sellers(full_name),
     distributors(company_name, contact_name)
   `);

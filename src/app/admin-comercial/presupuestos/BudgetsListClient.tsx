@@ -13,7 +13,7 @@ interface Budget {
   status: string;
   total_amount: number;
   created_at: string;
-  clients: { name: string; company_name: string | null } | null;
+  clients: { name: string; company_name: string | null; status?: string } | null;
   sellers: { full_name: string } | null;
 }
 
@@ -88,10 +88,17 @@ export function BudgetsListClient({ initialBudgets, isAdmin }: BudgetsListClient
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
+  const getStatusBadge = (b: Budget) => {
+    const clientStatus = b.clients?.status?.toLowerCase();
+    const isDistributor = clientStatus === "inactivo" || clientStatus === "vendido_distribuidor" || b.status === "distributor_sale";
+
+    switch (b.status) {
       case "converted":
-        return <Badge className="bg-green-50 text-green-700 border-green-200">Confirmado (Pedido)</Badge>;
+        return isDistributor ? (
+          <Badge className="bg-teal-50 text-teal-700 border-teal-200">Vendido por distribuidor</Badge>
+        ) : (
+          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">Vendido</Badge>
+        );
       case "sent":
         return <Badge className="bg-blue-50 text-blue-700 border-blue-200">Enviado</Badge>;
       case "draft":
@@ -101,7 +108,7 @@ export function BudgetsListClient({ initialBudgets, isAdmin }: BudgetsListClient
       case "rejected":
         return <Badge className="bg-red-50 text-red-700 border-red-200">Rechazado</Badge>;
       default:
-        return <Badge className="bg-stone-100 text-stone-600 border-stone-300">{status}</Badge>;
+        return <Badge className="bg-stone-100 text-stone-600 border-stone-300">{b.status}</Badge>;
     }
   };
 
@@ -135,7 +142,7 @@ export function BudgetsListClient({ initialBudgets, isAdmin }: BudgetsListClient
               <option value="sent">Enviados</option>
               <option value="accepted">Aceptados</option>
               <option value="rejected">Rechazados</option>
-              <option value="converted">Confirmados (Pedidos)</option>
+              <option value="converted">Vendidos</option>
             </select>
           </div>
 
@@ -243,7 +250,7 @@ export function BudgetsListClient({ initialBudgets, isAdmin }: BudgetsListClient
                         {formatCurrency(b.total_amount)}
                       </td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(b.status)}
+                        {getStatusBadge(b)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Button 
