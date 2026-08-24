@@ -130,65 +130,65 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Columna Izquierda: Métricas Globales */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4.5">
             {/* Cotizaciones Enviadas */}
-            <Card className="p-4 border-stone-200 bg-white flex flex-col justify-between">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <FileText className="w-4 h-4 text-blue-600" />
+            <Card className="p-5 border-stone-200 bg-white flex flex-col justify-between shadow-xs">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                  <FileText className="w-4.5 h-4.5 text-blue-600" />
                 </div>
-                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Presupuestos</h3>
+                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Presupuestos Cotizados</h3>
               </div>
               <div>
-                <div className="text-2xl font-black text-stone-900">{totalBudgets}</div>
-                <p className="text-[11px] text-stone-400 mt-0.5">Enviados en período</p>
+                <div className="text-2xl lg:text-3xl font-black text-stone-900 tracking-tight">{totalBudgets}</div>
+                <p className="text-xs text-stone-500 mt-1">Total enviados en el período</p>
               </div>
             </Card>
 
             {/* Ventas Directas Fábrica */}
-            <Card className="p-4 border-emerald-200 bg-emerald-50/30 flex flex-col justify-between">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <Building2 className="w-4 h-4 text-emerald-700" />
+            <Card className="p-5 border-emerald-200 bg-emerald-50/30 flex flex-col justify-between shadow-xs">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                  <Building2 className="w-4.5 h-4.5 text-emerald-700" />
                 </div>
-                <h3 className="font-bold text-xs text-emerald-800 uppercase tracking-wider">Ventas Directas</h3>
+                <h3 className="font-bold text-xs text-emerald-850 uppercase tracking-wider">Ventas Directas Fábrica</h3>
               </div>
               <div>
-                <div className="text-xl font-black text-emerald-800">{formatCurrency(directRevenue)}</div>
-                <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">
-                  {directSalesBudgets.length} pedido(s) • Base comisión
+                <div className="text-xl lg:text-2xl font-black text-emerald-800 tracking-tight">{formatCurrency(directRevenue)}</div>
+                <p className="text-xs text-emerald-700 font-medium mt-1">
+                  {directSalesBudgets.length} pedido(s) confirmado(s)
                 </p>
               </div>
             </Card>
 
             {/* Ventas por Distribuidor */}
-            <Card className="p-4 border-teal-200 bg-teal-50/40 flex flex-col justify-between">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
-                  <Store className="w-4 h-4 text-teal-700" />
+            <Card className="p-5 border-teal-200 bg-teal-50/40 flex flex-col justify-between shadow-xs">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
+                  <Store className="w-4.5 h-4.5 text-teal-700" />
                 </div>
-                <h3 className="font-bold text-xs text-teal-800 uppercase tracking-wider">Por Distribuidor</h3>
+                <h3 className="font-bold text-xs text-teal-850 uppercase tracking-wider">Vendido por Distribuidor</h3>
               </div>
               <div>
-                <div className="text-xl font-black text-teal-800">{formatCurrency(distributorRevenue)}</div>
-                <p className="text-[11px] text-teal-600 font-semibold mt-0.5">
-                  {distributorSalesBudgets.length} venta(s) • Sin comisión
+                <div className="text-xl lg:text-2xl font-black text-teal-800 tracking-tight">{formatCurrency(distributorRevenue)}</div>
+                <p className="text-xs text-teal-700 font-medium mt-1">
+                  {distributorSalesBudgets.length} venta(s) concretada(s)
                 </p>
               </div>
             </Card>
 
             {/* Total Ingresos Combinado */}
-            <Card className="p-4 border-stone-200 bg-white flex flex-col justify-between">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-accent-deep/10 flex items-center justify-center shrink-0">
-                  <DollarSign className="w-4 h-4 text-accent-deep" />
+            <Card className="p-5 border-stone-200 bg-white flex flex-col justify-between shadow-xs">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-full bg-accent-deep/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="w-4.5 h-4.5 text-accent-deep" />
                 </div>
-                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Total Ventas</h3>
+                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Total Ventas Globales</h3>
               </div>
               <div>
-                <div className="text-xl font-black text-stone-900">{formatCurrency(totalRevenue)}</div>
-                <p className="text-[11px] text-stone-500 font-medium mt-0.5">
-                  Conversión: {conversionRate.toFixed(1)}%
+                <div className="text-xl lg:text-2xl font-black text-stone-900 tracking-tight">{formatCurrency(totalRevenue)}</div>
+                <p className="text-xs text-stone-500 font-medium mt-1">
+                  Tasa de conversión: <span className="font-bold text-stone-800">{conversionRate.toFixed(1)}%</span>
                 </p>
               </div>
             </Card>
