@@ -20,8 +20,6 @@ export const revalidate = 3600;
 
 /**
  * Genera de forma estática (SSG) todas las rutas del catálogo al momento de la compilación.
- * 
- * @returns Listado de slugs pre-renderizados.
  */
 export async function generateStaticParams() {
   const products = await getProducts();
@@ -55,9 +53,7 @@ export async function generateMetadata(props: { params: Params }): Promise<Metad
 }
 
 /**
- * Vista Dinámica de Ficha de Producto (ProductDetailPage - Sprint 5/8).
- * Resuelve y recupera el producto por slug, gestiona redirección 404 (notFound) si no existe,
- * y compone las secciones modulares responsivas de detalle y catálogo relacionado.
+ * Vista Dinámica de Ficha de Producto (ProductDetailPage).
  */
 export default async function ProductDetailPage(props: { params: Params }) {
   const { slug } = await props.params;

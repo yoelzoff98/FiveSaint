@@ -17,6 +17,8 @@ interface ProductDetailHeroProps {
 export function ProductDetailHero({ product }: ProductDetailHeroProps) {
   const isBanera = product.categorySlug === 'baneras' || product.categorySlug === 'bañeras' || product.categoryName?.toLowerCase().includes('bañera') || product.categoryName?.toLowerCase().includes('banera');
   const isColumna = product.categorySlug === 'columnas-de-ducha' || product.categoryName?.toLowerCase().includes('columna');
+  const isEscocesa = product.categorySlug === 'ducha-escocesa' || product.categoryName?.toLowerCase().includes('escocesa');
+  const isVertical = isColumna || isEscocesa;
 
   return (
     <section className="relative overflow-hidden bg-white py-12 sm:py-16 border-b border-stone-200/50">
@@ -133,10 +135,10 @@ export function ProductDetailHero({ product }: ProductDetailHeroProps) {
           </div>
 
           {/* Columna Derecha: Imagen Real o Placeholder Visual Elevado en Gradiente */}
-          <div className={`lg:col-span-5 relative w-full ${isColumna ? 'h-[420px] sm:h-[500px] lg:h-[560px]' : 'h-[320px] sm:h-[400px] lg:h-[460px]'} rounded-[2rem] overflow-hidden border-[6px] border-white/80 shadow-2xl flex items-center justify-center group transform transition-transform duration-500 hover:scale-[1.01] ${
+          <div className={`lg:col-span-5 relative w-full ${isVertical ? 'h-[420px] sm:h-[500px] lg:h-[560px]' : 'h-[320px] sm:h-[400px] lg:h-[460px]'} rounded-[2rem] overflow-hidden border-[6px] border-white/80 shadow-2xl flex items-center justify-center group transform transition-transform duration-500 hover:scale-[1.01] ${
             isBanera 
               ? 'bg-gradient-to-br from-[#71717a] via-[#8d8d97] to-[#52525b] shadow-zinc-600/30' 
-              : isColumna
+              : isVertical
               ? 'bg-gradient-to-b from-stone-100 via-stone-50 to-white shadow-stone-300/40'
               : 'bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 shadow-stone-300/40'
           }`}>
@@ -147,7 +149,7 @@ export function ProductDetailHero({ product }: ProductDetailHeroProps) {
                 className={`absolute inset-0 w-full h-full ${
                   isBanera 
                     ? 'object-contain p-2 sm:p-4 drop-shadow-[0_25px_30px_rgba(0,0,0,0.60)]' 
-                    : isColumna
+                    : isVertical
                     ? 'object-contain p-3 sm:p-6 drop-shadow-lg'
                     : 'object-cover'
                 }`}

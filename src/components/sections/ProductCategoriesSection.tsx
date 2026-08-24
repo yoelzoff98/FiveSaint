@@ -12,7 +12,7 @@ const categoryImages: Record<string, string> = {
   "baneras": "/images/cat_baneras_new.jpg",
   "platos-de-duchas": "/images/cat_platos_new.jpg",
   "columnas-de-ducha": "/images/cat_columnas.png",
-  "ducha-escocesa": "/images/DuchaEscocesa.png",
+  "ducha-escocesa": "/images/ducha-escocesa/ducha-escocesa-portada.webp",
   "sauna": "/images/cat_saunas.png",
   "adicionales": "/images/duchador-manual.png"
 };

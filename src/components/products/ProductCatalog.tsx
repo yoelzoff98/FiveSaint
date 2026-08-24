@@ -8,6 +8,8 @@ import ProductCategoryFilter from "./ProductCategoryFilter";
 import ProductCard from "./ProductCard";
 import { ShieldAlert } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+
 interface ProductCatalogProps {
   products: Product[];
   categories: ProductCategory[];
@@ -19,6 +21,7 @@ interface ProductCatalogProps {
  * y los renderiza en una rejilla responsiva.
  */
 export function ProductCatalog({ products, categories }: ProductCatalogProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("categoria");
   
@@ -26,9 +29,21 @@ export function ProductCatalog({ products, categories }: ProductCatalogProps) {
 
   React.useEffect(() => {
     if (categoryParam) {
-      setSelectedCategory(categoryParam);
+      if (categoryParam === "ducha-escocesa" || categoryParam === "duchas-escocesas") {
+        router.push("/productos/ducha-escocesa");
+      } else {
+        setSelectedCategory(categoryParam);
+      }
     }
-  }, [categoryParam]);
+  }, [categoryParam, router]);
+
+  const handleCategoryChange = (slug: string) => {
+    if (slug === "ducha-escocesa" || slug === "duchas-escocesas") {
+      router.push("/productos/ducha-escocesa");
+    } else {
+      setSelectedCategory(slug);
+    }
+  };
 
   // Filtra los productos de acuerdo con la categoría seleccionada (usando slug)
   const filteredProducts = React.useMemo(() => {
@@ -46,7 +61,7 @@ export function ProductCatalog({ products, categories }: ProductCatalogProps) {
         <ProductCategoryFilter
           categories={categories}
           selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
+          onCategoryChange={handleCategoryChange}
         />
 
         {/* Contador Dinámico de Productos Encontrados */}

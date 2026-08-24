@@ -235,23 +235,25 @@ export const products: Product[] = [
     badge: "Maderas Selectas"
   },
 
-  // CATEGORÍA 7: Duchas escocesas (duchas-escocesas)
+  // CATEGORÍA 7: Ducha Escocesa (ducha-escocesa)
   {
-    id: "ducha-escocesa-wellness",
-    name: "Ducha Escocesa Wellness",
-    slug: "ducha-escocesa-wellness",
-    categoryId: "duchas-escocesas",
-    categoryName: "Duchas escocesas",
-    shortDescription: "Cabina/columna de estimulación hidráulica con jets verticales circulares.",
-    description: "Diseñada para masajes de choque térmico y estimulación de la circulación, integra múltiples jets regulables de alta presión vertical.",
+    id: "ducha-escocesa",
+    name: "Ducha Escocesa Five Saint",
+    slug: "ducha-escocesa",
+    categoryId: "ducha-escocesa",
+    categoryName: "Ducha Escocesa",
+    shortDescription: "Sistema integral de estimulación hidráulica vertical a alta presión en acero inoxidable.",
+    description: "La Ducha Escocesa Five Saint combina barrales de acero inoxidable pulido de alta densidad, 6 duchas punzantes direccionables y duchon superior de alta presión. Disponible en versión de recirculación con receptáculo (100x75x32 cm) y bomba air-switch, o en versión exterior/embutir.",
     features: [
-      "Masaje circular de alta presión",
-      "Regulación de zonas independiente",
-      "Efecto energizante y tonificante",
-      "Consulta por medidas disponibles"
+      "2 Barrales de acero inoxidable pulido Ø 1 1/4\"",
+      "6 Duchas punzantes direccionables con regulador",
+      "Duchón superior orientable de alta presión",
+      "Opción de recirculación con receptáculo (100 x 75 x 32 cm)",
+      "Bomba de recirculación con encendido neumático Air Switch",
+      "Presurización recomendada hasta 1,5 kg"
     ],
-    href: "/productos/ducha-escocesa-wellness",
-    badge: "Hidroterapia"
+    href: "/productos/ducha-escocesa",
+    badge: "Hidroterapia Premium"
   }
 ];
 export default products;
