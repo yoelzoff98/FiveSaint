@@ -226,6 +226,12 @@ export function NewBudgetClient({ clients, initialClientId }: NewBudgetClientPro
             });
           });
         });
+        // Opcional / Adicional de Desagüe para Platos de Ducha
+        prods.push({
+          key: "opcional-plato-desague-fse131",
+          name: "Opcional Plato de Ducha: Desagüe (FSE131)",
+          price: 28000
+        });
         break;
 
       case "Columnas de Ducha":
