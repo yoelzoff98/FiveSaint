@@ -13,6 +13,7 @@ interface ClientRef {
 
 interface Budget {
   id: string;
+  client_id?: string;
   budget_number: number;
   total_amount: number;
   status: string;
@@ -22,6 +23,7 @@ interface Budget {
 
 interface Order {
   id: string;
+  client_id?: string;
   order_number: number;
   total_amount: number;
   status: string;
@@ -73,10 +75,23 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
     return true;
   });
 
-  // Métricas separadas por tipo de venta
+  // Métricas de presupuestos y clientes cotizados
   const totalBudgets = filteredBudgets.length;
-  const convertedBudgets = filteredBudgets.filter((b) => b.status === "converted");
+  
+  // Clientes únicos presupuestados en este período
+  const quotedClientsSet = new Set(
+    filteredBudgets.map((b) => b.client_id || b.clients?.name).filter(Boolean)
+  );
+  const totalQuotedClients = quotedClientsSet.size;
+
+  const convertedBudgets = filteredBudgets.filter((b) => b.status === "converted" || b.status === "distributor_sale");
   const totalClosedCount = convertedBudgets.length;
+
+  // Clientes únicos que concretaron compra (conversión real por cliente)
+  const convertedClientsSet = new Set(
+    convertedBudgets.map((b) => b.client_id || b.clients?.name).filter(Boolean)
+  );
+  const totalConvertedClients = convertedClientsSet.size;
 
   const directSalesBudgets = convertedBudgets.filter((b) => !isDistributorSale(b));
   const distributorSalesBudgets = convertedBudgets.filter((b) => isDistributorSale(b));
@@ -85,7 +100,10 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   const distributorRevenue = distributorSalesBudgets.reduce((acc, curr) => acc + curr.total_amount, 0);
   const totalRevenue = directRevenue + distributorRevenue;
 
-  const conversionRate = totalBudgets > 0 ? (totalClosedCount / totalBudgets) * 100 : 0;
+  // Conversión basada en clientes (clientes ganados / clientes cotizados)
+  const conversionRate = totalQuotedClients > 0 
+    ? (totalConvertedClients / totalQuotedClients) * 100 
+    : (totalBudgets > 0 ? (totalClosedCount / totalBudgets) * 100 : 0);
 
   // La comisión SE CALCULA ÚNICAMENTE sobre las Ventas Directas de Fábrica
   const calculatedCommission = directRevenue * (commissionRate / 100);
@@ -131,17 +149,17 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
         {/* Columna Izquierda: Métricas Globales */}
         <div className="flex flex-col gap-6 lg:col-span-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4.5">
-            {/* Cotizaciones Enviadas */}
+            {/* Clientes Cotizados */}
             <Card className="p-5 border-stone-200 bg-white flex flex-col justify-between shadow-xs">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                   <FileText className="w-4.5 h-4.5 text-blue-600" />
                 </div>
-                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Presupuestos Cotizados</h3>
+                <h3 className="font-bold text-xs text-stone-600 uppercase tracking-wider">Clientes Cotizados</h3>
               </div>
               <div>
-                <div className="text-2xl lg:text-3xl font-black text-stone-900 tracking-tight">{totalBudgets}</div>
-                <p className="text-xs text-stone-500 mt-1">Total enviados en el período</p>
+                <div className="text-2xl lg:text-3xl font-black text-stone-900 tracking-tight">{totalQuotedClients}</div>
+                <p className="text-xs text-stone-500 mt-1">{totalBudgets} presupuestos en el período</p>
               </div>
             </Card>
 

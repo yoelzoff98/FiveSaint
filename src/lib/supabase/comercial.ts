@@ -621,15 +621,20 @@ export async function createBudget(
   return budget;
 }
 
-export async function updateBudgetStatus(id: string, status: string) {
+export async function updateBudgetStatus(id: string, status: string, rejectionReason?: string) {
   const ctx = await requireCommercialUser();
   const supabase = createSupabaseAdminClient();
 
   const budget = await getBudgetById(id);
 
+  const updatePayload: any = { status, updated_at: new Date().toISOString() };
+  if (status === "rejected" && rejectionReason !== undefined) {
+    updatePayload.rejection_reason = rejectionReason;
+  }
+
   const { data, error } = await supabase
     .from("budgets")
-    .update({ status, updated_at: new Date().toISOString() })
+    .update(updatePayload)
     .eq("id", id)
     .select()
     .single();
@@ -656,6 +661,9 @@ export async function updateBudgetStatus(id: string, status: string) {
   } else if (status === "rejected") {
     noteType = "budget_rejected";
     content = `El presupuesto N° ${budget.budget_number} (${formattedAmount}) fue RECHAZADO.`;
+    if (rejectionReason && rejectionReason.trim()) {
+      content += ` Motivo del rechazo: ${rejectionReason.trim()}`;
+    }
   } else if (status === "converted") {
     noteType = "order_created";
     content = `El presupuesto N° ${budget.budget_number} fue CONVERTIDO a pedido de fábrica.`;

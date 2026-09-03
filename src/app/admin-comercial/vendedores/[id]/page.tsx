@@ -35,7 +35,7 @@ export default async function SellerPerformancePage({ params }: PageProps) {
   // 2. Obtener presupuestos (para métricas y cálculos)
   const { data: budgets } = await supabase
     .from("budgets")
-    .select("id, budget_number, total_amount, status, created_at, clients(name, company_name, status)")
+    .select("id, client_id, budget_number, total_amount, status, created_at, clients(name, company_name, status)")
     .eq("seller_id", id)
     .order("created_at", { ascending: false });
 

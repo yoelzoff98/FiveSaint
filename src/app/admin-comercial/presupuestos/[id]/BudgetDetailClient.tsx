@@ -50,6 +50,7 @@ interface Budget {
     whatsapp?: string | null;
   } | null;
   items: BudgetItem[];
+  rejection_reason?: string | null;
   view_count?: number | null;
   viewed_at?: string | null;
 }
@@ -153,15 +154,22 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
     }
   }, [showConvertPanel]);
 
-  const handleUpdateStatus = async (newStatus: string) => {
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectionReasonInput, setRejectionReasonInput] = useState("");
+
+  const handleUpdateStatus = async (newStatus: string, reason?: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      await updateBudgetStatus(budget.id, newStatus);
+      await updateBudgetStatus(budget.id, newStatus, reason);
       
-      setBudget(prev => ({ ...prev, status: newStatus }));
-      setSuccess(`Estado del presupuesto actualizado a: ${newStatus}`);
+      setBudget(prev => ({ 
+        ...prev, 
+        status: newStatus,
+        rejection_reason: newStatus === "rejected" ? (reason || prev.rejection_reason) : prev.rejection_reason 
+      }));
+      setSuccess(`Estado del presupuesto actualizado a: ${newStatus === "rejected" ? "Rechazado" : newStatus}`);
       router.refresh();
     } catch (err: any) {
       console.error(err);
@@ -169,6 +177,12 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleConfirmRejection = async () => {
+    setShowRejectModal(false);
+    await handleUpdateStatus("rejected", rejectionReasonInput);
+    setRejectionReasonInput("");
   };
 
   const handleToggleItemSelection = (itemId: string) => {
@@ -249,7 +263,7 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
       case "draft":
         return <Badge className="bg-stone-50 text-stone-700 border-stone-200 text-sm py-1 px-3">Borrador</Badge>;
       case "accepted":
-        return <Badge className="bg-emerald-50 text-emerald-700 border-emerald-250 text-sm py-1 px-3">Aceptado</Badge>;
+        return <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-sm py-1 px-3">Aceptado</Badge>;
       case "rejected":
         return <Badge className="bg-red-50 text-red-700 border-red-200 text-sm py-1 px-3">Rechazado</Badge>;
       default:
@@ -576,7 +590,7 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
                 {budget.status !== "rejected" && (
                   <Button 
                     variant="ghost" 
-                    onClick={() => handleUpdateStatus("rejected")}
+                    onClick={() => setShowRejectModal(true)}
                     disabled={loading}
                     className="w-full flex items-center justify-center gap-2 cursor-pointer hover:bg-red-50 hover:text-red-650"
                   >
@@ -651,6 +665,68 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
           </div>
         </Card>
       </div>
+
+      {/* Modal de Rechazo de Presupuesto Elegante / Moderno */}
+      {showRejectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/40 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white rounded-2xl border border-stone-200/80 shadow-2xl max-w-md w-full p-6 relative overflow-hidden transition-all transform scale-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center font-bold">
+                  <X className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-stone-900">Rechazar Presupuesto</h3>
+                  <p className="text-xs text-stone-500 font-medium">Presupuesto #{budget.budget_number}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowRejectModal(false)}
+                className="text-stone-400 hover:text-stone-600 p-1.5 rounded-lg hover:bg-stone-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-stone-600 text-xs leading-relaxed mb-4">
+              ¿Querés registrar el motivo de rechazo del cliente? Este dato te servirá para el seguimiento comercial. Podés dejarlo vacío si preferís.
+            </p>
+
+            <div className="mb-6">
+              <label className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">
+                Motivo del Rechazo (Opcional)
+              </label>
+              <textarea
+                value={rejectionReasonInput}
+                onChange={(e) => setRejectionReasonInput(e.target.value)}
+                placeholder="Ej. Precio alto, eligió otro competidor, postergó la compra..."
+                rows={3}
+                className="w-full p-3 text-sm text-stone-850 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:outline-none transition-all placeholder:text-stone-400 bg-stone-50/50"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-100">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowRejectModal(false)}
+                disabled={loading}
+                className="rounded-xl cursor-pointer text-stone-600 font-medium"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleConfirmRejection}
+                disabled={loading}
+                className="rounded-xl cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center gap-2 shadow-sm"
+              >
+                <X className="w-4 h-4" />
+                Confirmar Rechazo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="hidden print:block">
         <BudgetPrintPdf ref={printRef} budget={budget} />
       </div>
