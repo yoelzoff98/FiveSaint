@@ -228,7 +228,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {
 
         {/* 2. Hero Image Banner */}
         <div className="relative h-[280px] shrink-0 w-full overflow-hidden bg-slate-100">
-          <img src="/images/Spa/Design.png" alt="Spa Banner" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
+          <img src="/images/Spa/Design.webp" alt="Spa Banner" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
           <div className="absolute inset-0 bg-accent-deep/40 mix-blend-multiply"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-accent-deep/90 via-accent-deep/60 to-transparent"></div>
 
@@ -485,18 +485,18 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {
       */}
       {(() => {
         const premiumModels = [
-          { name: "Romana", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Romana 160x75.png" },
-          { name: "Perla", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Perla 180x120.png" },
-          { name: "Yaquelin", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/yaquelin 165x120.png" },
-          { name: "Agustar", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Agustar 18.png" },
-          { name: "Quadra", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/quadra.png" },
-          { name: "Modena", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Modena.png" },
-          { name: "Veneto", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/veneto.png" },
-          { name: "Parma", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Parma 180x80.png" },
-          { name: "Laguna", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Laguna.png" },
-          { name: "Circular", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Circular 150x150.png" },
-          { name: "Esquinero", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Esquinero 150x150.png" },
-          { name: "Quarzo", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Quarzo170x83.png" }
+          { name: "Romana", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Romana 160x75.webp" },
+          { name: "Perla", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Perla 180x120.webp" },
+          { name: "Yaquelin", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/yaquelin 165x120.webp" },
+          { name: "Agustar", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Agustar 18.webp" },
+          { name: "Quadra", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/quadra.webp" },
+          { name: "Modena", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Modena.webp" },
+          { name: "Veneto", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/veneto.webp" },
+          { name: "Parma", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Parma 180x80.webp" },
+          { name: "Laguna", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Laguna.webp" },
+          { name: "Circular", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Circular 150x150.webp" },
+          { name: "Esquinero", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Esquinero 150x150.webp" },
+          { name: "Quarzo", imagePath: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Quarzo170x83.webp" }
         ].map(model => ({
           ...model,
           items: banerasPremiumData.filter(item => item.name === model.name)
@@ -771,32 +771,32 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {
         const groupedModels = [
           {
             name: "Romana",
-            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Romana 160x75.png",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Romana 160x75.webp",
             items: products.filter(p => p.name === "Romana")
           },
           {
             name: "Perla",
-            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Perla 180x120.png",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Perla 180x120.webp",
             items: products.filter(p => p.name === "Perla")
           },
           {
             name: "Lady",
-            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Lady 160x70.png",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Lady 160x70.webp",
             items: products.filter(p => p.name === "Lady")
           },
           {
             name: "Yaquelin",
-            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/yaquelin 165x120.png",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/yaquelin 165x120.webp",
             items: products.filter(p => p.name === "Yaquelin")
           },
           {
             name: "Joya",
-            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Joya 160x75.png",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Joya 160x75.webp",
             items: products.filter(p => p.name === "Joya")
           },
           {
             name: "Martina",
-            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Martina.png",
+            image: "/images/Beñeras/Sin fondo/SIN LOGO ALTA/Martina.webp",
             items: products.filter(p => p.name.includes("Martina"))
           }
         ];
@@ -1671,7 +1671,7 @@ export const PriceListPdf = forwardRef<HTMLDivElement, {
                         <div className="bg-slate-50 border border-slate-200 rounded-lg p-2 flex justify-between items-center shadow-sm min-h-[42px]">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-white rounded-full border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
-                              <img src="/images/Platos de Ducha/desague.png" alt="Desagüe" className="w-6 h-6 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
+                              <img src="/images/Platos de Ducha/desague.webp" alt="Desagüe" className="w-6 h-6 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
                             </div>
                             <div>
                               <h4 className="text-[10px] font-bold text-slate-800 uppercase leading-none">Desagüe</h4>

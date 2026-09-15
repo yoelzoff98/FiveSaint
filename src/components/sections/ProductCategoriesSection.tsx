@@ -8,13 +8,13 @@ import { ArrowRight, Check } from "lucide-react";
 
 // Mapeo de imágenes generadas para cada categoría
 const categoryImages: Record<string, string> = {
-  "spas-y-minipiscinas": "/images/cat_spas_new.jpg",
-  "baneras": "/images/cat_baneras_new.jpg",
-  "platos-de-duchas": "/images/cat_platos_new.jpg",
-  "columnas-de-ducha": "/images/cat_columnas.png",
+  "spas-y-minipiscinas": "/images/cat_spas_new.webp",
+  "baneras": "/images/cat_baneras_new.webp",
+  "platos-de-duchas": "/images/cat_platos_new.webp",
+  "columnas-de-ducha": "/images/cat_columnas.webp",
   "ducha-escocesa": "/images/ducha-escocesa/ducha-escocesa-portada.webp",
-  "sauna": "/images/cat_saunas.png",
-  "adicionales": "/images/duchador-manual.png"
+  "sauna": "/images/cat_saunas.webp",
+  "adicionales": "/images/duchador-manual.webp"
 };
 
 /**
@@ -38,7 +38,7 @@ export function ProductCategoriesSection() {
           {/* Grilla de Categorías */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {productCategories.map((category) => {
-              const bgImage = categoryImages[category.id] || "/images/cat_baneras.png";
+              const bgImage = categoryImages[category.id] || "/images/cat_baneras.webp";
               
               return (
                 <Card

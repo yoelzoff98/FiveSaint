@@ -17,7 +17,7 @@ export function AboutPreviewSection() {
       {/* Fondo fotográfico real (Agua y Burbujas de Spa) */}
       <div className="absolute inset-0 -z-20 w-full h-full">
         <Image
-          src="/images/about_bg.png"
+          src="/images/about_bg.webp"
           alt="Agua relajante de spa Five Saint"
           fill
           sizes="100vw"

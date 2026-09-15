@@ -9,7 +9,7 @@ export const siteConfig = {
   description: 
     "Fabricante líder en la Argentina desde 1995. Diseñamos y fabricamos bañeras, hidromasajes, spas, platos de ducha, columnas de ducha, saunas y duchas escocesas con los más altos estándares de calidad, innovación y diseño.",
   url: "https://www.fivesaint.com.ar",
-  ogImage: "/images/og-image.jpg",
+  ogImage: "/images/og-image.webp",
   foundedYear: 1995,
   foundationYear: 1995, // Alias para garantizar retrocompatibilidad del Sprint 1
   location: "Buenos Aires, Argentina",

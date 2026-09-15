@@ -18,7 +18,7 @@ export function HeroSection() {
       {/* Imagen de fondo real (Wellness / Jacuzzi) */}
       <div className="absolute inset-0 -z-20 w-full h-full">
         <Image
-          src="/images/hero_bg_new.jpg"
+          src="/images/hero_bg_new.webp"
           alt="Bañera de hidromasaje de lujo Five Saint"
           fill
           priority
