@@ -15,7 +15,7 @@ export function HeroSection() {
   return (
     <section className="relative isolate overflow-hidden min-h-[calc(100vh-90px)] flex flex-col justify-center py-10 lg:py-12 border-b border-stone-800 text-white">
       
-      {/* Imagen de fondo real (Wellness / Jacuzzi) */}
+      {/* Imagen de fondo real (Hidromasaje a la derecha) */}
       <div className="absolute inset-0 -z-20 w-full h-full">
         <Image
           src="/images/hero_bg_new.webp"
