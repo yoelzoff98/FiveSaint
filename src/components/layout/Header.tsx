@@ -47,28 +47,20 @@ export default function Header() {
         )}
       >
         <Container className="flex items-center justify-between">
-          {/* Logo Corporativo con subtexto de trayectoria e imagen vectorizada */}
+          {/* Logo Corporativo Oficial */}
           <Link
             href="/"
-            className="group flex items-center gap-3 focus-visible:outline-accent-deep focus-visible:outline-2 focus-visible:outline-offset-4"
+            className="group flex items-center focus-visible:outline-accent-deep focus-visible:outline-2 focus-visible:outline-offset-4"
             aria-label={`${siteConfig.name} - Volver al inicio`}
           >
-            <div className="relative w-10 h-10 overflow-hidden rounded-lg shadow-sm border border-stone-200/40 bg-[#007299] shrink-0 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 overflow-hidden rounded-xl shadow-xs border border-stone-200/50 shrink-0 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
               <Image
-                src="/LOGO.svg"
-                alt="Five Saint Logo"
+                src="/logo.webp"
+                alt="Five Saint - Equipamientos para Spa"
                 fill
-                className="object-cover"
+                className="object-contain"
                 priority
               />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="font-sans text-base font-bold uppercase tracking-[0.2em] text-stone-900 group-hover:text-accent-deep transition-colors leading-tight">
-                {siteConfig.name}
-              </span>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-stone-400 mt-0.5 leading-none">
-                Equipamientos para Spa
-              </span>
             </div>
           </Link>
 

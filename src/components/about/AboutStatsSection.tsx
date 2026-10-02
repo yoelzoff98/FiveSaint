@@ -13,7 +13,7 @@ export function AboutStatsSection() {
       label: "Inicio de trayectoria"
     },
     {
-      value: "+25",
+      value: "+30",
       label: "Años de experiencia"
     },
     {
@@ -27,22 +27,22 @@ export function AboutStatsSection() {
   ];
 
   return (
-    <section className="py-20 lg:py-24 bg-stone-900 border-y border-stone-800 relative overflow-hidden">
-      {/* Luz tenue de fondo para darle profundidad al oscuro */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent-deep/10 via-stone-900 to-stone-900 -z-10" />
+    <section className="py-16 lg:py-20 bg-gradient-to-b from-[#f0f9fb] via-[#f7fbfd] to-[#edf6f9] border-y border-stone-200/70 relative overflow-hidden">
+      {/* Sutil halo decorativo en tono turquesa marca */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#087d9f]/8 via-transparent to-transparent -z-10" />
       
       <Container>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 text-center relative z-10">
           {metrics.map((metric, idx) => (
             <Card
               key={idx}
-              className="bg-stone-800/30 border border-white/5 backdrop-blur-sm shadow-xl flex flex-col justify-center items-center py-10 gap-3 rounded-2xl hover:bg-stone-800/50 hover:-translate-y-1 transition-all duration-300"
+              className="bg-white border border-stone-200/80 shadow-md shadow-stone-200/40 flex flex-col justify-center items-center py-8 sm:py-10 px-4 gap-2 rounded-2xl hover:shadow-xl hover:border-[#087d9f]/40 hover:-translate-y-1 transition-all duration-300"
               padding="none"
             >
-              <span className="text-4xl sm:text-5xl font-light text-white tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-br from-white to-stone-400">
+              <span className="text-3.5xl sm:text-5xl font-extrabold text-[#087d9f] tracking-tight leading-none">
                 {metric.value}
               </span>
-              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-accent-soft mt-1 max-w-[150px] leading-tight">
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-stone-600 mt-1 max-w-[150px] leading-snug">
                 {metric.label}
               </span>
             </Card>

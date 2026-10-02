@@ -44,7 +44,7 @@ export function ProductCategoriesSection() {
                 <Card
                   key={category.id}
                   padding="none"
-                  className="relative isolate h-[280px] sm:h-[320px] rounded-2xl overflow-hidden group shadow-lg hover:shadow-xl hover:shadow-[#087d9f]/10 transition-all duration-500 border border-stone-200/40"
+                  className="relative isolate h-[320px] sm:h-[350px] lg:h-[360px] rounded-2xl overflow-hidden group shadow-lg hover:shadow-xl hover:shadow-[#087d9f]/10 transition-all duration-500 border border-stone-200/40"
                 >
                   {/* Imagen de fondo real de la categoría */}
                   <div className="absolute inset-0 w-full h-full -z-20">
@@ -86,10 +86,10 @@ export function ProductCategoriesSection() {
                   </div>
 
                   {/* Panel Flotante de Detalles al hacer Hover (Glassmorphism Slide Up) */}
-                  <div className="absolute inset-x-0 bottom-0 h-4/5 bg-[#01161d]/90 backdrop-blur-md border-t border-white/10 p-6 flex flex-col justify-between transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-t-2xl">
-                    <div className="flex flex-col gap-3">
+                  <div className="absolute inset-x-0 bottom-0 h-[88%] bg-[#01161d]/95 backdrop-blur-md border-t border-white/10 p-5 sm:p-6 flex flex-col justify-between transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-t-2xl">
+                    <div className="flex flex-col gap-2.5">
                       <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                        <span className="text-lg font-bold text-white">{category.name}</span>
+                        <span className="text-base sm:text-lg font-bold text-white">{category.name}</span>
                         <span className="text-[9px] font-bold text-[#c5a880] uppercase tracking-widest bg-[#c5a880]/15 px-2 py-0.5 rounded-md border border-[#c5a880]/20">
                           Premium
                         </span>
@@ -101,7 +101,7 @@ export function ProductCategoriesSection() {
 
                       {/* Highlights / Viñetas */}
                       {category.highlights && (
-                        <ul className="flex flex-col gap-1.5 mt-2">
+                        <ul className="flex flex-col gap-1.5 mt-1 sm:mt-2">
                           {category.highlights.map((highlight) => (
                             <li key={highlight} className="flex items-center gap-2 text-[11px] font-light text-stone-200">
                               <div className="rounded-full bg-[#087d9f]/20 p-0.5 text-[#9de6f2] shrink-0 border border-[#087d9f]/30">
@@ -115,13 +115,15 @@ export function ProductCategoriesSection() {
                     </div>
 
                     {/* Enlace final del Panel */}
-                    <Link
-                      href={category.href}
-                      className="w-full py-2.5 bg-[#087d9f] hover:bg-[#055f79] text-center text-xs font-bold uppercase tracking-widest text-white rounded-lg transition-colors duration-300 shadow-md flex items-center justify-center gap-2"
-                    >
-                      Explorar Catálogo
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                    <div className="pt-3 mt-auto">
+                      <Link
+                        href={category.href}
+                        className="w-full py-2.5 bg-[#087d9f] hover:bg-[#055f79] text-center text-xs font-bold uppercase tracking-widest text-white rounded-lg transition-colors duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        Explorar Catálogo
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
                   </div>
                 </Card>
               );

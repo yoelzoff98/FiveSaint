@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
@@ -62,9 +63,14 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           >
             {/* Header del Menú */}
             <div className="flex items-center justify-between">
-              <span className="font-sans text-lg font-semibold uppercase tracking-[0.2em] text-stone-900">
-                {siteConfig.name}
-              </span>
+              <div className="relative w-10 h-10 overflow-hidden rounded-xl shadow-xs border border-stone-200/50 shrink-0">
+                <Image
+                  src="/logo.webp"
+                  alt="Five Saint"
+                  fill
+                  className="object-contain"
+                />
+              </div>
               <button
                 onClick={onClose}
                 aria-label="Cerrar menú de navegación"

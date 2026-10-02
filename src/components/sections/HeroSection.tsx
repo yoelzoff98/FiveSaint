@@ -41,7 +41,7 @@ export function HeroSection() {
           <h1 className="text-4xl font-extralight tracking-tight text-white sm:text-5xl lg:text-5xl leading-tight max-w-xl">
             Diseño, confort e innovación <br className="hidden lg:block" />
             para{" "}
-            <span className="font-bold text-[#9de6f2] underline decoration-[#087d9f]/50 decoration-[4px] sm:decoration-[6px] underline-offset-4 sm:underline-offset-8">
+            <span className="font-bold text-[#9de6f2]">
               espacios de bienestar
             </span>
           </h1>

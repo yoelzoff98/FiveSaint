@@ -17,7 +17,7 @@ export function AboutStorySection() {
         <div className="lg:col-span-7 flex flex-col gap-6 text-left items-start">
           <SectionTitle
             eyebrow="Historia"
-            title="Más de dos décadas acompañando proyectos de baño y bienestar"
+            title="Más de tres décadas acompañando proyectos de baño y bienestar"
           />
           
           <div className="flex flex-col gap-5 text-base font-light text-stone-600 leading-relaxed max-w-2xl">

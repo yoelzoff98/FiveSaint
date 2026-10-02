@@ -10,56 +10,42 @@ import { Calendar, Layers, MapPin } from "lucide-react";
  */
 export function ProductCatalogHeader() {
   return (
-    <section className="relative overflow-hidden bg-stone-900 pt-16 pb-12 sm:pt-20 sm:pb-14 border-b border-stone-800">
-      {/* Luz tenue de fondo para darle profundidad al oscuro */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent-deep/15 via-stone-900 to-stone-900 -z-10" />
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#f2f9fb] via-[#f7fbfd] to-stone-50/80 pt-8 pb-7 sm:pt-10 sm:pb-8 border-b border-stone-200/70">
+      {/* Sutil resplandor de fondo en color marca */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#087d9f]/10 via-transparent to-transparent -z-10" />
       
-      <Container className="flex flex-col gap-6 items-start text-left relative z-10">
-        <Badge variant="outline" className="uppercase tracking-widest text-[9px] font-bold px-3 py-1 text-accent-soft border-accent-soft/30 bg-accent-soft/10">
+      <Container className="flex flex-col gap-3.5 sm:gap-4 items-start text-left relative z-10">
+        <Badge variant="outline" className="uppercase tracking-widest text-[9px] font-bold px-3 py-0.5 text-[#087d9f] border-[#087d9f]/30 bg-[#087d9f]/10">
           Catálogo Oficial
         </Badge>
         
-        <h1 className="text-3xl font-light tracking-tight text-white sm:text-5xl lg:text-6xl leading-tight max-w-3xl">
-          Soluciones para <span className="font-semibold text-accent-soft">baño, relax y bienestar</span>
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-light tracking-tight text-stone-900 leading-tight max-w-3xl">
+          Soluciones para <span className="font-semibold text-[#087d9f]">baño, relax y bienestar</span>
         </h1>
         
-        <p className="max-w-2xl text-sm sm:text-base font-light text-stone-300 leading-relaxed">
+        <p className="max-w-2xl text-xs sm:text-sm font-light text-stone-600 leading-relaxed">
           Explorá las principales líneas de productos Five Saint: bañeras, hidromasajes, spas, platos de ducha, columnas, saunas y duchas escocesas.
         </p>
 
-        {/* Grilla de Estadísticas Rápidas al pie de la cabecera */}
-        <div className="mt-8 pt-8 border-t border-stone-800 flex flex-wrap gap-4 sm:gap-6 w-full">
-          
-          <div className="flex items-center gap-4 bg-stone-800/40 backdrop-blur-md p-4 pr-8 rounded-2xl border border-white/5 shadow-xl hover:bg-stone-800/60 hover:-translate-y-0.5 transition-all duration-300 group">
-            <div className="bg-stone-800 p-2.5 rounded-full shadow-sm text-accent-soft border border-white/5 group-hover:bg-accent-deep group-hover:text-white transition-colors duration-300">
-              <Calendar className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-stone-400">Trayectoria y Confianza</span>
-              <span className="text-sm font-semibold text-white">Desde {siteConfig.foundedYear}</span>
-            </div>
+        {/* Chips compactos de estadísticas al pie de la cabecera */}
+        <div className="mt-2 pt-3 border-t border-stone-200/80 flex flex-wrap items-center gap-3 sm:gap-5 w-full">
+          <div className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-stone-200/80 shadow-xs text-xs">
+            <Calendar className="h-3.5 w-3.5 text-[#087d9f]" aria-hidden="true" />
+            <span className="text-stone-500 font-medium">Trayectoria:</span>
+            <span className="font-bold text-stone-800">Desde {siteConfig.foundedYear}</span>
           </div>
           
-          <div className="flex items-center gap-4 bg-stone-800/40 backdrop-blur-md p-4 pr-8 rounded-2xl border border-white/5 shadow-xl hover:bg-stone-800/60 hover:-translate-y-0.5 transition-all duration-300 group">
-            <div className="bg-stone-800 p-2.5 rounded-full shadow-sm text-accent-soft border border-white/5 group-hover:bg-accent-deep group-hover:text-white transition-colors duration-300">
-              <Layers className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-stone-400">Variedad y Adaptabilidad</span>
-              <span className="text-sm font-semibold text-white">+200 Artículos</span>
-            </div>
+          <div className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-stone-200/80 shadow-xs text-xs">
+            <Layers className="h-3.5 w-3.5 text-[#087d9f]" aria-hidden="true" />
+            <span className="text-stone-500 font-medium">Variedad:</span>
+            <span className="font-bold text-stone-800">+200 Artículos</span>
           </div>
           
-          <div className="flex items-center gap-4 bg-stone-800/40 backdrop-blur-md p-4 pr-8 rounded-2xl border border-white/5 shadow-xl hover:bg-stone-800/60 hover:-translate-y-0.5 transition-all duration-300 group">
-            <div className="bg-stone-800 p-2.5 rounded-full shadow-sm text-accent-soft border border-white/5 group-hover:bg-accent-deep group-hover:text-white transition-colors duration-300">
-              <MapPin className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-stone-400">Fabricación Nacional</span>
-              <span className="text-sm font-semibold text-white">{siteConfig.location}</span>
-            </div>
+          <div className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-stone-200/80 shadow-xs text-xs">
+            <MapPin className="h-3.5 w-3.5 text-[#087d9f]" aria-hidden="true" />
+            <span className="text-stone-500 font-medium">Origen:</span>
+            <span className="font-bold text-stone-800">Fabricación Nacional</span>
           </div>
-
         </div>
       </Container>
     </section>
