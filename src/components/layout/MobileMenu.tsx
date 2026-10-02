@@ -113,7 +113,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 asChild
               >
                 <Link href="/contacto" onClick={onClose}>
-                  Solicitar asesoramiento
+                  Solicitar Asesoramiento
                 </Link>
               </Button>
 

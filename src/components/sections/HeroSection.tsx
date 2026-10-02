@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowRight, Sparkles, Shield, Compass } from "lucide-react";
+import { ArrowRight, Headset } from "lucide-react";
 
 /**
  * Sección Hero de Impacto Visual (Sprint 3).
@@ -28,75 +28,75 @@ export function HeroSection() {
       </div>
 
       {/* Capa de superposición para legibilidad (Spa Oscuro) */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#01161d] via-[#01161d]/80 to-transparent" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#01161d] via-[#01161d]/85 via-60% to-transparent" />
       
       {/* Resplandores visuales de luz */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#087d9f]/10 filter blur-3xl opacity-40 -z-10 animate-pulse-slow pointer-events-none" />
 
-      <Container className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 my-auto w-full">
+      <Container className="relative z-10 my-auto w-full">
         
-        {/* Columna Izquierda: Información de Marca y CTAs */}
-        <div className="lg:col-span-6 flex flex-col gap-4 lg:gap-5 text-left items-start">
+        {/* Columna Principal: Información de Marca y CTAs */}
+        <div className="max-w-2xl sm:max-w-3xl lg:max-w-4xl flex flex-col gap-4 sm:gap-5 lg:gap-6 text-left items-start">
           
-          <h1 className="text-4xl font-extralight tracking-tight text-white sm:text-5xl lg:text-5xl leading-tight max-w-xl">
-            Diseño, confort e innovación <br className="hidden lg:block" />
-            para{" "}
-            <span className="font-bold text-[#9de6f2]">
-              espacios de bienestar
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tight text-white leading-[1.15] max-w-3xl">
+            Tu espacio.<br />
+            Tu momento.<br />
+            <span className="font-bold text-[#9de6f2] inline-block">
+              Tu forma de disfrutarlo.
             </span>
           </h1>
           
-          <p className="text-base sm:text-lg lg:text-xl font-light text-stone-300 leading-relaxed max-w-lg">
-            Fabricamos hidromasajes, spas y equipamiento premium. Transformamos tu baño con calidad industrial y diseño de vanguardia.
+          <p className="text-base sm:text-lg lg:text-xl font-light text-stone-300 leading-relaxed max-w-2xl lg:max-w-3xl">
+            Descubrí hidromasajes y spas Five Saint, diseñados para combinar confort, estética y prestaciones en cada ambiente.
           </p>
 
-          {/* Acciones principales - Botón "¡Contactanos!" estilo pill */}
-          <div className="mt-1 flex flex-wrap gap-4 w-full sm:w-auto">
+          {/* Acciones principales */}
+          <div className="mt-1 flex flex-row flex-wrap gap-4 items-center">
             <Button
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto uppercase tracking-wider font-bold rounded-full bg-[#087d9f] hover:bg-[#055f79] text-white border-none group cursor-pointer shadow-lg px-8"
+              className="uppercase tracking-wider font-bold rounded-full bg-[#087d9f] hover:bg-[#055f79] text-white border-none group cursor-pointer shadow-lg px-8 py-3.5 text-xs sm:text-sm"
               asChild
             >
-              <Link href="/contacto" className="flex items-center justify-center gap-2">
-                ¡Contactanos!
+              <Link href="/productos" className="flex items-center justify-center gap-2">
+                Conocé nuestros productos
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto uppercase tracking-wider font-semibold rounded-full border-white/40 hover:border-white hover:bg-white/10 text-white transition-all duration-300 bg-white/5 backdrop-blur-xs px-8"
+              className="uppercase tracking-wider font-semibold rounded-full border-white/40 hover:border-white hover:bg-white/10 text-white transition-all duration-300 bg-white/5 backdrop-blur-xs px-8 py-3.5 text-xs sm:text-sm cursor-pointer"
               asChild
             >
-              <Link href="/productos">Ver productos</Link>
+              <Link href="/contacto">Hablemos de tu proyecto</Link>
             </Button>
           </div>
 
-          {/* Estadísticas de Confianza */}
-          <div className="mt-4 pt-4 lg:mt-6 lg:pt-6 border-t border-white/10 grid grid-cols-3 gap-4 sm:gap-8 w-full max-w-2xl">
+          {/* Destacados Inferiores */}
+          <div className="mt-4 pt-4 lg:mt-6 lg:pt-6 border-t border-white/15 grid grid-cols-3 gap-6 sm:gap-10 w-full max-w-2xl">
             <div className="flex flex-col gap-1">
               <span className="text-2xl sm:text-3xl font-extrabold text-white leading-none">
                 +30
               </span>
-              <span className="text-[10px] sm:text-xs font-semibold text-stone-400 uppercase tracking-wider">
-                Años
+              <span className="text-[10px] sm:text-xs font-semibold text-stone-300 uppercase tracking-wider leading-tight">
+                Años de experiencia
               </span>
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-2xl sm:text-3xl font-extrabold text-white leading-none">
-                +200
+                100%
               </span>
-              <span className="text-[10px] sm:text-xs font-semibold text-stone-400 uppercase tracking-wider">
-                Artículos
+              <span className="text-[10px] sm:text-xs font-semibold text-stone-300 uppercase tracking-wider leading-tight">
+                Fabricación Nacional
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-2xl sm:text-3xl font-extrabold text-[#e3c498] leading-none">
-                100%
-              </span>
-              <span className="text-[10px] sm:text-xs font-semibold text-stone-400 uppercase tracking-wider">
-                Industria Nacional
+              <div className="h-[24px] sm:h-[30px] flex items-center">
+                <Headset className="h-6 w-6 sm:h-7 sm:w-7 text-[#9de6f2]" aria-hidden="true" />
+              </div>
+              <span className="text-[10px] sm:text-xs font-semibold text-stone-300 uppercase tracking-wider leading-tight">
+                Asesoramiento Especializado
               </span>
             </div>
           </div>

@@ -104,7 +104,7 @@ export default function Header() {
               className="text-xs uppercase tracking-wider font-semibold cursor-pointer"
               asChild
             >
-              <Link href="/contacto">Solicitar asesoramiento</Link>
+              <Link href="/contacto">Solicitar Asesoramiento</Link>
             </Button>
           </div>
 
