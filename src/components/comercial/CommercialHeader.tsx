@@ -13,6 +13,18 @@ export function CommercialHeader({ profileName }: CommercialHeaderProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
+    try {
+      if (typeof window !== "undefined" && window.sessionStorage) {
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.startsWith("fivesaint_draft_budget_")) {
+            sessionStorage.removeItem(key);
+          }
+        });
+      }
+    } catch {
+      // Ignorar
+    }
+
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
     router.push("/admin-comercial/login");
@@ -30,7 +42,7 @@ export function CommercialHeader({ profileName }: CommercialHeaderProps) {
           <User className="w-4 h-4 text-stone-500" />
           <span>{profileName}</span>
         </div>
-        <button 
+        <button
           onClick={handleLogout}
           className="flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-red-600 transition-colors cursor-pointer"
         >

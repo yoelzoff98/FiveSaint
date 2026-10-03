@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { resolveIssuedBudgetTotals, formatCurrencyARS, type CommercialBreakdown } from '@/lib/commercial-calculations';
 
 interface BudgetItem {
   id: string;
@@ -9,22 +10,38 @@ interface BudgetItem {
   total_price: number;
 }
 
-interface Budget {
+export interface Budget {
   id: string;
   budget_number: number;
   status: string;
   total_amount: number;
-  notes: string | null;
+  tax_rate?: number | null;
+  calculation_snapshot?: Partial<CommercialBreakdown> | null;
+  notes?: string | null;
+  public_notes?: string | null;
   discounts: number[];
   created_at: string;
-  clients: {
+  client_snapshot?: {
+    name: string;
+    company_name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    address?: string | null;
+  } | null;
+  clients?: {
     name: string;
     company_name: string | null;
     email: string | null;
     phone: string | null;
     address: string | null;
   } | null;
-  sellers: {
+  seller_snapshot?: {
+    name: string;
+    full_name?: string;
+    phone?: string | null;
+    whatsapp?: string | null;
+  } | null;
+  sellers?: {
     full_name: string;
     email: string;
     phone?: string | null;
@@ -39,14 +56,15 @@ interface BudgetPrintPdfProps {
 
 export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
   ({ budget }, ref) => {
-    const formatCurrency = (amount: number) => {
-      return new Intl.NumberFormat("es-AR", {
-        style: "currency",
-        currency: "ARS",
-      }).format(amount);
-    };
+    // Usar snapshot guardado si existe para preservar la emisión original
+    const client = budget.client_snapshot || budget.clients;
+    const seller = budget.seller_snapshot || budget.sellers;
+
+    const breakdown = resolveIssuedBudgetTotals(budget);
 
     const date = new Date(budget.created_at);
+    // Mostrar notas públicas para el cliente si existen
+    const conditionsText = budget.public_notes ?? (budget.calculation_snapshot ? null : budget.notes);
 
     return (
       <div
@@ -75,11 +93,11 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               <h1 className="text-base sm:text-lg font-black text-accent-deep tracking-wider uppercase">
                 Presupuesto
               </h1>
-              <div className="bg-stone-100 font-mono text-xs sm:text-sm font-bold text-stone-800 py-1 px-3 rounded mt-1 sm:mt-2 border border-stone-200 inline-block">
+              <div className="bg-stone-100 font-mono text-xs sm:text-sm font-bold text-stone-850 py-1 px-3 rounded mt-1 sm:mt-2 border border-stone-200 inline-block">
                 N° FS-P-{budget.budget_number}
               </div>
               <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1 sm:mt-2">
-                Fecha: {date.toLocaleDateString("es-AR")}
+                Fecha de Emisión: {date.toLocaleDateString("es-AR")}
               </div>
             </div>
           </div>
@@ -90,15 +108,15 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
               <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-2">
                 Presupuestado a:
               </span>
-              <p className="font-bold text-stone-900 text-sm mb-1">{budget.clients?.name}</p>
-              {budget.clients?.company_name && (
-                <p className="font-semibold text-stone-700 mb-0.5">{budget.clients.company_name}</p>
+              <p className="font-bold text-stone-900 text-sm mb-1">{client?.name || "Cliente"}</p>
+              {client?.company_name && (
+                <p className="font-semibold text-stone-700 mb-0.5">{client.company_name}</p>
               )}
-              {budget.clients?.email && <p className="text-stone-600 mb-0.5">{budget.clients.email}</p>}
-              {budget.clients?.phone && <p className="text-stone-600 mb-0.5">Tel: {budget.clients.phone}</p>}
-              {budget.clients?.address && (
+              {client?.email && <p className="text-stone-600 mb-0.5">{client.email}</p>}
+              {client?.phone && <p className="text-stone-600 mb-0.5">Tel: {client.phone}</p>}
+              {client?.address && (
                 <p className="text-stone-500 mt-1 italic max-w-full sm:max-w-[280px]">
-                  Dirección: {budget.clients.address}
+                  Dirección: {client.address}
                 </p>
               )}
             </div>
@@ -108,10 +126,10 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
                 Asesor Comercial:
               </span>
               <p className="font-bold text-stone-900 text-sm mb-1">
-                {budget.sellers?.full_name || "Five Saint (Administración)"}
+                {seller?.full_name || ("name" in (seller || {}) ? budget.seller_snapshot?.name : null) || "Five Saint (Administración)"}
               </p>
               <p className="text-stone-600 mb-2">
-                WhatsApp: {budget.sellers?.whatsapp || budget.sellers?.phone || "+54 9 11 3816-1492"}
+                WhatsApp: {seller?.whatsapp || seller?.phone || "+54 9 11 3816-1492"}
               </p>
 
               <div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 font-semibold inline-block mt-1">
@@ -143,9 +161,9 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
                       )}
                     </td>
                     <td className="px-3 sm:px-4 py-3 text-right font-bold text-stone-900">{item.quantity}</td>
-                    <td className="px-3 sm:px-4 py-3 text-right">{formatCurrency(item.unit_price)}</td>
+                    <td className="px-3 sm:px-4 py-3 text-right">{formatCurrencyARS(item.unit_price)}</td>
                     <td className="px-3 sm:px-4 py-3 text-right font-bold text-stone-950">
-                      {formatCurrency(item.quantity * item.unit_price)}
+                      {formatCurrencyARS(item.quantity * item.unit_price)}
                     </td>
                   </tr>
                 ))}
@@ -153,55 +171,55 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
             </table>
           </div>
 
-          {/* Total del Presupuesto */}
+          {/* Desglose Unificado de Totales e Impuestos */}
           <div className="flex justify-end sm:pr-2 mb-6 sm:mb-8">
-            <div className="text-right bg-stone-50 border border-stone-200 p-3.5 sm:p-4 rounded-lg w-full sm:w-auto min-w-full sm:min-w-[260px]">
+            <div className="text-right bg-stone-50 border border-stone-200 p-4 rounded-lg w-full sm:w-auto min-w-full sm:min-w-[280px]">
+              <div className="flex justify-between items-center text-[11px] font-bold text-stone-600 uppercase mb-1.5">
+                <span>Subtotal Bruto:</span>
+                <span>{formatCurrencyARS(breakdown.subtotal)}</span>
+              </div>
 
-              {budget.discounts && budget.discounts.length > 0 && (() => {
-                const subtotal = budget.items.reduce((acc, item) => acc + item.quantity * item.unit_price, 0);
-                return (
-                  <div className="mb-2 pb-2 border-b border-stone-200">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-stone-500 uppercase">
-                      <span>Subtotal Bruto</span>
-                      <span>{formatCurrency(subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[10px] font-bold text-green-600 uppercase mt-1">
-                      <span>Desc. ({budget.discounts.join("% + ")}%)</span>
-                      <span>-{formatCurrency(subtotal - budget.total_amount)}</span>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest block">
-                Total Presupuestado
-              </span>
-              <span className="text-xl sm:text-2xl font-black text-accent-deep mt-0.5 block">
-                {formatCurrency(budget.total_amount)}
-              </span>
-
-              {/* Total con IVA (21%) */}
-              <div className="mt-2 pt-2 border-t border-stone-200 flex flex-col items-end">
-                <div className="flex justify-between items-center w-full gap-4 text-xs font-bold text-stone-800">
-                  <span className="text-[10px] uppercase text-stone-500 font-semibold">Total con IVA (21%):</span>
-                  <span>{formatCurrency(budget.total_amount * 1.21)}</span>
+              {budget.discounts && budget.discounts.length > 0 && (
+                <div className="flex justify-between items-center text-[11px] font-bold text-green-700 uppercase mb-2 pb-2 border-b border-stone-200">
+                  <span>Desc. ({budget.discounts.join("% + ")}%):</span>
+                  <span>-{formatCurrencyARS(breakdown.discountAmount)}</span>
                 </div>
+              )}
+
+              <div className="flex justify-between items-center text-xs font-bold text-stone-900 pt-1">
+                <span>Subtotal Neto:</span>
+                <span>{formatCurrencyARS(breakdown.netTotal)}</span>
+              </div>
+
+              {/* Impuesto IVA (21%) discriminado */}
+              <div className="flex justify-between items-center text-[11px] font-semibold text-stone-600 mt-1 pb-2 border-b border-stone-200">
+                <span>IVA ({breakdown.taxRate}%):</span>
+                <span>+{formatCurrencyARS(breakdown.taxAmount)}</span>
+              </div>
+
+              <div className="mt-2.5 flex justify-between items-baseline">
+                <span className="text-xs font-black text-stone-850 uppercase tracking-wider">
+                  Total Final:
+                </span>
+                <span className="text-xl sm:text-2xl font-black text-accent-deep">
+                  {formatCurrencyARS(breakdown.totalWithTax)}
+                </span>
               </div>
 
               <span className="text-[9px] text-stone-400 block mt-2 uppercase font-medium">
-                * Los precios no incluyen costo de envío
+                * Los precios no incluyen costo de flete ni descarga en obra
               </span>
             </div>
           </div>
 
-          {/* Notas / Observaciones Comerciales */}
-          {budget.notes && (
+          {/* Condiciones Comerciales Destinadas al Cliente */}
+          {conditionsText && (
             <div className="border border-stone-200 rounded-lg p-4 bg-stone-50/50 text-[11px] leading-relaxed">
               <span className="font-bold text-stone-600 uppercase tracking-wider block mb-1.5 text-[9px]">
                 Condiciones & Notas Comerciales:
               </span>
               <p className="text-stone-700 whitespace-pre-line font-normal">
-                {budget.notes}
+                {conditionsText}
               </p>
             </div>
           )}

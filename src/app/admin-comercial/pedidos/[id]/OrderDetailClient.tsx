@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { 
-  ShoppingBag, User, Calendar, DollarSign, Building, Mail, 
+import {
+  ShoppingBag, User, Calendar, DollarSign, Building, Mail,
   Phone, MapPin, RefreshCw, AlertCircle, Check, X, Printer, Hammer, Truck
 } from "lucide-react";
-import { updateOrderStatus } from "@/lib/supabase/comercial";
+import { updateOrderStatus, cancelOrder } from "@/lib/supabase/comercial";
 import { useReactToPrint } from "react-to-print";
 import { OrderPrintPdf } from "@/components/pdf/OrderPrintPdf";
 
@@ -68,20 +68,48 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
     }).format(amount);
   };
 
+  const handleCancelOrder = async (reason?: string) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      await cancelOrder(order.id, reason || undefined);
+      setOrder(prev => ({ ...prev, status: "cancelled" }));
+      setSuccess("Pedido cancelado exitosamente y saldo de presupuesto restaurado.");
+      router.refresh();
+    } catch (err: unknown) {
+      console.error(err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg || "Error al cancelar el pedido.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleUpdateStatus = async (newStatus: string) => {
+    if (newStatus === "cancelled") {
+      const reason = window.prompt("Ingrese el motivo de cancelación (opcional):");
+      if (reason !== null) {
+        return handleCancelOrder(reason);
+      }
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
       await updateOrderStatus(order.id, newStatus);
-      
+
       setOrder(prev => ({ ...prev, status: newStatus }));
       setSuccess(`Estado del pedido actualizado a: ${newStatus}`);
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || "Error al actualizar estado del pedido.");
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(msg || "Error al actualizar estado del pedido.");
     } finally {
       setLoading(false);
     }
@@ -95,6 +123,8 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
         return <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-sm py-1 px-3">En Fabricación / Proceso</Badge>;
       case "delivered":
         return <Badge className="bg-green-50 text-green-700 border-green-200 text-sm py-1 px-3">Entregado</Badge>;
+      case "completed":
+        return <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-sm py-1 px-3">Venta confirmada</Badge>;
       case "cancelled":
         return <Badge className="bg-red-50 text-red-700 border-red-200 text-sm py-1 px-3">Cancelado</Badge>;
       default:
@@ -232,7 +262,7 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
             </div>
 
             {order.status === "pending" && (
-              <Button 
+              <Button
                 onClick={() => handleUpdateStatus("processing")}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 cursor-pointer bg-blue-700 hover:bg-blue-600 text-white font-semibold"
@@ -243,7 +273,7 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
             )}
 
             {order.status === "processing" && (
-              <Button 
+              <Button
                 onClick={() => handleUpdateStatus("delivered")}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 cursor-pointer bg-green-700 hover:bg-green-600 text-white font-semibold"
@@ -254,7 +284,7 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
             )}
 
             {order.status !== "delivered" && order.status !== "cancelled" && (
-              <Button 
+              <Button
                 variant="ghost"
                 onClick={() => handleUpdateStatus("cancelled")}
                 disabled={loading}

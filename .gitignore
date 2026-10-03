@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backups and sensitive dumps
+/backups/
+*.backup
+*.dump
+supabase/isolated_restore_verification.sql
+supabase/*restore*.sql
+*restore*.sql
+*dump*.sql
+/lint-review.log

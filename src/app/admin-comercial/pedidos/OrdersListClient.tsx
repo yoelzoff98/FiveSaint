@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Search, Eye, Calendar, User, Factory, Store } from "lucide-react";
+import { Search, Eye, Calendar, User, Factory, Store, ChevronLeft, ChevronRight, XCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { formatCurrencyARS } from "@/lib/commercial-calculations";
+import { cancelOrder } from "@/lib/supabase/comercial";
 
 interface Order {
   id: string;
@@ -12,6 +14,8 @@ interface Order {
   status: string;
   total_amount: number;
   created_at: string;
+  sale_channel?: string | null;
+  order_type?: string | null;
   clients: { name: string; company_name: string | null; status?: string } | null;
   sellers: { full_name: string } | null;
 }
@@ -22,43 +26,64 @@ interface Budget {
   status: string;
   total_amount: number;
   created_at: string;
+  sale_channel?: string | null;
   clients: { name: string; company_name: string | null; status?: string } | null;
   sellers: { full_name: string } | null;
 }
 
+import { useRouter } from "next/navigation";
+
 interface OrdersListClientProps {
   initialOrders: Order[];
+  totalOrdersCount?: number;
+  serverPage?: number;
+  serverPageSize?: number;
+  serverTotalPages?: number;
   initialBudgets: Budget[];
+  initialStatus?: string;
+  initialSaleChannel?: string;
   isAdmin: boolean;
 }
 
-export function OrdersListClient({ initialOrders, initialBudgets, isAdmin }: OrdersListClientProps) {
+const PAGE_SIZE = 15;
+
+export function OrdersListClient({
+  initialOrders,
+  totalOrdersCount,
+  serverPage = 1,
+  serverTotalPages = 1,
+  initialBudgets,
+  initialStatus = "all",
+  initialSaleChannel = "all",
+  isAdmin
+}: OrdersListClientProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"factory" | "distributor">("factory");
-  const [orders] = useState<Order[]>(initialOrders);
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [budgets] = useState<Budget[]>(initialBudgets);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [dateRangeFilter, setDateRangeFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(serverPage);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(amount);
-  };
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  // 1. Filtrar presupuestos/ventas vendidas por distribuidor
+  // Filtrar presupuestos/ventas vendidas por distribuidor consultando canal persistido
   const isDistributorSaleBudget = (b: Budget) => {
-    const s = b.clients?.status?.toLowerCase();
-    return b.status === "distributor_sale" || s === "inactivo" || s === "vendido_distribuidor";
+    return b.sale_channel === "distributor" || b.status === "distributor_sale";
   };
 
-  const distributorBudgetsList = budgets.filter((b) => isDistributorSaleBudget(b));
+  const distributorBudgetsList = useMemo(() => {
+    return budgets.filter((b) => isDistributorSaleBudget(b));
+  }, [budgets]);
 
-  // 2. Filtro general por fecha
+  // Filtro general por fecha
   const passesDateFilter = (created_at: string) => {
     if (dateRangeFilter === "all") return true;
     const itemDate = new Date(created_at);
@@ -96,138 +121,168 @@ export function OrdersListClient({ initialOrders, initialBudgets, isAdmin }: Ord
     return true;
   };
 
-  // 3. Filtrar pedidos de fábrica
-  const filteredOrders = orders.filter((o) => {
-    const term = searchTerm.toLowerCase();
-    const clientName = o.clients?.name.toLowerCase() || "";
-    const companyName = o.clients?.company_name?.toLowerCase() || "";
-    const orderNum = o.order_number.toString();
+  const filteredOrders = useMemo(() => {
+    return orders.filter((o) => {
+      const term = searchTerm.toLowerCase();
+      const clientName = o.clients?.name.toLowerCase() || "";
+      const companyName = o.clients?.company_name?.toLowerCase() || "";
+      const orderNum = o.order_number.toString();
 
-    const matchesSearch = clientName.includes(term) || companyName.includes(term) || orderNum.includes(term);
-    const matchesStatus = statusFilter === "all" || o.status === statusFilter;
-    const matchesDate = passesDateFilter(o.created_at);
+      const matchesSearch = clientName.includes(term) || companyName.includes(term) || orderNum.includes(term);
+      const matchesStatus = statusFilter === "all" || o.status === statusFilter;
+      const matchesDate = passesDateFilter(o.created_at);
 
-    return matchesSearch && matchesStatus && matchesDate;
-  });
+      return matchesSearch && matchesStatus && matchesDate;
+    });
+  }, [orders, searchTerm, statusFilter, dateRangeFilter, startDate, endDate]);
 
-  // 4. Filtrar ventas por distribuidor
-  const filteredDistributorBudgets = distributorBudgetsList.filter((b) => {
-    const term = searchTerm.toLowerCase();
-    const clientName = b.clients?.name.toLowerCase() || "";
-    const companyName = b.clients?.company_name?.toLowerCase() || "";
-    const budgetNum = b.budget_number.toString();
+  // Pedidos de fábrica filtrados según el canal persistido
+  const filteredFactoryOrders = useMemo(() => {
+    return filteredOrders.filter(
+      (o) => o.sale_channel !== "distributor" && o.order_type !== "distributor_sale"
+    );
+  }, [filteredOrders]);
 
-    const matchesSearch = clientName.includes(term) || companyName.includes(term) || budgetNum.includes(term);
-    const matchesDate = passesDateFilter(b.created_at);
+  const filteredDistributorBudgets = useMemo(() => {
+    return distributorBudgetsList.filter((b) => {
+      const term = searchTerm.toLowerCase();
+      const clientName = b.clients?.name.toLowerCase() || "";
+      const companyName = b.clients?.company_name?.toLowerCase() || "";
+      const budgetNum = b.budget_number.toString();
 
-    return matchesSearch && matchesDate;
-  });
+      const matchesSearch = clientName.includes(term) || companyName.includes(term) || budgetNum.includes(term);
+      const matchesDate = passesDateFilter(b.created_at);
+
+      return matchesSearch && matchesDate;
+    });
+  }, [distributorBudgetsList, searchTerm, dateRangeFilter, startDate, endDate]);
+
+  // Cálculos de métricas separadas consultando el canal persistido
+  const factoryTotalSales = useMemo(() => {
+    return filteredFactoryOrders
+      .filter((o) => o.status !== "cancelled")
+      .reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+  }, [filteredFactoryOrders]);
+
+  const distributorTotalSales = useMemo(() => {
+    const ordersTotal = filteredOrders
+      .filter((o) => o.status !== "cancelled" && (o.sale_channel === "distributor" || o.order_type === "distributor_sale"))
+      .reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+    const budgetsTotal = filteredDistributorBudgets.reduce((sum, b) => sum + Number(b.total_amount || 0), 0);
+    return ordersTotal + budgetsTotal;
+  }, [filteredOrders, filteredDistributorBudgets]);
+
+  // Paginación
+  const currentList = activeTab === "factory" ? filteredFactoryOrders : filteredDistributorBudgets;
+  const totalPages = Math.max(1, Math.ceil(currentList.length / PAGE_SIZE));
+  const paginatedList = useMemo(() => {
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    return currentList.slice(startIndex, startIndex + PAGE_SIZE);
+  }, [currentList, currentPage]);
+
+  const handleConfirmCancel = async () => {
+    if (!cancellingOrderId) return;
+    setActionLoading(true);
+    setActionError(null);
+
+    try {
+      await cancelOrder(cancellingOrderId, cancelReason);
+      setOrders(prev => prev.map(o => o.id === cancellingOrderId ? { ...o, status: "cancelled" } : o));
+      setCancellingOrderId(null);
+      setCancelReason("");
+    } catch (err: any) {
+      setActionError(err.message || "Error al cancelar pedido");
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   const getOrderStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge className="bg-amber-50 text-amber-700 border-amber-200">Pendiente de Aprobación</Badge>;
+        return <Badge className="bg-amber-50 text-amber-800 border-amber-300 font-bold text-xs py-0.5 px-2">Pendiente Fábrica</Badge>;
       case "processing":
-        return <Badge className="bg-blue-50 text-blue-700 border-blue-200">En Fabricación / Proceso</Badge>;
+        return <Badge className="bg-blue-50 text-blue-800 border-blue-300 font-bold text-xs py-0.5 px-2">En Producción</Badge>;
+      case "completed":
+        return <Badge className="bg-purple-50 text-purple-800 border-purple-300 font-bold text-xs py-0.5 px-2">Venta confirmada</Badge>;
       case "delivered":
-        return <Badge className="bg-green-50 text-green-700 border-green-200">Entregado</Badge>;
+        return <Badge className="bg-emerald-50 text-emerald-800 border-emerald-300 font-bold text-xs py-0.5 px-2">Entregado</Badge>;
       case "cancelled":
-        return <Badge className="bg-red-50 text-red-700 border-red-200">Cancelado</Badge>;
+        return <Badge className="bg-rose-50 text-rose-800 border-rose-300 font-bold text-xs py-0.5 px-2">Cancelado</Badge>;
       default:
-        return <Badge className="bg-stone-100 text-stone-600 border-stone-300">{status}</Badge>;
+        return <Badge className="bg-stone-100 text-stone-600 border-stone-300 text-xs py-0.5 px-2">{status}</Badge>;
     }
   };
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Botones de Navegación por Pestañas principales */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-stone-200 pb-3">
+      {/* Selector de Canal / Pestañas */}
+      <div className="flex border-b border-stone-200">
         <button
-          onClick={() => setActiveTab("factory")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${
+          onClick={() => { setActiveTab("factory"); setCurrentPage(1); }}
+          className={`flex items-center gap-2 py-3 px-6 font-bold text-xs border-b-2 transition-all cursor-pointer ${
             activeTab === "factory"
-              ? "bg-stone-900 text-white shadow-md"
-              : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-50"
+              ? "border-emerald-600 text-emerald-950 bg-emerald-50/40 rounded-t-lg"
+              : "border-transparent text-stone-500 hover:text-stone-850"
           }`}
         >
-          <Factory className="w-4 h-4" />
-          <span>Pedidos de Fábrica</span>
-          <span
-            className={`px-2 py-0.5 rounded-full text-xs font-black ${
-              activeTab === "factory" ? "bg-stone-800 text-stone-200" : "bg-stone-100 text-stone-700"
-            }`}
-          >
-            {orders.length}
+          <Factory className="w-4 h-4 text-emerald-700" />
+          <span>Pedidos a Fábrica ({filteredFactoryOrders.length})</span>
+          <span className="ml-2 font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]" title="Subtotal de la vista actual">
+            {formatCurrencyARS(factoryTotalSales)} (vista)
           </span>
         </button>
 
         <button
-          onClick={() => setActiveTab("distributor")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer ${
+          onClick={() => { setActiveTab("distributor"); setCurrentPage(1); }}
+          className={`flex items-center gap-2 py-3 px-6 font-bold text-xs border-b-2 transition-all cursor-pointer ${
             activeTab === "distributor"
-              ? "bg-teal-700 text-white shadow-md"
-              : "bg-white text-stone-600 border border-stone-200 hover:bg-teal-50/50 hover:text-teal-800"
+              ? "border-teal-600 text-teal-950 bg-teal-50/40 rounded-t-lg"
+              : "border-transparent text-stone-500 hover:text-stone-850"
           }`}
         >
-          <Store className="w-4 h-4" />
-          <span>Vendidos por Distribuidor</span>
-          <span
-            className={`px-2 py-0.5 rounded-full text-xs font-black ${
-              activeTab === "distributor" ? "bg-teal-800 text-teal-100" : "bg-teal-50 text-teal-800 border border-teal-200"
-            }`}
-          >
-            {distributorBudgetsList.length}
+          <Store className="w-4 h-4 text-teal-700" />
+          <span>Vendido por Distribuidor ({filteredDistributorBudgets.length})</span>
+          <span className="ml-2 font-bold text-teal-900 bg-teal-100 px-2 py-0.5 rounded-full text-[10px]" title="Subtotal de la vista actual">
+            {formatCurrencyARS(distributorTotalSales)} (vista)
           </span>
         </button>
       </div>
 
-      {/* Controles de Filtros */}
-      <div className="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Búsqueda */}
-          <div className="flex items-center bg-stone-50 border border-stone-300 rounded-lg px-3 py-2">
-            <Search className="w-5 h-5 text-stone-400 mr-2 shrink-0" />
+      {/* Filtros y Búsqueda */}
+      <div className="flex flex-col gap-3 bg-white p-4 rounded-xl border border-stone-200 shadow-xs">
+        <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
             <input
               type="text"
-              placeholder="Buscar por cliente, empresa o nro..."
+              placeholder="Buscar por N° pedido, cliente o empresa..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full focus:outline-none text-stone-800 placeholder-stone-400 bg-transparent text-sm"
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="w-full pl-9 pr-4 py-2 border border-stone-300 rounded-lg text-xs text-stone-850 bg-white"
             />
           </div>
 
-          {/* Filtro Estado (Solo visible para Pedidos de Fábrica) */}
-          {activeTab === "factory" ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Estado:</span>
+          <div className="flex items-center gap-2">
+            {activeTab === "factory" && (
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-855 text-sm bg-white cursor-pointer w-full"
+                onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                className="px-3 py-2 border border-stone-300 rounded-lg text-xs font-semibold text-stone-700 bg-white"
               >
-                <option value="all">Todos los Pedidos</option>
-                <option value="pending">Pendientes de Aprobación</option>
-                <option value="processing">En Fabricación / Proceso</option>
-                <option value="delivered">Entregados</option>
-                <option value="cancelled">Cancelados</option>
+                <option value="all">Todos los Estados</option>
+                <option value="pending">Pendiente Fábrica</option>
+                <option value="processing">En Producción</option>
+                <option value="completed">Venta confirmada</option>
+                <option value="delivered">Entregado</option>
+                <option value="cancelled">Cancelado</option>
               </select>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Origen:</span>
-              <div className="px-3 py-2 border border-stone-200 rounded-md bg-stone-50 text-stone-700 text-sm font-semibold w-full">
-                Ventas concretadas vía Distribuidor
-              </div>
-            </div>
-          )}
+            )}
 
-          {/* Filtro Período */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Período:</span>
             <select
               value={dateRangeFilter}
-              onChange={(e) => setDateRangeFilter(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-855 text-sm bg-white cursor-pointer w-full"
+              onChange={(e) => { setDateRangeFilter(e.target.value); setCurrentPage(1); }}
+              className="px-3 py-2 border border-stone-300 rounded-lg text-xs font-semibold text-stone-700 bg-white"
             >
               <option value="all">Cualquier fecha</option>
               <option value="current_month">Mes actual</option>
@@ -235,202 +290,221 @@ export function OrdersListClient({ initialOrders, initialBudgets, isAdmin }: Ord
               <option value="last_7">Últimos 7 días</option>
               <option value="last_14">Últimos 14 días</option>
               <option value="last_30">Últimos 30 días</option>
-              <option value="custom">Fecha personalizada...</option>
             </select>
           </div>
         </div>
-
-        {/* Controles de Fecha Personalizada */}
-        {dateRangeFilter === "custom" && (
-          <div className="flex flex-wrap items-center gap-4 bg-stone-50 p-4 border border-stone-200 rounded-lg text-sm transition-all duration-300">
-            <div className="flex items-center gap-2">
-              <span className="text-stone-600 font-semibold">Desde:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-1.5 border border-stone-300 rounded text-stone-850 bg-white"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-stone-600 font-semibold">Hasta:</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-1.5 border border-stone-300 rounded text-stone-850 bg-white"
-              />
-            </div>
-            {(startDate || endDate) && (
-              <button
-                onClick={() => {
-                  setStartDate("");
-                  setEndDate("");
-                }}
-                className="text-xs text-red-600 hover:underline font-semibold cursor-pointer"
-              >
-                Limpiar Fechas
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
-      {/* VISTA 1: Pedidos de Fábrica */}
-      {activeTab === "factory" && (
-        <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
-          {filteredOrders.length === 0 ? (
-            <div className="p-8 text-center text-stone-500 text-sm italic">
-              No se encontraron pedidos de fábrica registrados.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
-                    <th className="px-6 py-4">Pedido</th>
-                    <th className="px-6 py-4">Cliente</th>
-                    <th className="px-6 py-4">Fecha Confirmado</th>
-                    {isAdmin && <th className="px-6 py-4">Vendedor</th>}
-                    <th className="px-6 py-4">Monto Pedido</th>
-                    <th className="px-6 py-4">Estado</th>
-                    <th className="px-6 py-4 text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-100 text-sm text-stone-800">
-                  {filteredOrders.map((o) => {
+      {actionError && (
+        <div className="bg-rose-50 text-rose-700 border border-rose-200 p-3 rounded-lg text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{actionError}</span>
+        </div>
+      )}
+
+      {/* Tabla de Resultados */}
+      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
+        {currentList.length === 0 ? (
+          <div className="p-8 text-center text-stone-400 text-xs italic">
+            No se encontraron registros para la búsqueda seleccionada.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 font-bold uppercase text-[10px]">
+                  <th className="px-4 py-3">N° Operación</th>
+                  <th className="px-4 py-3">Cliente</th>
+                  <th className="px-4 py-3">Fecha</th>
+                  {isAdmin && <th className="px-4 py-3">Asesor</th>}
+                  <th className="px-4 py-3 text-right">Importe</th>
+                  <th className="px-4 py-3 text-center">Estado</th>
+                  <th className="px-4 py-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100 text-stone-800">
+                {activeTab === "factory" ? (
+                  (paginatedList as Order[]).map((o) => {
                     const date = new Date(o.created_at);
                     return (
-                      <tr key={o.id} className="hover:bg-stone-50/50 transition-colors">
-                        <td className="px-6 py-4 font-bold text-stone-900">
+                      <tr key={o.id} className="hover:bg-stone-50/60 transition-colors">
+                        <td className="px-4 py-3 font-bold text-stone-900">
                           #{o.order_number}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-3">
                           <div className="font-semibold text-stone-900">{o.clients?.name}</div>
                           {o.clients?.company_name && (
-                            <div className="text-xs text-stone-500 font-normal">{o.clients.company_name}</div>
+                            <div className="text-[11px] text-stone-500">{o.clients.company_name}</div>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-xs text-stone-600 font-medium">
+                        <td className="px-4 py-3 text-stone-600">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5 text-stone-400" />
                             <span>{date.toLocaleDateString("es-AR")}</span>
                           </div>
                         </td>
                         {isAdmin && (
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1 text-xs text-stone-700 bg-stone-100 px-2.5 py-1 rounded-full w-max">
-                              <User className="w-3.5 h-3.5 text-stone-400" />
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1 text-[11px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-full w-max">
+                              <User className="w-3 h-3 text-stone-400" />
                               <span>{o.sellers?.full_name || "Admin"}</span>
                             </div>
                           </td>
                         )}
-                        <td className="px-6 py-4 font-bold text-stone-950">
-                          {formatCurrency(o.total_amount)}
+                        <td className="px-4 py-3 text-right font-bold text-stone-950">
+                          {formatCurrencyARS(o.total_amount)}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-3 text-center">
                           {getOrderStatusBadge(o.status)}
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            asChild
-                            className="cursor-pointer"
-                          >
-                            <Link href={`/admin-comercial/pedidos/${o.id}`} className="flex items-center gap-1">
-                              <Eye className="w-3.5 h-3.5" />
-                              Seguimiento
-                            </Link>
-                          </Button>
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button variant="outline" size="sm" asChild className="text-xs py-1 px-2.5">
+                              <Link href={`/admin-comercial/pedidos/${o.id}`} className="flex items-center gap-1">
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Ver</span>
+                              </Link>
+                            </Button>
+                            {o.status !== "cancelled" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setCancellingOrderId(o.id)}
+                                className="text-xs text-stone-400 hover:text-rose-600 py-1 px-2"
+                                title="Cancelar pedido"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                              </Button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* VISTA 2: Vendidos por Distribuidor */}
-      {activeTab === "distributor" && (
-        <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
-          {filteredDistributorBudgets.length === 0 ? (
-            <div className="p-8 text-center text-stone-500 text-sm italic">
-              No hay ventas por distribuidor registradas en este período.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
-                    <th className="px-6 py-4">Presupuesto Originario</th>
-                    <th className="px-6 py-4">Cliente</th>
-                    <th className="px-6 py-4">Fecha Venta</th>
-                    {isAdmin && <th className="px-6 py-4">Vendedor Asignado</th>}
-                    <th className="px-6 py-4">Monto Venta</th>
-                    <th className="px-6 py-4">Estado</th>
-                    <th className="px-6 py-4 text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-100 text-sm text-stone-800">
-                  {filteredDistributorBudgets.map((b) => {
+                  })
+                ) : (
+                  (paginatedList as Budget[]).map((b) => {
                     const date = new Date(b.created_at);
                     return (
-                      <tr key={b.id} className="hover:bg-stone-50/50 transition-colors">
-                        <td className="px-6 py-4 font-mono font-bold text-stone-900">
+                      <tr key={b.id} className="hover:bg-stone-50/60 transition-colors">
+                        <td className="px-4 py-3 font-mono font-bold text-stone-900">
                           FS-P-{b.budget_number}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-3">
                           <div className="font-semibold text-stone-900">{b.clients?.name}</div>
                           {b.clients?.company_name && (
-                            <div className="text-xs text-stone-500 font-normal">{b.clients.company_name}</div>
+                            <div className="text-[11px] text-stone-500">{b.clients.company_name}</div>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-xs text-stone-600 font-medium">
+                        <td className="px-4 py-3 text-stone-600">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5 text-stone-400" />
                             <span>{date.toLocaleDateString("es-AR")}</span>
                           </div>
                         </td>
                         {isAdmin && (
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1 text-xs text-stone-700 bg-stone-100 px-2.5 py-1 rounded-full w-max">
-                              <User className="w-3.5 h-3.5 text-stone-400" />
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1 text-[11px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-full w-max">
+                              <User className="w-3 h-3 text-stone-400" />
                               <span>{b.sellers?.full_name || "Admin"}</span>
                             </div>
                           </td>
                         )}
-                        <td className="px-6 py-4 font-bold text-teal-800">
-                          {formatCurrency(b.total_amount)}
+                        <td className="px-4 py-3 text-right font-bold text-teal-800">
+                          {formatCurrencyARS(b.total_amount)}
                         </td>
-                        <td className="px-6 py-4">
-                          <Badge className="bg-teal-50 text-teal-700 border-teal-200 font-semibold">
-                            Vendido por distribuidor
+                        <td className="px-4 py-3 text-center">
+                          <Badge className="bg-teal-50 text-teal-800 border-teal-300 font-bold text-xs py-0.5 px-2">
+                            Vendido Distribuidor
                           </Badge>
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            asChild
-                            className="cursor-pointer"
-                          >
+                        <td className="px-4 py-3 text-right">
+                          <Button variant="outline" size="sm" asChild className="text-xs py-1 px-2.5">
                             <Link href={`/admin-comercial/presupuestos/${b.id}`} className="flex items-center gap-1">
                               <Eye className="w-3.5 h-3.5" />
-                              Ver Detalle
+                              <span>Detalle</span>
                             </Link>
                           </Button>
                         </td>
                       </tr>
                     );
-                  })}
-                </tbody>
-              </table>
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Paginador */}
+        {(serverTotalPages > 1 || totalPages > 1) && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-stone-200 bg-stone-50 text-xs">
+            <span className="text-stone-500">
+              Página <strong>{currentPage}</strong> de <strong>{Math.max(serverTotalPages, totalPages)}</strong>
+              {totalOrdersCount !== undefined && <span className="ml-2">({totalOrdersCount} ventas totales)</span>}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage <= 1}
+                onClick={() => {
+                  const newP = Math.max(1, currentPage - 1);
+                  setCurrentPage(newP);
+                  const stParam = statusFilter !== "all" ? `&status=${encodeURIComponent(statusFilter)}` : "";
+                  router.push(`/admin-comercial/pedidos?page=${newP}${stParam}`);
+                }}
+                className="text-xs px-2.5 py-1 cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+                Anterior
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= Math.max(serverTotalPages, totalPages)}
+                onClick={() => {
+                  const newP = Math.min(Math.max(serverTotalPages, totalPages), currentPage + 1);
+                  setCurrentPage(newP);
+                  const stParam = statusFilter !== "all" ? `&status=${encodeURIComponent(statusFilter)}` : "";
+                  router.push(`/admin-comercial/pedidos?page=${newP}${stParam}`);
+                }}
+                className="text-xs px-2.5 py-1 cursor-pointer"
+              >
+                Siguiente
+                <ChevronRight className="w-3.5 h-3.5 ml-1" />
+              </Button>
             </div>
-          )}
+          </div>
+        )}
+      </div>
+
+      {/* Modal de Cancelación de Pedido */}
+      {cancellingOrderId && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl border border-stone-300 p-6 max-w-md w-full shadow-2xl">
+            <h3 className="text-base font-bold text-stone-900 mb-2">Cancelar Pedido</h3>
+            <p className="text-xs text-stone-500 mb-4">
+              Al cancelar este pedido, se restablecerá automáticamente el saldo de unidades disponibles en el presupuesto de origen.
+            </p>
+            <input
+              type="text"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Motivo de cancelación (opcional)"
+              className="w-full px-3 py-2 border border-stone-300 rounded text-xs text-stone-850 mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setCancellingOrderId(null)} disabled={actionLoading}>
+                Volver
+              </Button>
+              <Button
+                onClick={handleConfirmCancel}
+                disabled={actionLoading}
+                className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold"
+              >
+                Confirmar Cancelación
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

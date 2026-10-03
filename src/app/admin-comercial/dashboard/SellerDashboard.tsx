@@ -5,10 +5,11 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { 
-  Search, AlertCircle, Clock, Phone, Mail, 
-  FileText, ArrowRight, UserPlus, CheckCircle2, User, HelpCircle
+import {
+  Search, AlertCircle, Clock, Phone, Mail,
+  FileText, ArrowRight, UserPlus, CheckCircle2, User, HelpCircle, Eye
 } from "lucide-react";
+import { formatCurrencyARS } from "@/lib/commercial-calculations";
 
 interface Client {
   id: string;
@@ -29,6 +30,8 @@ interface Budget {
   total_amount: number;
   created_at: string;
   updated_at: string;
+  sent_at?: string | null;
+  view_count?: number | null;
   clients: { name: string; company_name: string | null } | null;
 }
 
@@ -65,27 +68,25 @@ interface SellerDashboardProps {
 export function SellerDashboard({ clients, budgets, profileName }: SellerDashboardProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // =========================================================================
-  // LOGICA DE REGLAS DE NEGOCIO (RECORDATORIOS AUTOMATICOS)
-  // =========================================================================
-
   const now = new Date();
-  
+
   // 1. Leads Nuevos (Prioridad Urgente)
   const newLeads = useMemo(() => {
     return clients.filter(c => c.status === "nuevo");
   }, [clients]);
 
   // 2. Presupuestos Pendientes de Seguimiento (> 48 horas)
+  // REGLA CRÍTICA: Utilizar sent_at o created_at del presupuesto original.
+  // Las visitas del cliente online NO deben postergar el seguimiento comercial.
   const budgetsToFollowUp = useMemo(() => {
     return budgets.filter(b => {
-      if (b.status !== "sent" && b.status !== "viewed") return false;
-      
-      const budgetDate = new Date(b.updated_at);
-      const diffTime = Math.abs(now.getTime() - budgetDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-      
-      return diffDays >= 2; // pasaron 2 dias (48hs) o más
+      if (b.status !== "sent") return false;
+
+      const referenceDate = new Date(b.sent_at || b.created_at);
+      const diffTime = Math.abs(now.getTime() - referenceDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      return diffDays >= 2; // pasaron 2 días o más desde el envío
     });
   }, [budgets]);
 
@@ -107,22 +108,19 @@ export function SellerDashboard({ clients, budgets, profileName }: SellerDashboa
     });
   }, [clients]);
 
-  // =========================================================================
-  // BUSCADOR UNIVERSAL
-  // =========================================================================
-
+  // Buscador Universal
   const searchResults = useMemo(() => {
     if (!searchTerm.trim()) return { clients: [], budgets: [] };
-    
+
     const term = searchTerm.toLowerCase();
-    
-    const matchedClients = clients.filter(c => 
-      c.name.toLowerCase().includes(term) || 
+
+    const matchedClients = clients.filter(c =>
+      c.name.toLowerCase().includes(term) ||
       (c.email && c.email.toLowerCase().includes(term)) ||
       (c.phone && c.phone.includes(term))
     );
 
-    const matchedBudgets = budgets.filter(b => 
+    const matchedBudgets = budgets.filter(b =>
       b.budget_number.toString().includes(term) ||
       (b.clients?.name && b.clients.name.toLowerCase().includes(term))
     );
@@ -135,253 +133,195 @@ export function SellerDashboard({ clients, budgets, profileName }: SellerDashboa
   return (
     <div className="flex flex-col gap-8">
       {/* Saludo y Buscador */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-6 rounded-2xl border border-stone-200 shadow-xs">
         <div>
           <h1 className="text-2xl font-bold text-stone-900 tracking-tight">
             Hola, {profileName} 👋
           </h1>
           <p className="text-stone-500 text-sm mt-1">
-            Este es tu centro de acción comercial. Aquí tienes las prioridades para hoy.
+            Centro de seguimiento y prioridades comerciales.
           </p>
         </div>
-        
+
         <div className="w-full md:w-96 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-          <input 
-            type="text" 
-            placeholder="Buscar clientes o presupuestos..." 
-            className="w-full pl-9 pr-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 transition-all"
+          <input
+            type="text"
+            placeholder="Buscar por cliente, teléfono, mail o # de presupuesto..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-accent-deep text-stone-800"
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-stone-600"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Resultados de Busqueda Dinamicos */}
-      {hasSearch ? (
-        <div className="bg-stone-50 p-6 rounded-2xl border border-stone-200">
-          <h2 className="font-bold text-stone-800 mb-4 flex items-center gap-2">
-            <Search className="w-5 h-5 text-stone-500" />
-            Resultados de Búsqueda
+      {/* Resultados de Búsqueda si hay término ingresado */}
+      {hasSearch && (
+        <Card className="p-6 border-stone-200">
+          <h2 className="text-base font-bold text-stone-900 mb-4 flex items-center gap-2">
+            <Search className="w-4 h-4 text-stone-500" />
+            Resultados para &quot;{searchTerm}&quot;
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Clientes Encontrados */}
             <div>
-              <h3 className="text-sm font-semibold text-stone-500 mb-3 uppercase tracking-wider">Clientes ({searchResults.clients.length})</h3>
-              <div className="flex flex-col gap-3">
-                {searchResults.clients.length === 0 ? (
-                  <p className="text-sm text-stone-400">No hay clientes que coincidan.</p>
-                ) : (
-                  searchResults.clients.map(c => (
-                    <Link key={c.id} href={`/admin-comercial/clientes/${c.id}`} className="block bg-white border border-stone-200 p-4 rounded-xl hover:border-stone-400 hover:shadow-md transition-all group">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-bold text-stone-800 group-hover:text-black transition-colors">{c.name}</p>
-                          <p className="text-xs text-stone-500 mt-1">{c.phone || "Sin teléfono"}</p>
-                        </div>
-                        <Badge className={STATUS_COLORS[c.status] || "bg-stone-50 text-stone-600 border-stone-200"}>
-                          {STATUS_LABELS[c.status] || c.status}
-                        </Badge>
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">
+                Clientes ({searchResults.clients.length})
+              </h3>
+              {searchResults.clients.length === 0 ? (
+                <p className="text-xs text-stone-400 italic">No se encontraron clientes.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {searchResults.clients.map(c => (
+                    <Link
+                      key={c.id}
+                      href={`/admin-comercial/clientes`}
+                      className="p-3 bg-stone-50 hover:bg-stone-100 rounded-lg flex items-center justify-between border border-stone-100 transition-colors"
+                    >
+                      <div>
+                        <p className="text-xs font-bold text-stone-900">{c.name}</p>
+                        <p className="text-[11px] text-stone-500">{c.company_name || c.email || c.phone}</p>
                       </div>
+                      <Badge className={`text-[10px] font-semibold ${STATUS_COLORS[c.status] || "bg-stone-100 text-stone-600"}`}>
+                        {STATUS_LABELS[c.status] || c.status}
+                      </Badge>
                     </Link>
-                  ))
-                )}
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Presupuestos Encontrados */}
+            <div>
+              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">
+                Presupuestos ({searchResults.budgets.length})
+              </h3>
+              {searchResults.budgets.length === 0 ? (
+                <p className="text-xs text-stone-400 italic">No se encontraron presupuestos.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {searchResults.budgets.map(b => (
+                    <Link
+                      key={b.id}
+                      href={`/admin-comercial/presupuestos/${b.id}`}
+                      className="p-3 bg-stone-50 hover:bg-stone-100 rounded-lg flex items-center justify-between border border-stone-100 transition-colors"
+                    >
+                      <div>
+                        <p className="text-xs font-bold text-stone-900">FS-P-#{b.budget_number}</p>
+                        <p className="text-[11px] text-stone-500">{b.clients?.name || "Cliente"}</p>
+                      </div>
+                      <span className="text-xs font-bold text-stone-900">{formatCurrencyARS(b.total_amount)}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* 4 Secciones Operativas del CRM */}
+      {!hasSearch && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Prioridad 1: Nuevos Contactos */}
+          <Card className="p-6 border-blue-100 bg-white">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                  {newLeads.length}
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-stone-900">Nuevos Leads</h2>
+                  <p className="text-[11px] text-stone-500">Contactar y calificar</p>
+                </div>
               </div>
             </div>
-            
-            <div>
-              <h3 className="text-sm font-semibold text-stone-500 mb-3 uppercase tracking-wider">Presupuestos ({searchResults.budgets.length})</h3>
-              <div className="flex flex-col gap-3">
-                {searchResults.budgets.length === 0 ? (
-                  <p className="text-sm text-stone-400">No hay presupuestos que coincidan.</p>
-                ) : (
-                  searchResults.budgets.map(b => (
-                    <Link key={b.id} href={`/admin-comercial/presupuestos/${b.id}`} className="block bg-white border border-stone-200 p-4 rounded-xl hover:border-amber-400 hover:shadow-md transition-all group">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-bold text-amber-900 group-hover:text-amber-700 transition-colors">
-                            PRE-{b.budget_number.toString().padStart(4, '0')}
-                          </p>
-                          <p className="text-xs text-stone-500 mt-1">{b.clients?.name}</p>
-                        </div>
-                        <Badge variant="outline" className="bg-amber-50 text-amber-700">{b.status}</Badge>
-                      </div>
+
+            {newLeads.length === 0 ? (
+              <div className="py-8 text-center text-xs text-stone-400 italic">
+                No hay contactos nuevos sin contactar.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2.5 max-h-72 overflow-y-auto">
+                {newLeads.map(c => (
+                  <div key={c.id} className="p-3 bg-blue-50/40 rounded-xl border border-blue-100 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-stone-900">{c.name}</p>
+                      <p className="text-[11px] text-stone-500">{c.phone || c.email}</p>
+                    </div>
+                    <Link
+                      href={`/admin-comercial/clientes`}
+                      className="px-2.5 py-1 bg-white hover:bg-stone-50 border border-stone-200 rounded text-[11px] font-semibold text-stone-700"
+                    >
+                      Gestionar
                     </Link>
-                  ))
-                )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Prioridad 2: Presupuestos Pendientes de Seguimiento (> 48h) */}
+          <Card className="p-6 border-amber-100 bg-white">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">
+                  {budgetsToFollowUp.length}
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-stone-900">Seguimiento de Cotizaciones</h2>
+                  <p className="text-[11px] text-stone-500">Enviadas hace más de 48 horas sin respuesta</p>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      ) : (
-        /* Vista Principal de Action Center */
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* COLUMNA IZQUIERDA: ALTA PRIORIDAD */}
-          <div className="flex flex-col gap-6">
-            <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500" />
-              Alta Prioridad / Para Hoy
-            </h2>
 
-            {/* Panel: Nuevos Leads */}
-            <Card className="p-0 overflow-hidden border-rose-200 shadow-sm">
-              <div className="bg-rose-50 px-5 py-3 border-b border-rose-100 flex justify-between items-center">
-                <h3 className="font-semibold text-rose-900 flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-rose-600" />
-                  Nuevos Leads ({newLeads.length})
-                </h3>
+            {budgetsToFollowUp.length === 0 ? (
+              <div className="py-8 text-center text-xs text-stone-400 italic">
+                Al día. No hay presupuestos antiguos pendientes de seguimiento.
               </div>
-              <div className="p-2">
-                {newLeads.length === 0 ? (
-                  <div className="p-4 text-sm text-stone-500 text-center">
-                    No tienes clientes nuevos pendientes. ¡Excelente trabajo! 🎉
-                  </div>
-                ) : (
-                  <div className="flex flex-col divide-y divide-stone-100">
-                    {newLeads.map(lead => (
-                      <div key={lead.id} className="p-3 flex items-center justify-between hover:bg-stone-50 transition-colors rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
-                            {lead.name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="font-bold text-stone-800 text-sm">{lead.name}</p>
-                            <p className="text-xs text-stone-500 mt-0.5 flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> 
-                              Registrado el {new Date(lead.created_at).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" asChild className="border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800">
-                          <Link href={`/admin-comercial/clientes/${lead.id}`}>
-                            Contactar
-                          </Link>
-                        </Button>
+            ) : (
+              <div className="flex flex-col gap-2.5 max-h-72 overflow-y-auto">
+                {budgetsToFollowUp.map(b => (
+                  <div key={b.id} className="p-3 bg-amber-50/40 rounded-xl border border-amber-100 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-stone-900">
+                        Presupuesto #{b.budget_number} - {b.clients?.name}
+                      </p>
+                      <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-0.5">
+                        <span>{formatCurrencyARS(b.total_amount)}</span>
+                        {b.view_count && b.view_count > 0 ? (
+                          <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                            <Eye className="w-3 h-3" /> Visto {b.view_count} veces
+                          </span>
+                        ) : (
+                          <span className="text-stone-400">Sin abrir</span>
+                        )}
                       </div>
-                    ))}
+                    </div>
+                    <Link
+                      href={`/admin-comercial/presupuestos/${b.id}`}
+                      className="px-2.5 py-1 bg-white hover:bg-stone-50 border border-stone-200 rounded text-[11px] font-semibold text-stone-700"
+                    >
+                      Ver Ficha
+                    </Link>
                   </div>
-                )}
+                ))}
               </div>
-            </Card>
-
-            {/* Panel: Seguimiento de Presupuestos (>48hs) */}
-            <Card className="p-0 overflow-hidden border-amber-200 shadow-sm">
-              <div className="bg-amber-50 px-5 py-3 border-b border-amber-100 flex justify-between items-center">
-                <h3 className="font-semibold text-amber-900 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-600" />
-                  Seguimiento de Presupuestos ({budgetsToFollowUp.length})
-                </h3>
-              </div>
-              <div className="p-2">
-                {budgetsToFollowUp.length === 0 ? (
-                  <div className="p-4 text-sm text-stone-500 text-center">
-                    No hay presupuestos pendientes de hacerles seguimiento.
-                  </div>
-                ) : (
-                  <div className="flex flex-col divide-y divide-stone-100">
-                    {budgetsToFollowUp.map(budget => (
-                      <div key={budget.id} className="p-3 hover:bg-stone-50 transition-colors rounded-lg">
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-amber-600" />
-                            <p className="font-bold text-stone-800 text-sm">PRE-{budget.budget_number.toString().padStart(4, '0')}</p>
-                          </div>
-                          <Badge variant="outline" className="bg-white border-amber-200 text-amber-700 text-[10px]">
-                            {budget.status === 'viewed' ? 'Visto' : 'Enviado'}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-stone-600 mb-3 flex items-center gap-1">
-                          <User className="w-3 h-3" /> {budget.clients?.name}
-                        </p>
-                        <div className="flex gap-2">
-                          <Button variant="primary" size="sm" asChild className="w-full text-xs h-8 bg-amber-600 hover:bg-amber-700 cursor-pointer">
-                            <Link href={`/admin-comercial/clientes/${budget.client_id}`}>
-                              Llamar al cliente
-                            </Link>
-                          </Button>
-                          <Button variant="outline" size="sm" asChild className="w-full text-xs h-8 border-stone-200 text-stone-600 hover:bg-stone-50 cursor-pointer">
-                            <Link href={`/admin-comercial/presupuestos/${budget.id}`}>
-                              Ver Presupuesto
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
-
-          {/* COLUMNA DERECHA: EN ESPERA / SEGUIMIENTO SUAVE */}
-          <div className="flex flex-col gap-6">
-            <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-indigo-500" />
-              Seguimiento Activo e Inactivo
-            </h2>
-
-            {/* Panel: En Negociación */}
-            <Card className="p-0 overflow-hidden border-indigo-200 shadow-sm">
-              <div className="bg-indigo-50 px-5 py-3 border-b border-indigo-100 flex justify-between items-center">
-                <h3 className="font-semibold text-indigo-900 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-indigo-600" />
-                  En Negociación Activa ({inNegotiation.length})
-                </h3>
-              </div>
-              <div className="p-2">
-                {inNegotiation.length === 0 ? (
-                  <div className="p-4 text-sm text-stone-500 text-center">
-                    No tienes clientes en la etapa de negociación.
-                  </div>
-                ) : (
-                  <div className="flex flex-col divide-y divide-stone-100">
-                    {inNegotiation.map(client => (
-                      <Link key={client.id} href={`/admin-comercial/clientes/${client.id}`} className="p-3 flex justify-between items-center hover:bg-stone-50 transition-colors rounded-lg group">
-                        <div className="flex flex-col">
-                          <p className="font-bold text-stone-800 text-sm group-hover:text-indigo-700 transition-colors">{client.name}</p>
-                          <p className="text-xs text-stone-500 mt-0.5">Último avance: {new Date(client.updated_at).toLocaleDateString()}</p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-indigo-500 transition-colors" />
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-
-            {/* Panel: Clientes Fríos */}
-            <Card className="p-0 overflow-hidden border-stone-200 shadow-sm">
-              <div className="bg-stone-100 px-5 py-3 border-b border-stone-200 flex justify-between items-center">
-                <h3 className="font-semibold text-stone-700 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-stone-500" />
-                  Clientes "Fríos" ({coldClients.length})
-                </h3>
-              </div>
-              <div className="p-2">
-                {coldClients.length === 0 ? (
-                  <div className="p-4 text-sm text-stone-500 text-center">
-                    No tienes clientes atascados en la fase de contacto.
-                  </div>
-                ) : (
-                  <div className="flex flex-col divide-y divide-stone-100">
-                    {coldClients.map(client => (
-                      <Link key={client.id} href={`/admin-comercial/clientes/${client.id}`} className="p-3 flex justify-between items-center hover:bg-stone-50 transition-colors rounded-lg group">
-                        <div className="flex flex-col">
-                          <p className="font-bold text-stone-800 text-sm group-hover:text-black transition-colors">{client.name}</p>
-                          <p className="text-xs text-stone-500 mt-0.5">Sin contacto desde hace &gt; 7 días</p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-stone-500 transition-colors" />
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-
-          </div>
+            )}
+          </Card>
         </div>
       )}
     </div>
   );
 }
+
+export default SellerDashboard;

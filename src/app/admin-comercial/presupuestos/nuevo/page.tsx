@@ -10,7 +10,7 @@ interface PageProps {
 }
 
 export default async function NewBudgetPage({ searchParams }: PageProps) {
-  await requireCommercialUser();
+  const ctx = await requireCommercialUser();
   const clients = await getClients();
   const { clientId } = await searchParams;
 
@@ -28,7 +28,7 @@ export default async function NewBudgetPage({ searchParams }: PageProps) {
           <p className="text-stone-500 text-sm">Armá una nueva cotización interactiva seleccionando productos del catálogo.</p>
         </div>
 
-        <NewBudgetClient clients={clients} initialClientId={clientId} />
+        <NewBudgetClient clients={clients} initialClientId={clientId} userId={ctx.user?.id} />
       </div>
     </CommercialShell>
   );

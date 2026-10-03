@@ -11,7 +11,10 @@
     "seed-columnas": "node scripts/seed-columnas-ducha.mjs",
     "seed-baneras": "node scripts/seed-baneras-info.mjs",
     "seed-platos": "node scripts/seed-platos-info.mjs",
-    "update-crm-statuses": "node scripts/update-crm-statuses.mjs"
+    "update-crm-statuses": "node scripts/update-crm-statuses.mjs",
+    "test:commercial": "node --import tsx --test tests/commercial-rules.test.mjs tests/commercial-postgres-real.test.mjs tests/commercial-pdf.test.mjs",
+    "test:concurrency": "node scripts/verify-native-concurrency.mjs",
+    "test:restore": "node scripts/execute-isolated-restore.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -21,7 +24,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.17.0",
-    "next": "16.2.7",
+    "next": "^16.3.8",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.77.0",
@@ -31,16 +34,20 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "embedded-postgres": "^18.4.0-beta.17",
     "eslint": "^9",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "^16.3.8",
+    "pg": "^8.23.1",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "sharp": "^0.35.3",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

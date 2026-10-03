@@ -1,0 +1,11 @@
+-- =========================================================================
+-- OBSOLETO / DESACONSEJADO: NO EJECUTAR EN PRODUCCIÓN
+-- =========================================================================
+-- ADVERTENCIA CRÍTICA:
+-- Este script contenía sentencias 'DROP COLUMN' que destruyen datos de producción
+-- (snapshots, notas públicas, saldos y tokens).
+--
+-- UTILIZAR EXCLUSIVAMENTE LA ESTRATEGIA DE REVERSIÓN SEGURA:
+-- '20261002_commercial_stabilization_rollback_safe.sql'
+-- =========================================================================
+RAISE EXCEPTION 'EJECUCIÓN BLOQUEADA: El rollback destructivo de columnas ha sido sustituido por 20261002_commercial_stabilization_rollback_safe.sql para preservar los datos de clientes y presupuestos.';

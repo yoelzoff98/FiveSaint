@@ -1,11 +1,26 @@
-import { requireCommercialUser, getOrders, getBudgets } from "@/lib/supabase/comercial";
+import { requireCommercialUser, getPaginatedOrders, getPaginatedBudgets } from "@/lib/supabase/comercial";
 import { CommercialShell } from "@/components/comercial/CommercialShell";
 import { OrdersListClient } from "./OrdersListClient";
 
-export default async function OrdersPage() {
+interface OrdersPageProps {
+  searchParams?: Promise<{
+    page?: string;
+    status?: string;
+    saleChannel?: string;
+  }>;
+}
+
+export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const ctx = await requireCommercialUser();
-  const orders = await getOrders();
-  const budgets = await getBudgets();
+  const params = searchParams ? await searchParams : {};
+  const page = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const status = params.status || "all";
+  const saleChannel = params.saleChannel || "all";
+
+  const [ordersResult, budgetsResult] = await Promise.all([
+    getPaginatedOrders({ page, pageSize: 20, status, saleChannel }),
+    getPaginatedBudgets({ page: 1, pageSize: 50, status: "distributor_sale" })
+  ]);
 
   return (
     <CommercialShell>
@@ -15,7 +30,17 @@ export default async function OrdersPage() {
           <p className="text-stone-500 text-sm">Gestioná las órdenes de fábrica y las ventas concretadas por distribuidores.</p>
         </div>
 
-        <OrdersListClient initialOrders={orders} initialBudgets={budgets} isAdmin={ctx.isAdmin} />
+        <OrdersListClient
+          initialOrders={ordersResult.data}
+          totalOrdersCount={ordersResult.total}
+          serverPage={ordersResult.page}
+          serverPageSize={ordersResult.pageSize}
+          serverTotalPages={ordersResult.totalPages}
+          initialBudgets={budgetsResult.data}
+          initialStatus={status}
+          initialSaleChannel={saleChannel}
+          isAdmin={ctx.isAdmin}
+        />
       </div>
     </CommercialShell>
   );

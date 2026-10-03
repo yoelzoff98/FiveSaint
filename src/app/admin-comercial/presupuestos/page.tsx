@@ -1,13 +1,31 @@
-import { requireCommercialUser, getBudgets } from "@/lib/supabase/comercial";
+import { requireCommercialUser, getPaginatedBudgets } from "@/lib/supabase/comercial";
 import { CommercialShell } from "@/components/comercial/CommercialShell";
 import { BudgetsListClient } from "./BudgetsListClient";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-export default async function BudgetsPage() {
+interface BudgetsPageProps {
+  searchParams?: Promise<{
+    page?: string;
+    search?: string;
+    status?: string;
+  }>;
+}
+
+export default async function BudgetsPage({ searchParams }: BudgetsPageProps) {
   const ctx = await requireCommercialUser();
-  const budgets = await getBudgets();
+  const params = searchParams ? await searchParams : {};
+  const page = Math.max(1, parseInt(params.page || "1", 10) || 1);
+  const search = params.search || "";
+  const status = params.status || "all";
+
+  const paginatedResult = await getPaginatedBudgets({
+    page,
+    pageSize: 20,
+    search,
+    status
+  });
 
   return (
     <CommercialShell>
@@ -25,7 +43,16 @@ export default async function BudgetsPage() {
           </Button>
         </div>
 
-        <BudgetsListClient initialBudgets={budgets} isAdmin={ctx.isAdmin} />
+        <BudgetsListClient
+          initialBudgets={paginatedResult.data}
+          totalCount={paginatedResult.total}
+          serverPage={paginatedResult.page}
+          serverPageSize={paginatedResult.pageSize}
+          serverTotalPages={paginatedResult.totalPages}
+          initialSearch={search}
+          initialStatus={status}
+          isAdmin={ctx.isAdmin}
+        />
       </div>
     </CommercialShell>
   );

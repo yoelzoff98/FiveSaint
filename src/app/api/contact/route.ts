@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { contactFormSchema } from "@/lib/validations/contact";
 import type { ContactApiResponse } from "@/types/contact";
+import { createSupabaseAdminClient } from "@/lib/supabase/server";
 
 // Claves de configuración por entorno
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
@@ -10,18 +11,27 @@ const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || "Five Saint <onboar
 const IS_DEV = process.env.NODE_ENV === "development";
 
 /**
- * API Route para el envío del formulario de contacto (Sprint 7).
- * Valida los datos en el servidor con Zod y despacha el correo mediante Resend,
- * con fallback seguro en modo desarrollo si no se dispone de credenciales.
+ * API Route para el envío del formulario de contacto (Sprint 7 + Sprint Correctivo).
+ * - Control de abuso y validación de entrada con Zod.
+ * - Deduplicación e ingreso automático al CRM (clients y client_notes).
+ * - Notificación por correo vía Resend.
  */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
+    // 0. Control de abuso (Honeypot)
+    if (body._hp || body.website_url) {
+      // Detección de bot automatizado: responder éxito silencioso sin procesar
+      return NextResponse.json<ContactApiResponse>({
+        success: true,
+        message: "Consulta recibida correctamente.",
+      });
+    }
+
     // 1. Validar los datos de entrada con el esquema Zod en el servidor
     const validationResult = contactFormSchema.safeParse(body);
     if (!validationResult.success) {
-      // Retornar error de validación 400 estructurado
       const errorMessages = validationResult.error.issues.map(err => err.message).join(", ");
       return NextResponse.json<ContactApiResponse>(
         {
@@ -33,6 +43,55 @@ export async function POST(request: Request) {
     }
 
     const { name, email, phone, company, productInterest, message } = validationResult.data;
+
+    // 2. Registro y deduplicación en CRM (Supabase)
+    try {
+      const supabaseAdmin = createSupabaseAdminClient();
+      const cleanEmail = email.trim().toLowerCase();
+
+      // Verificar si ya existe un cliente con este email
+      const { data: existingClient } = await supabaseAdmin
+        .from("clients")
+        .select("id, name, notes")
+        .ilike("email", cleanEmail)
+        .limit(1)
+        .maybeSingle();
+
+      let targetClientId: string;
+
+      if (existingClient) {
+        targetClientId = existingClient.id;
+      } else {
+        // Crear nuevo prospecto en CRM
+        const { data: newClient } = await supabaseAdmin
+          .from("clients")
+          .insert([{
+            name: name.trim(),
+            company_name: company?.trim() || null,
+            email: cleanEmail,
+            phone: phone?.trim() || null,
+            status: "nuevo",
+            notes: `Prospecto web - Interés: ${productInterest || "General"}`
+          }])
+          .select("id")
+          .single();
+
+        targetClientId = newClient?.id || "";
+      }
+
+      if (targetClientId) {
+        await supabaseAdmin
+          .from("client_notes")
+          .insert([{
+            client_id: targetClientId,
+            content: `Consulta desde el sitio web [${productInterest || "General"}]: "${message}"`,
+            contacted_at: new Date().toISOString(),
+            note_type: "web_inquiry"
+          }]);
+      }
+    } catch (crmErr) {
+      console.error("Error no bloqueante registrando prospecto en CRM:", crmErr);
+    }
 
     // 2. Comprobar si se configuran variables de entorno para Resend
     if (!RESEND_API_KEY) {

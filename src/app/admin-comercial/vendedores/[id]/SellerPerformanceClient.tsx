@@ -17,6 +17,8 @@ interface Budget {
   budget_number: number;
   total_amount: number;
   status: string;
+  sale_channel?: string | null;
+  order_type?: string | null;
   created_at: string;
   clients: ClientRef | null;
 }
@@ -27,6 +29,8 @@ interface Order {
   order_number: number;
   total_amount: number;
   status: string;
+  sale_channel?: string | null;
+  order_type?: string | null;
   created_at: string;
   clients: ClientRef | null;
 }
@@ -50,8 +54,10 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   const [commissionRate, setCommissionRate] = useState<number>(5);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("this_month");
 
-  // Helper para identificar venta por distribuidor
+  // Helper para identificar venta por distribuidor consultando canal persistido
   const isDistributorSale = (item: Budget | Order) => {
+    if (item.sale_channel === "distributor" || item.order_type === "distributor_sale") return true;
+    if (item.sale_channel === "direct") return false;
     const status = item.clients?.status?.toLowerCase();
     return status === "inactivo" || status === "vendido_distribuidor" || item.status === "distributor_sale";
   };
@@ -77,7 +83,7 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
 
   // Métricas de presupuestos y clientes cotizados
   const totalBudgets = filteredBudgets.length;
-  
+
   // Clientes únicos presupuestados en este período
   const quotedClientsSet = new Set(
     filteredBudgets.map((b) => b.client_id || b.clients?.name).filter(Boolean)
@@ -101,8 +107,8 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   const totalRevenue = directRevenue + distributorRevenue;
 
   // Conversión basada en clientes (clientes ganados / clientes cotizados)
-  const conversionRate = totalQuotedClients > 0 
-    ? (totalConvertedClients / totalQuotedClients) * 100 
+  const conversionRate = totalQuotedClients > 0
+    ? (totalConvertedClients / totalQuotedClients) * 100
     : (totalBudgets > 0 ? (totalClosedCount / totalBudgets) * 100 : 0);
 
   // La comisión SE CALCULA ÚNICAMENTE sobre las Ventas Directas de Fábrica
@@ -223,7 +229,7 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
                 {totalClosedCount} cerradas
               </Badge>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>

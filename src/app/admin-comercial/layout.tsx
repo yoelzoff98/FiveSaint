@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Seguimiento Comercial | Five Saint",
   description: "Portal de seguimiento comercial y ventas",
