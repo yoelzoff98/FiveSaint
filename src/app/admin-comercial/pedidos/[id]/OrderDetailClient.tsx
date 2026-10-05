@@ -37,6 +37,12 @@ interface Order {
   cancelled_by?: string | null;
   cancelled_by_name?: string | null;
   cancellation_reason?: string | null;
+  sale_channel?: string | null;
+  order_type?: string | null;
+  distributor_id?: string | null;
+  purchase_date?: string | null;
+  distributor_reference?: string | null;
+  recorded_by_name?: string | null;
   clients: {
     name: string;
     company_name: string | null;
@@ -46,6 +52,10 @@ interface Order {
   } | null;
   sellers: {
     full_name: string;
+  } | null;
+  distributors?: {
+    company_name: string;
+    contact_name?: string | null;
   } | null;
   items: OrderItem[];
 }
@@ -210,6 +220,28 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
                 </div>
               )}
             </div>
+
+            {(order.sale_channel === "distributor" || order.order_type === "distributor_sale") && (
+              <div className="sm:col-span-2 p-3.5 bg-teal-50/60 border border-teal-200 rounded-lg text-xs">
+                <span className="font-bold text-teal-950 uppercase tracking-wide block mb-1">
+                  Datos de Compra en Distribuidor
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-stone-700">
+                  <div>
+                    <span className="text-stone-500 block">Distribuidor:</span>
+                    <strong className="text-teal-900">{order.distributors?.company_name || "Distribuidor no registrado"}</strong>
+                  </div>
+                  <div>
+                    <span className="text-stone-500 block">Fecha de compra:</span>
+                    <strong>{order.purchase_date ? new Date(order.purchase_date).toLocaleDateString("es-AR") : "No registrada"}</strong>
+                  </div>
+                  <div>
+                    <span className="text-stone-500 block">Referencia / Ticket:</span>
+                    <strong>{order.distributor_reference || "Sin referencia"}</strong>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {order.notes && (

@@ -83,10 +83,33 @@ export const ConvertBudgetInputSchema = z.object({
     .min(1, "Debe seleccionar al menos un ítem para convertir"),
   notes: z.string().max(2000).optional().nullable(),
   saleType: z.enum(["direct", "distributor"]).default("direct"),
+  distributorId: z.string().uuid("Identificador de distribuidor inválido").optional().nullable(),
+  purchaseDate: z.string().optional().nullable(),
+  distributorReference: z.string().max(200).optional().nullable(),
   idempotencyKey: z.string().max(100).optional().nullable()
+}).refine((data) => {
+  if (data.saleType === "distributor") {
+    return Boolean(data.distributorId);
+  }
+  return true;
+}, {
+  message: "Debe seleccionar obligatoriamente un distribuidor para registrar la compra",
+  path: ["distributorId"]
 });
 
 export type ValidatedConvertBudgetInput = z.infer<typeof ConvertBudgetInputSchema>;
+
+// Esquema para registro de envío comercial
+export const RecordShipmentInputSchema = z.object({
+  budgetId: z.string().uuid("Identificador de presupuesto inválido"),
+  medium: z.enum(["whatsapp", "digital_link", "email", "printed_pdf", "other"], {
+    message: "Medio de envío no válido"
+  }),
+  sentAt: z.string().optional().nullable(),
+  notes: z.string().max(1000).optional().nullable()
+});
+
+export type ValidatedRecordShipmentInput = z.infer<typeof RecordShipmentInputSchema>;
 
 // Esquema para cancelación de pedido
 export const CancelOrderInputSchema = z.object({
@@ -105,7 +128,7 @@ export const VALID_BUDGET_TRANSITIONS: Record<string, string[]> = {
   partially_converted: ["converted", "partially_converted", "rejected", "distributor_sale"],
   distributor_sale: [], // Estado final
   converted: [],        // Estado final
-  rejected: ["draft"]   // Permite reabrir a borrador si el cliente reconsidera
+  rejected: ["draft", "sent"] // Permite reabrir a borrador o enviado para registrar venta
 };
 
 export function isValidBudgetTransition(currentStatus: string, nextStatus: string): boolean {

@@ -27,8 +27,10 @@ interface Budget {
   total_amount: number;
   created_at: string;
   sale_channel?: string | null;
+  distributor_id?: string | null;
   clients: { name: string; company_name: string | null; status?: string } | null;
   sellers: { full_name: string } | null;
+  distributors?: { company_name: string } | null;
 }
 
 import { useRouter } from "next/navigation";
@@ -398,6 +400,9 @@ export function OrdersListClient({
                           {b.clients?.company_name && (
                             <div className="text-[11px] text-stone-500">{b.clients.company_name}</div>
                           )}
+                          <div className="text-[10px] text-teal-850 font-medium">
+                            Distribuidor: {b.distributors?.company_name || "Distribuidor no registrado"}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-stone-600">
                           <div className="flex items-center gap-1">

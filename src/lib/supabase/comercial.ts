@@ -14,6 +14,7 @@ import {
 import {
   CreateBudgetInputSchema,
   ConvertBudgetInputSchema,
+  RecordShipmentInputSchema,
   CancelOrderInputSchema,
   isValidBudgetTransition,
   isValidOrderTransition
@@ -774,26 +775,46 @@ export async function getBudgetById(id: string) {
     throw new Error("Error al obtener los ítems del presupuesto");
   }
 
-  // 1. Obtener órdenes activas (no canceladas) asociadas a este presupuesto
-  const { data: linkedOrders } = await supabase
+  // 1. Obtener todas las órdenes vinculadas (activas y canceladas) para trazabilidad completa
+  const { data: allLinkedOrders } = await supabase
     .from("orders")
-    .select("id, status, order_number")
+    .select(`
+      id, order_number, status, total_amount, sale_channel, order_type,
+      distributor_id, purchase_date, distributor_reference, created_at,
+      recorded_by_name,
+      distributors(id, company_name, contact_name)
+    `)
     .eq("budget_id", id)
-    .neq("status", "cancelled");
+    .order("created_at", { ascending: false });
 
-  const orderIds = (linkedOrders || []).map(o => o.id);
-  const orderItemsByBudgetItemId: Record<string, number> = {};
+  const allOrderIds = (allLinkedOrders || []).map(o => o.id);
+  const directByBudgetItemId: Record<string, number> = {};
+  const distributorByBudgetItemId: Record<string, number> = {};
+  const cancelledByBudgetItemId: Record<string, number> = {};
 
-  if (orderIds.length > 0) {
+  if (allOrderIds.length > 0) {
     const { data: linkedOrderItems } = await supabase
       .from("order_items")
-      .select("budget_item_id, quantity")
-      .in("order_id", orderIds);
+      .select("order_id, budget_item_id, quantity")
+      .in("order_id", allOrderIds);
+
+    const orderMap = new Map((allLinkedOrders || []).map(o => [o.id, o]));
 
     (linkedOrderItems || []).forEach(oi => {
-      if (oi.budget_item_id) {
-        orderItemsByBudgetItemId[oi.budget_item_id] =
-          (orderItemsByBudgetItemId[oi.budget_item_id] || 0) + (Number(oi.quantity) || 0);
+      if (!oi.budget_item_id) return;
+      const parentOrder = orderMap.get(oi.order_id);
+      if (!parentOrder) return;
+      const qty = Number(oi.quantity) || 0;
+
+      if (parentOrder.status === "cancelled") {
+        cancelledByBudgetItemId[oi.budget_item_id] = (cancelledByBudgetItemId[oi.budget_item_id] || 0) + qty;
+      } else {
+        const isDistributor = parentOrder.sale_channel === "distributor" || parentOrder.order_type === "distributor_sale";
+        if (isDistributor) {
+          distributorByBudgetItemId[oi.budget_item_id] = (distributorByBudgetItemId[oi.budget_item_id] || 0) + qty;
+        } else {
+          directByBudgetItemId[oi.budget_item_id] = (directByBudgetItemId[oi.budget_item_id] || 0) + qty;
+        }
       }
     });
   }
@@ -803,32 +824,73 @@ export async function getBudgetById(id: string) {
     budget.id === "7d53d595-a05b-4faf-8c16-bfa55c0a658e" || // Presupuesto #38
     Boolean(budget.is_historical_reconciliation_pending);
 
-  // 3. Fuente de verdad unificada para saldos de ítems:
-  // - Si el presupuesto ya está en 'converted', el saldo restante es 0.
-  // - Si tiene converted_quantity registrado en BD, se toma el valor consolidado.
-  // - De lo contrario, se calcula sumando los ítems de órdenes activas vinculadas por budget_item_id.
-  const enrichedItems = (items || []).map(item => {
-    let converted = 0;
+  // 3. Fuente de verdad unificada para saldos de ítems y desglose por canal
+  let totalBudgeted = 0;
+  let totalDirect = 0;
+  let totalDistributor = 0;
+  let totalCancelled = 0;
+  let totalPending = 0;
 
+  const enrichedItems = (items || []).map(item => {
+    const directQty = directByBudgetItemId[item.id] || 0;
+    const distQty = distributorByBudgetItemId[item.id] || 0;
+    const cancQty = cancelledByBudgetItemId[item.id] || 0;
+    const activeConfirmed = directQty + distQty;
+
+    let converted = activeConfirmed;
     if (budget.status === "converted" || budget.status === "distributor_sale") {
-      converted = item.quantity;
-    } else if (item.converted_quantity !== undefined && item.converted_quantity !== null && item.converted_quantity > 0) {
+      converted = Math.max(item.quantity, activeConfirmed);
+    } else if (item.converted_quantity !== undefined && item.converted_quantity !== null && item.converted_quantity > activeConfirmed) {
       converted = item.converted_quantity;
-    } else if (orderItemsByBudgetItemId[item.id] !== undefined) {
-      converted = orderItemsByBudgetItemId[item.id];
     }
 
     const remaining = Math.max(0, item.quantity - converted);
+
+    totalBudgeted += item.quantity;
+    totalDirect += directQty;
+    totalDistributor += distQty;
+    totalCancelled += cancQty;
+    totalPending += remaining;
+
     return {
       ...item,
+      direct_quantity: directQty,
+      distributor_quantity: distQty,
+      cancelled_quantity: cancQty,
       converted_quantity: converted,
       remaining_quantity: remaining
     };
   });
 
+  // Determinar canal comercial resultante de operaciones vigentes
+  let closing_channel: "none" | "direct" | "distributor" | "mixed" = "none";
+  let closing_label = "Sin ventas registradas";
+
+  if (totalDirect > 0 && totalDistributor > 0) {
+    closing_channel = "mixed";
+    closing_label = totalPending === 0 ? "Venta mixta" : "Venta mixta (Parcial)";
+  } else if (totalDirect > 0) {
+    closing_channel = "direct";
+    closing_label = totalPending === 0 ? "Venta directa FiveSaint" : "Venta directa parcial";
+  } else if (totalDistributor > 0) {
+    closing_channel = "distributor";
+    closing_label = totalPending === 0 ? "Compra en distribuidor" : "Compra en distribuidor parcial";
+  }
+
   return {
     ...budget,
     items: enrichedItems,
+    orders: allLinkedOrders || [],
+    has_active_operations: (totalDirect + totalDistributor) > 0,
+    operations_summary: {
+      total_budgeted: totalBudgeted,
+      total_direct: totalDirect,
+      total_distributor: totalDistributor,
+      total_cancelled: totalCancelled,
+      total_pending: totalPending,
+      closing_channel,
+      closing_label
+    },
     is_historical_reconciliation_pending: isHistoricalAmbiguous
   };
 }
@@ -1108,6 +1170,10 @@ export async function updateBudgetStatus(id: string, status: string, rejectionRe
     throw new Error(`Transición de estado no permitida: de '${budget.status}' a '${status}'`);
   }
 
+  if (status === "rejected" && budget.has_active_operations) {
+    throw new Error("No se puede rechazar el presupuesto porque posee operaciones comerciales o pedidos vigentes. Cancele los pedidos previamente si desea rechazarlo.");
+  }
+
   const updatePayload: Record<string, unknown> = {
     status,
     updated_at: new Date().toISOString()
@@ -1115,6 +1181,10 @@ export async function updateBudgetStatus(id: string, status: string, rejectionRe
 
   if (status === "rejected" && rejectionReason !== undefined) {
     updatePayload.rejection_reason = rejectionReason.trim();
+  }
+
+  if (budget.status === "rejected" && status !== "rejected") {
+    updatePayload.rejection_reason = null;
   }
 
   if (status === "sent") {
@@ -1446,7 +1516,12 @@ export async function convertBudgetToOrder(
   }[],
   notes?: string,
   saleType: "direct" | "distributor" = "direct",
-  options: { idempotencyKey?: string } = {}
+  options: {
+    idempotencyKey?: string;
+    distributorId?: string;
+    purchaseDate?: string;
+    distributorReference?: string;
+  } = {}
 ) {
   const ctx = await requireCommercialUser();
   const supabaseAdmin = createSupabaseAdminClient();
@@ -1457,6 +1532,9 @@ export async function convertBudgetToOrder(
     itemsToConvert,
     notes,
     saleType,
+    distributorId: options.distributorId,
+    purchaseDate: options.purchaseDate,
+    distributorReference: options.distributorReference,
     idempotencyKey: options.idempotencyKey
   });
 
@@ -1470,7 +1548,10 @@ export async function convertBudgetToOrder(
     budgetId,
     itemsToConvert,
     saleType,
-    notes
+    notes,
+    distributorId: options.distributorId || null,
+    purchaseDate: options.purchaseDate || null,
+    distributorReference: options.distributorReference || null
   });
 
   if (options.idempotencyKey) {
@@ -1516,11 +1597,37 @@ export async function convertBudgetToOrder(
   }
 
   if (budget.status === "rejected") {
-    throw new Error("No se puede convertir un presupuesto que fue rechazado.");
+    throw new Error("No se puede convertir un presupuesto que fue rechazado. Debe reabrirlo explícitamente antes de registrar una venta.");
   }
 
   if (budget.status === "converted" && saleType !== "distributor") {
     throw new Error("Este presupuesto ya ha sido convertido en su totalidad previamente.");
+  }
+
+  if (saleType === "distributor") {
+    if (!options.distributorId) {
+      throw new Error("Debe seleccionar obligatoriamente un distribuidor para registrar la compra.");
+    }
+    const { data: distData } = await supabaseAdmin
+      .from("distributors")
+      .select("id, is_active, company_name")
+      .eq("id", options.distributorId)
+      .maybeSingle();
+
+    if (!distData) {
+      throw new Error("El distribuidor especificado no existe.");
+    }
+    if (!distData.is_active) {
+      throw new Error("El distribuidor seleccionado no está activo para nuevas operaciones comerciales.");
+    }
+    if (options.purchaseDate) {
+      const pDate = new Date(options.purchaseDate);
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (pDate > today) {
+        throw new Error("La fecha de compra en distribuidor no puede ser futura.");
+      }
+    }
   }
 
   // 3. Pre-validación agregada de saldos por ítem en el request
@@ -1547,7 +1654,6 @@ export async function convertBudgetToOrder(
     }
   }
 
-
   // 4. Intentar ejecución mediante función RPC transaccional en PostgreSQL
   try {
     const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("convert_budget_transactional", {
@@ -1557,7 +1663,10 @@ export async function convertBudgetToOrder(
       p_sale_channel: saleType,
       p_notes: notes?.trim() || null,
       p_idempotency_key: options.idempotencyKey || null,
-      p_request_hash: requestHash
+      p_request_hash: requestHash,
+      p_distributor_id: options.distributorId || null,
+      p_purchase_date: options.purchaseDate || null,
+      p_distributor_reference: options.distributorReference?.trim() || null
     });
 
     if (!rpcError && rpcResult && rpcResult.success) {
@@ -1640,6 +1749,191 @@ export async function convertBudgetToOrder(
     const msg = rpcErr instanceof Error ? rpcErr.message : String(rpcErr);
     throw new Error(`Error en conversión transaccional: ${msg}`);
   }
+}
+
+export const convertBudget = convertBudgetToOrder;
+
+/**
+ * Registra el envío comercial de un presupuesto (WhatsApp/PDF, Enlace digital, etc.)
+ * separando la publicación en el portal del envío real al cliente.
+ */
+export async function recordBudgetShipment(
+  budgetId: string,
+  medium: "whatsapp" | "digital_link" | "email" | "printed_pdf" | "other",
+  sentAt?: string,
+  notes?: string
+) {
+  const ctx = await requireCommercialUser();
+  const supabaseAdmin = createSupabaseAdminClient();
+
+  const validation = RecordShipmentInputSchema.safeParse({
+    budgetId,
+    medium,
+    sentAt,
+    notes
+  });
+
+  if (!validation.success) {
+    const errorMsg = validation.error.issues.map(i => i.message).join(", ");
+    throw new Error(`Datos de envío inválidos: ${errorMsg}`);
+  }
+
+  // 1. Intentar ejecución transaccional vía RPC en PostgreSQL
+  try {
+    const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("record_budget_shipment_transactional", {
+      p_user_id: ctx.user!.id,
+      p_budget_id: budgetId,
+      p_sent_via: medium,
+      p_sent_at: sentAt || new Date().toISOString(),
+      p_notes: notes?.trim() || null
+    });
+
+    if (!rpcError && rpcResult && rpcResult.success) {
+      return rpcResult;
+    }
+  } catch (e) {
+    console.warn("RPC record_budget_shipment_transactional falló o no existe, aplicando fallback:", e);
+  }
+
+  // 2. Fallback defensivo
+  const budget = await getBudgetById(budgetId);
+  if (budget.status === "rejected") {
+    throw new Error("No se puede registrar el envío de un presupuesto rechazado.");
+  }
+
+  const sentTimestamp = sentAt || new Date().toISOString();
+  const userName = ctx.profileName || ctx.user?.email || "Asesor comercial";
+
+  const { error } = await supabaseAdmin
+    .from("budgets")
+    .update({
+      sent_via: medium,
+      sent_at: budget.sent_at || sentTimestamp,
+      sent_by_user_id: ctx.user!.id,
+      sent_by_name: userName,
+      shipment_notes: notes?.trim() || null,
+      status: budget.status === "draft" ? "sent" : budget.status,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", budgetId);
+
+  if (error) throw error;
+
+  await supabaseAdmin.from("client_notes").insert({
+    client_id: budget.client_id,
+    seller_id: budget.seller_id,
+    content: `Presupuesto N° ${budget.budget_number} enviado vía ${medium} por ${userName}${notes ? " - " + notes.trim() : ""}`,
+    contacted_at: sentTimestamp,
+    note_type: "budget_sent",
+    budget_id: budgetId
+  });
+
+  return {
+    success: true,
+    budget_id: budgetId,
+    sent_via: medium,
+    sent_at: sentTimestamp,
+    sent_by_name: userName
+  };
+}
+
+/**
+ * Reabre un presupuesto rechazado permitiendo registrar ventas posteriores.
+ */
+export async function reopenBudget(budgetId: string) {
+  const ctx = await requireCommercialUser();
+  const supabaseAdmin = createSupabaseAdminClient();
+
+  // 1. Intentar RPC
+  try {
+    const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("reopen_budget_transactional", {
+      p_user_id: ctx.user!.id,
+      p_budget_id: budgetId
+    });
+
+    if (!rpcError && rpcResult && rpcResult.success) {
+      return rpcResult;
+    }
+  } catch (e) {
+    console.warn("RPC reopen_budget_transactional falló o no existe, aplicando fallback:", e);
+  }
+
+  // 2. Fallback
+  const budget = await getBudgetById(budgetId);
+  if (budget.status !== "rejected") {
+    throw new Error("El presupuesto no se encuentra en estado rechazado.");
+  }
+
+  const nextStatus = budget.sent_at ? "sent" : "draft";
+  const { error } = await supabaseAdmin
+    .from("budgets")
+    .update({
+      status: nextStatus,
+      rejection_reason: null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", budgetId);
+
+  if (error) throw error;
+
+  const userName = ctx.profileName || ctx.user?.email || "Asesor comercial";
+  await supabaseAdmin.from("client_notes").insert({
+    client_id: budget.client_id,
+    seller_id: budget.seller_id,
+    content: `Presupuesto N° ${budget.budget_number} reabierto para negociación por ${userName}`,
+    contacted_at: new Date().toISOString(),
+    note_type: "manual",
+    budget_id: budgetId
+  });
+
+  return { success: true, budget_id: budgetId, status: nextStatus };
+}
+
+/**
+ * Búsqueda paginada de distribuidores para selección eficiente en pantalla.
+ * Evita la descarga de todo el directorio en clientes web.
+ */
+export async function searchDistributorsPaginated(params: {
+  query?: string;
+  page?: number;
+  pageSize?: number;
+  onlyActive?: boolean;
+}) {
+  const supabase = createSupabaseAdminClient();
+  const page = Math.max(1, params.page || 1);
+  const pageSize = Math.max(1, Math.min(params.pageSize || 10, 50));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let queryBuilder = supabase
+    .from("distributors")
+    .select("id, company_name, contact_name, email, phone, address, is_active", { count: "exact" });
+
+  if (params.onlyActive !== false) {
+    queryBuilder = queryBuilder.eq("is_active", true);
+  }
+
+  if (params.query && params.query.trim()) {
+    const term = `%${params.query.trim()}%`;
+    queryBuilder = queryBuilder.or(`company_name.ilike.${term},contact_name.ilike.${term}`);
+  }
+
+  const { data, count, error } = await queryBuilder
+    .order("company_name", { ascending: true })
+    .range(from, to);
+
+  if (error) {
+    console.error("Error searchDistributorsPaginated:", error);
+    throw new Error("Error al buscar distribuidores");
+  }
+
+  return {
+    distributors: data || [],
+    total: count || 0,
+    page,
+    pageSize,
+    totalPages: Math.ceil((count || 0) / pageSize),
+  };
 }
 
 /**

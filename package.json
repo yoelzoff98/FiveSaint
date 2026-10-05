@@ -14,6 +14,7 @@
     "update-crm-statuses": "node scripts/update-crm-statuses.mjs",
     "test:commercial": "node --import tsx --test tests/commercial-rules.test.mjs tests/commercial-postgres-real.test.mjs tests/commercial-pdf.test.mjs",
     "test:admin": "node --import tsx --test tests/sprint1-administration.test.mjs",
+    "test:closing": "node --import tsx --test tests/sprint-seller-closing.test.mjs",
     "test:concurrency": "node scripts/verify-native-concurrency.mjs",
     "test:restore": "node scripts/execute-isolated-restore.mjs"
   },
