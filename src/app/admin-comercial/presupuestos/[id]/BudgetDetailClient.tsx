@@ -20,7 +20,8 @@ import {
   recordBudgetShipment,
   reopenBudget,
   revokeBudget,
-  publishBudget
+  publishBudget,
+  getBudgetById
 } from "@/lib/supabase/comercial";
 import { resolveIssuedBudgetTotals, formatCurrencyARS, type CommercialBreakdown } from "@/lib/commercial-calculations";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -129,9 +130,32 @@ interface BudgetDetailClientProps {
   ordersBasePath?: string;
 }
 
+function getLocalDateString(): string {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getLocalDateTimeString(): string {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-comercial/pedidos" }: BudgetDetailClientProps) {
   const router = useRouter();
   const [budget, setBudget] = useState<Budget>(initialBudget);
+
+  // Sincronizar estado local cuando las props iniciales se actualizan (por ejemplo tras router.refresh)
+  useEffect(() => {
+    setBudget(initialBudget);
+  }, [initialBudget]);
 
   const printRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({
@@ -156,13 +180,13 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
   const [distributorLoading, setDistributorLoading] = useState(false);
   const [distributorPage, setDistributorPage] = useState(1);
   const [distributorTotalPages, setDistributorTotalPages] = useState(1);
-  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split("T")[0]);
+  const [purchaseDate, setPurchaseDate] = useState(getLocalDateString());
   const [distributorReference, setDistributorReference] = useState("");
 
   // Modal de Registro de Envío
   const [showShipmentModal, setShowShipmentModal] = useState(false);
   const [shipmentMedium, setShipmentMedium] = useState<"whatsapp" | "digital_link" | "email" | "printed_pdf" | "other">("whatsapp");
-  const [shipmentDate, setShipmentDate] = useState(new Date().toISOString().slice(0, 16));
+  const [shipmentDate, setShipmentDate] = useState(getLocalDateTimeString());
   const [shipmentNotes, setShipmentNotes] = useState("");
 
   // Modal de Rechazo y Reapertura
@@ -185,7 +209,7 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
     setSelectedChannel(null); // Elección explícita obligatoria
     setSelectedDistributor(null);
     setDistributorReference("");
-    setPurchaseDate(new Date().toISOString().split("T")[0]);
+    setPurchaseDate(getLocalDateString());
     setOrderNotes("");
 
     const initialSelection: { [id: string]: boolean } = {};
@@ -256,21 +280,15 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
     setError(null);
 
     try {
-      const res = await recordBudgetShipment(
+      await recordBudgetShipment(
         budget.id,
         shipmentMedium,
         new Date(shipmentDate).toISOString(),
         shipmentNotes
       );
 
-      setBudget((prev) => ({
-        ...prev,
-        sent_via: res.sent_via,
-        sent_at: res.sent_at,
-        sent_by_name: res.sent_by_name,
-        shipment_notes: shipmentNotes,
-        status: prev.status === "draft" ? "sent" : prev.status
-      }));
+      const fresh = await getBudgetById(budget.id);
+      if (fresh) setBudget(fresh as any);
 
       setShowShipmentModal(false);
       setSuccess("Envío comercial registrado exitosamente.");
@@ -289,12 +307,9 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
     setError(null);
 
     try {
-      const res = await reopenBudget(budget.id);
-      setBudget((prev) => ({
-        ...prev,
-        status: res.status,
-        rejection_reason: null
-      }));
+      await reopenBudget(budget.id);
+      const fresh = await getBudgetById(budget.id);
+      if (fresh) setBudget(fresh as any);
       setSuccess("Presupuesto reabierto exitosamente para continuar las gestiones comerciales.");
       router.refresh();
     } catch (err: any) {
@@ -305,24 +320,15 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
     }
   };
 
-  // Rechazar presupuesto
+  // Rechazar presupuesto de forma transaccional
   const handleRejectBudget = async () => {
-    if (budget.has_active_operations) {
-      setError("No se puede rechazar el presupuesto porque posee operaciones comerciales vigentes. Debe cancelar los pedidos previamente si desea rechazarlo.");
-      setShowRejectModal(false);
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
       await updateBudgetStatus(budget.id, "rejected", rejectionReasonInput);
-      setBudget((prev) => ({
-        ...prev,
-        status: "rejected",
-        rejection_reason: rejectionReasonInput.trim() || null
-      }));
+      const fresh = await getBudgetById(budget.id);
+      if (fresh) setBudget(fresh as any);
       setShowRejectModal(false);
       setSuccess("Presupuesto marcado como rechazado.");
       router.refresh();
@@ -339,13 +345,9 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
     setLoading(true);
     setError(null);
     try {
-      const published = await publishBudget(budget.id);
-      setBudget((prev) => ({
-        ...prev,
-        status: published.status,
-        public_status: "published",
-        public_token: published.public_token
-      }));
+      await publishBudget(budget.id);
+      const fresh = await getBudgetById(budget.id);
+      if (fresh) setBudget(fresh as any);
       setSuccess("¡Cotización digital publicada oficialmente! El enlace ahora es accesible para el cliente.");
       router.refresh();
     } catch (err: any) {
@@ -362,12 +364,14 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
     setError(null);
     try {
       if (budget.public_status === "revoked") {
-        const published = await publishBudget(budget.id);
-        setBudget((prev) => ({ ...prev, public_status: "published", public_token: published.public_token, status: published.status }));
+        await publishBudget(budget.id);
+        const fresh = await getBudgetById(budget.id);
+        if (fresh) setBudget(fresh as any);
         setSuccess("Enlace público restablecido exitosamente.");
       } else {
         await revokeBudget(budget.id);
-        setBudget((prev) => ({ ...prev, public_status: "revoked" }));
+        const fresh = await getBudgetById(budget.id);
+        if (fresh) setBudget(fresh as any);
         setSuccess("Enlace público revocado. Los clientes ya no podrán acceder.");
       }
       router.refresh();
@@ -457,7 +461,26 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
           : `¡Compra en distribuidor registrada! N° de registro N° ${generatedNum} guardado en el seguimiento.`
       );
 
-      // Actualizar datos del servidor
+      // Actualizar datos directamente desde el servidor y sincronizar estado local y selección
+      const freshBudget = await getBudgetById(budget.id);
+      if (freshBudget) {
+        setBudget(freshBudget as any);
+        const newSelections: { [id: string]: boolean } = {};
+        const newQuantities: { [id: string]: number } = {};
+        freshBudget.items.forEach((item: any) => {
+          const remaining = item.remaining_quantity !== undefined ? item.remaining_quantity : item.quantity;
+          if (remaining > 0) {
+            newSelections[item.id] = true;
+            newQuantities[item.id] = remaining;
+          } else {
+            newSelections[item.id] = false;
+            newQuantities[item.id] = 0;
+          }
+        });
+        setSelectedItems(newSelections);
+        setConvertQuantities(newQuantities);
+      }
+
       router.refresh();
     } catch (err: any) {
       console.error("Error al registrar venta:", err);

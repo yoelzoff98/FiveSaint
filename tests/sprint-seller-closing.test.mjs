@@ -587,12 +587,12 @@ describe('SPRINT — SIMPLIFICACIÓN DEL CIERRE COMERCIAL DEL VENDEDOR (ENTORNO 
     const budgetId = bRes.rows[0].res.id;
     const itemId = (await db.query(`SELECT id FROM public.budget_items WHERE budget_id = '${budgetId}'`)).rows[0].id;
 
-    // Rechazar presupuesto
-    await db.query(`
-      UPDATE public.budgets
-      SET status = 'rejected', rejection_reason = 'Precio fuera de presupuesto del cliente'
-      WHERE id = '${budgetId}';
+    // Rechazar presupuesto de forma estrictamente transaccional
+    const rejRes = await db.query(`
+      SELECT public.reject_budget_transactional('${seller1UserId}', '${budgetId}', 'Precio fuera de presupuesto del cliente') as res;
     `);
+    assert.equal(rejRes.rows[0].res.success, true);
+    assert.equal(rejRes.rows[0].res.status, 'rejected');
 
     // 1. Intentar convertir mientras está rechazado -> Debe fallar
     const p = [{ budgetItemId: itemId, quantity: 1 }];
@@ -633,6 +633,13 @@ describe('SPRINT — SIMPLIFICACIÓN DEL CIERRE COMERCIAL DEL VENDEDOR (ENTORNO 
       ) as res;
     `);
     assert.equal(convOk.rows[0].res.success, true);
+
+    // 4. Intentar rechazar un presupuesto que ahora TIENE órdenes activas -> Debe fallar de forma transaccional
+    await assert.rejects(async () => {
+      await db.query(`
+        SELECT public.reject_budget_transactional('${seller1UserId}', '${budgetId}', 'Intento de rechazar con orden activa');
+      `);
+    }, /No se puede rechazar un presupuesto que posee \d+ operación\(es\) comercial\(es\) activa\(s\)/);
   });
 
   // CASO 10: Registro de envío comercial separado de publicación
@@ -647,14 +654,23 @@ describe('SPRINT — SIMPLIFICACIÓN DEL CIERRE COMERCIAL DEL VENDEDOR (ENTORNO 
     }) }] };
     const budgetId = bRes.rows[0].res.id;
 
-    // Registrar envío comercial vía WhatsApp
-    const sendTime = '2026-10-05T10:30:00Z';
+    // 1. Publicar no debe cambiar estado a 'sent' ni completar fecha de envío
+    const pubRes = await db.query(`
+      SELECT public.publish_budget_transactional('${seller1UserId}', '${budgetId}') as res;
+    `);
+    assert.equal(pubRes.rows[0].res.public_status, 'published');
+    const pubCheck = await db.query(`SELECT status, sent_at FROM public.budgets WHERE id = '${budgetId}'`);
+    assert.equal(pubCheck.rows[0].status, 'draft', 'Publicar no altera el estado comercial a sent');
+    assert.equal(pubCheck.rows[0].sent_at, null);
+
+    // 2. Registrar primer envío comercial vía WhatsApp
+    const sendTime1 = '2026-10-05T10:30:00Z';
     const shipRes = await db.query(`
       SELECT public.record_budget_shipment_transactional(
         '${seller1UserId}',
         '${budgetId}',
         'whatsapp',
-        '${sendTime}'::timestamptz,
+        '${sendTime1}'::timestamptz,
         'Enviado PDF al cliente por WhatsApp'
       ) as res;
     `);
@@ -662,24 +678,45 @@ describe('SPRINT — SIMPLIFICACIÓN DEL CIERRE COMERCIAL DEL VENDEDOR (ENTORNO 
     assert.equal(shipRes.rows[0].res.success, true);
     assert.equal(shipRes.rows[0].res.sent_via, 'whatsapp');
 
-    // Verificar en BD que el presupuesto ahora tiene los datos de envío y avanzó a 'sent'
+    // Verificar en BD que el presupuesto ahora tiene los datos de primer y último envío coherentes
     const bCheck = await db.query(`
-      SELECT status, sent_via, sent_by_name, sent_at, shipment_notes
+      SELECT status, sent_via, sent_by_name, sent_at, first_sent_via, first_sent_at, last_sent_via, last_sent_at, shipment_notes
       FROM public.budgets
       WHERE id = '${budgetId}'
     `);
     assert.equal(bCheck.rows[0].status, 'sent');
     assert.equal(bCheck.rows[0].sent_via, 'whatsapp');
+    assert.equal(bCheck.rows[0].first_sent_via, 'whatsapp');
+    assert.equal(bCheck.rows[0].last_sent_via, 'whatsapp');
     assert.equal(bCheck.rows[0].sent_by_name, 'Juan Vendedor');
     assert.equal(bCheck.rows[0].shipment_notes, 'Enviado PDF al cliente por WhatsApp');
 
-    // Verificar que se registró en la línea de tiempo del CRM (client_notes)
+    // 3. Registrar un reenvío posterior vía email: debe conservar first_sent_* y actualizar last_sent_*
+    const sendTime2 = '2026-10-05T16:00:00Z';
+    await db.query(`
+      SELECT public.record_budget_shipment_transactional(
+        '${seller1UserId}',
+        '${budgetId}',
+        'email',
+        '${sendTime2}'::timestamptz,
+        'Reenvío por correo a administración'
+      );
+    `);
+    const bCheck2 = await db.query(`
+      SELECT first_sent_via, first_sent_at, last_sent_via, last_sent_at, shipment_notes
+      FROM public.budgets
+      WHERE id = '${budgetId}'
+    `);
+    assert.equal(bCheck2.rows[0].first_sent_via, 'whatsapp', 'El primer envío debe permanecer inalterado');
+    assert.equal(bCheck2.rows[0].last_sent_via, 'email', 'El último envío debe actualizarse');
+    assert.equal(bCheck2.rows[0].shipment_notes, 'Reenvío por correo a administración');
+
+    // Verificar que se registraron en la línea de tiempo del CRM (client_notes)
     const cNote = await db.query(`
       SELECT content, note_type FROM public.client_notes
       WHERE budget_id = '${budgetId}' AND note_type = 'budget_sent'
     `);
-    assert.ok(cNote.rows.length >= 1);
-    assert.match(cNote.rows[0].content, /WhatsApp \/ PDF/);
+    assert.ok(cNote.rows.length >= 2);
   });
 
   // CASO 11: Aislamiento RLS en órdenes de compras en distribuidores

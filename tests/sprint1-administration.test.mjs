@@ -226,9 +226,11 @@ describe('SPRINT 1 — PORTAL DE ADMINISTRACIÓN FIVESAINT (ENTORNO AISLADO PGLI
     const histBefore = await db.query(`SELECT id, budget_number, client_id, seller_id, status, total_amount, subtotal_amount, tax_amount FROM budgets ORDER BY budget_number ASC;`);
     historicalSnapshotBefore = histBefore.rows;
 
-    // 5. APLICAR LA MIGRACIÓN NUEVA DEL SPRINT 1
+    // 5. APLICAR MIGRACIONES ACUMULADAS: SPRINT 1 Y SPRINT 2
     const migrationSprint1 = fs.readFileSync('supabase/migrations/20261004000100_sprint1_administration_portal.sql', 'utf8');
     await db.exec(migrationSprint1);
+    const migrationSprint2 = fs.readFileSync('supabase/migrations/20261005000100_sprint_seller_closing_flow.sql', 'utf8');
+    await db.exec(migrationSprint2);
   });
 
   test('1. VERIFICACIÓN DE INTEGRIDAD HISTÓRICA POST-MIGRACIÓN', async () => {
@@ -399,11 +401,19 @@ describe('SPRINT 1 — PORTAL DE ADMINISTRACIÓN FIVESAINT (ENTORNO AISLADO PGLI
     assert.equal(pubRes.rows[0].result.success, true);
     assert.ok(pubRes.rows[0].result.public_token);
 
-    // Verificar estado published
+    // Verificar estado published (separado de envío comercial: conserva status draft hasta registrar envío)
     const pubCheck = await db.query(`SELECT status, public_status, public_token FROM budgets WHERE id = '${budgetId}';`);
     assert.equal(pubCheck.rows[0].public_status, 'published');
-    assert.equal(pubCheck.rows[0].status, 'sent');
+    assert.equal(pubCheck.rows[0].status, 'draft', 'Publicar habilita el enlace digital pero conserva status draft hasta registrar envío');
     assert.ok(pubCheck.rows[0].public_token);
+
+    // Registrar envío comercial para avanzar a sent
+    await db.query(`
+      SELECT record_budget_shipment_transactional('${adminRoleUserId}'::UUID, '${budgetId}'::UUID, 'digital_link', NOW(), 'Enviado enlace al cliente');
+    `);
+    const sentCheck = await db.query(`SELECT status, sent_via FROM budgets WHERE id = '${budgetId}';`);
+    assert.equal(sentCheck.rows[0].status, 'sent');
+    assert.equal(sentCheck.rows[0].sent_via, 'digital_link');
 
     // Revocar enlace digital
     const revRes = await db.query(`

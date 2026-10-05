@@ -5,9 +5,11 @@
 -- OBJETIVOS:
 -- 1. Flujo comercial explícito de confirmación: Venta Directa vs Compra en Distribuidor.
 -- 2. Trazabilidad aditiva de envíos comerciales (WhatsApp/PDF, Enlace, etc.) separada de publicación.
--- 3. Registro exacto del distribuidor de la operación sin alterar asignaciones históricas ni conceder acceso RLS no autorizado.
--- 4. Soporte para distribuidores sin usuario de acceso (user_id nullable).
--- 5. Cálculo y presentación de saldos por canal (Venta directa, distribuidor, parcial, venta mixta).
+-- 3. Distinción explícita y coherente entre primer envío y último envío (fecha, medio, responsable).
+-- 4. Registro exacto del distribuidor de la operación sin alterar asignaciones históricas ni conceder acceso RLS no autorizado.
+-- 5. Soporte para distribuidores sin usuario de acceso (user_id nullable).
+-- 6. Rechazo protegido transaccionalmente bajo el mismo bloqueo de conversión.
+-- 7. Cálculo y presentación de saldos por canal (Venta directa, distribuidor, parcial, venta mixta).
 -- ============================================================================
 
 BEGIN;
@@ -17,7 +19,15 @@ ALTER TABLE public.budgets
   ADD COLUMN IF NOT EXISTS sent_via VARCHAR(50) DEFAULT NULL,
   ADD COLUMN IF NOT EXISTS sent_by_user_id UUID DEFAULT NULL REFERENCES auth.users(id),
   ADD COLUMN IF NOT EXISTS sent_by_name TEXT DEFAULT NULL,
-  ADD COLUMN IF NOT EXISTS shipment_notes TEXT DEFAULT NULL;
+  ADD COLUMN IF NOT EXISTS shipment_notes TEXT DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS first_sent_at TIMESTAMPTZ DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS first_sent_via VARCHAR(50) DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS first_sent_by_user_id UUID DEFAULT NULL REFERENCES auth.users(id),
+  ADD COLUMN IF NOT EXISTS first_sent_by_name TEXT DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS last_sent_at TIMESTAMPTZ DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS last_sent_via VARCHAR(50) DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS last_sent_by_user_id UUID DEFAULT NULL REFERENCES auth.users(id),
+  ADD COLUMN IF NOT EXISTS last_sent_by_name TEXT DEFAULT NULL;
 
 -- 2. PERMITIR DISTRIBUIDORES FÍSICOS SIN USUARIO DE ACCESO EN auth.users
 -- Un distribuidor comercial puede ser un showroom o punto de venta sin cuenta de acceso al portal.
@@ -105,18 +115,40 @@ BEGIN
 
   v_sent_timestamp := COALESCE(p_sent_at, NOW());
 
-  -- E. ACTUALIZAR PRESUPUESTO
-  -- Si estaba en 'draft', avanza a 'sent'. Si ya estaba en 'accepted' o conversión, se conservan esos estados avanzados.
-  UPDATE public.budgets
-  SET
-    sent_via = p_sent_via,
-    sent_at = COALESCE(sent_at, v_sent_timestamp),
-    sent_by_user_id = p_user_id,
-    sent_by_name = v_user_name,
-    shipment_notes = NULLIF(TRIM(p_notes), ''),
-    status = CASE WHEN status = 'draft' THEN 'sent' ELSE status END,
-    updated_at = NOW()
-  WHERE id = p_budget_id;
+  -- E. ACTUALIZAR PRESUPUESTO PRESERVANDO PRIMER Y ÚLTIMO ENVÍO
+  -- Si nunca se envió, establece primer envío y último envío de forma idéntica y coherente.
+  -- Si ya existía un envío anterior, preserva intactos first_sent_* y actualiza last_sent_*.
+  IF v_budget.sent_at IS NULL AND v_budget.first_sent_at IS NULL THEN
+    UPDATE public.budgets
+    SET
+      sent_via = p_sent_via,
+      sent_at = v_sent_timestamp,
+      sent_by_user_id = p_user_id,
+      sent_by_name = v_user_name,
+      first_sent_via = p_sent_via,
+      first_sent_at = v_sent_timestamp,
+      first_sent_by_user_id = p_user_id,
+      first_sent_by_name = v_user_name,
+      last_sent_via = p_sent_via,
+      last_sent_at = v_sent_timestamp,
+      last_sent_by_user_id = p_user_id,
+      last_sent_by_name = v_user_name,
+      shipment_notes = NULLIF(TRIM(p_notes), ''),
+      status = CASE WHEN status = 'draft' THEN 'sent' ELSE status END,
+      updated_at = NOW()
+    WHERE id = p_budget_id;
+  ELSE
+    UPDATE public.budgets
+    SET
+      last_sent_via = p_sent_via,
+      last_sent_at = v_sent_timestamp,
+      last_sent_by_user_id = p_user_id,
+      last_sent_by_name = v_user_name,
+      shipment_notes = NULLIF(TRIM(p_notes), ''),
+      status = CASE WHEN status = 'draft' THEN 'sent' ELSE status END,
+      updated_at = NOW()
+    WHERE id = p_budget_id;
+  END IF;
 
   -- F. REGISTRAR HISTORIAL CRM EN client_notes
   INSERT INTO public.client_notes (
@@ -138,7 +170,7 @@ BEGIN
         ELSE 'Otro medio comercial'
       END || ' por ' || v_user_name ||
       COALESCE(' - ' || NULLIF(TRIM(p_notes), ''), ''),
-    v_sent_timestamp,
+    NOW(),
     'budget_sent',
     p_budget_id
   );
@@ -148,13 +180,74 @@ BEGIN
     'budget_id', p_budget_id,
     'sent_via', p_sent_via,
     'sent_at', v_sent_timestamp,
-    'sent_by_name', v_user_name
+    'sent_by_name', v_user_name,
+    'status', CASE WHEN v_budget.status = 'draft' THEN 'sent' ELSE v_budget.status END
   );
 END;
 $$;
 
--- 6. RPC TRANSACCIONAL: REAPERTURA DE PRESUPUESTO RECHAZADO (reopen_budget_transactional)
--- Permite reabrir de forma explícita un presupuesto antes de registrar una nueva venta
+-- 6. RPC TRANSACCIONAL: PUBLICACIÓN DIGITAL INDEPENDIENTE (publish_budget_transactional)
+-- Separa completamente la publicación digital del envío: publicar habilita el enlace público sin cambiar status a sent
+CREATE OR REPLACE FUNCTION public.publish_budget_transactional(
+  p_user_id UUID,
+  p_budget_id UUID
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_is_admin BOOLEAN := false;
+  v_is_administration BOOLEAN := false;
+  v_seller_id UUID := NULL;
+  v_budget RECORD;
+  v_token UUID;
+BEGIN
+  -- A. AUTORIZACIÓN
+  SELECT EXISTS(SELECT 1 FROM public.admin_users WHERE user_id = p_user_id AND is_active = true) INTO v_is_admin;
+  IF NOT v_is_admin THEN
+    SELECT EXISTS(SELECT 1 FROM public.administration_users WHERE user_id = p_user_id AND is_active = true) INTO v_is_administration;
+  END IF;
+  IF NOT v_is_admin AND NOT v_is_administration THEN
+    SELECT id INTO v_seller_id FROM public.sellers WHERE user_id = p_user_id AND is_active = true;
+    IF v_seller_id IS NULL THEN
+      RAISE EXCEPTION 'ACCESO DENEGADO: Solo vendedores activos o administración pueden publicar presupuestos.';
+    END IF;
+  END IF;
+
+  SELECT * INTO v_budget FROM public.budgets WHERE id = p_budget_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Presupuesto no encontrado.';
+  END IF;
+
+  IF NOT v_is_admin AND NOT v_is_administration AND v_budget.seller_id IS DISTINCT FROM v_seller_id THEN
+    RAISE EXCEPTION 'ACCESO DENEGADO: No está autorizado a publicar presupuestos de otro asesor.';
+  END IF;
+
+  v_token := COALESCE(v_budget.public_token, gen_random_uuid());
+
+  -- SEPARACIÓN ESTRICTA: Publicar solo habilita el enlace digital público.
+  -- NO cambia status a 'sent' ni altera sent_at; el presupuesto en borrador sigue siendo borrador
+  -- comercial hasta que el asesor registre un envío explícito.
+  UPDATE public.budgets
+  SET 
+    public_status = 'published',
+    public_token = v_token,
+    updated_at = NOW()
+  WHERE id = p_budget_id;
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'id', p_budget_id,
+    'public_status', 'published',
+    'public_token', v_token,
+    'status', v_budget.status
+  );
+END;
+$$;
+
+-- 7. RPC TRANSACCIONAL: REAPERTURA DE PRESUPUESTO (reopen_budget_transactional)
 CREATE OR REPLACE FUNCTION public.reopen_budget_transactional(
   p_user_id UUID,
   p_budget_id UUID
@@ -183,7 +276,7 @@ BEGIN
     END IF;
   END IF;
 
-  -- B. OBTENER Y BLOQUEAR PRESUPUESTO
+  -- B. BLOQUEAR Y VALIDAR PRESUPUESTO
   SELECT * INTO v_budget FROM public.budgets WHERE id = p_budget_id FOR UPDATE;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Presupuesto no encontrado.';
@@ -243,7 +336,105 @@ BEGIN
 END;
 $$;
 
--- 7. ACTUALIZACIÓN DE RPC: CONVERSIÓN DE PRESUPUESTO (convert_budget_transactional)
+-- 8. RPC TRANSACCIONAL: RECHAZO DE PRESUPUESTO PROTEGIDO CONTRA CONVERSIÓN CONCURRENTE
+CREATE OR REPLACE FUNCTION public.reject_budget_transactional(
+  p_user_id UUID,
+  p_budget_id UUID,
+  p_reason TEXT DEFAULT NULL
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_is_admin BOOLEAN := false;
+  v_is_administration BOOLEAN := false;
+  v_seller_id UUID := NULL;
+  v_budget RECORD;
+  v_active_orders_count INTEGER := 0;
+  v_user_name TEXT := NULL;
+BEGIN
+  -- A. AUTORIZACIÓN
+  SELECT EXISTS(SELECT 1 FROM public.admin_users WHERE user_id = p_user_id AND is_active = true) INTO v_is_admin;
+  IF NOT v_is_admin THEN
+    SELECT EXISTS(SELECT 1 FROM public.administration_users WHERE user_id = p_user_id AND is_active = true) INTO v_is_administration;
+  END IF;
+  IF NOT v_is_admin AND NOT v_is_administration THEN
+    SELECT id INTO v_seller_id FROM public.sellers WHERE user_id = p_user_id AND is_active = true;
+    IF v_seller_id IS NULL THEN
+      RAISE EXCEPTION 'ACCESO DENEGADO: El usuario no posee un rol comercial o administrativo activo.';
+    END IF;
+  END IF;
+
+  -- B. BLOQUEO FOR UPDATE DEL PRESUPUESTO
+  SELECT * INTO v_budget FROM public.budgets WHERE id = p_budget_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Presupuesto no encontrado.';
+  END IF;
+
+  IF NOT v_is_admin AND NOT v_is_administration AND v_budget.seller_id IS DISTINCT FROM v_seller_id THEN
+    RAISE EXCEPTION 'ACCESO DENEGADO: No está autorizado a rechazar presupuestos de otro asesor.';
+  END IF;
+
+  -- C. COMPROBACIÓN TRANSACCIONAL DE OPERACIONES VIGENTES
+  -- Si existen órdenes activas (status <> 'cancelled'), rechazar el presupuesto es inválido
+  SELECT COUNT(*) INTO v_active_orders_count
+  FROM public.orders
+  WHERE budget_id = p_budget_id AND status <> 'cancelled';
+
+  IF v_active_orders_count > 0 THEN
+    RAISE EXCEPTION 'No se puede rechazar un presupuesto que posee % operación(es) comercial(es) activa(s).', v_active_orders_count;
+  END IF;
+
+  -- D. RESOLVER NOMBRE PARA AUDITORÍA
+  SELECT full_name INTO v_user_name FROM public.sellers WHERE user_id = p_user_id;
+  IF v_user_name IS NULL THEN
+    SELECT full_name INTO v_user_name FROM public.administration_users WHERE user_id = p_user_id;
+  END IF;
+  IF v_user_name IS NULL THEN
+    SELECT username INTO v_user_name FROM public.admin_users WHERE user_id = p_user_id;
+  END IF;
+  IF v_user_name IS NULL THEN
+    v_user_name := 'Asesor comercial';
+  END IF;
+
+  -- E. ACTUALIZAR ESTADO A REJECTED
+  UPDATE public.budgets
+  SET
+    status = 'rejected',
+    rejection_reason = NULLIF(TRIM(p_reason), ''),
+    updated_at = NOW()
+  WHERE id = p_budget_id;
+
+  -- F. REGISTRO EN CRM
+  INSERT INTO public.client_notes (
+    client_id,
+    seller_id,
+    content,
+    contacted_at,
+    note_type,
+    budget_id
+  ) VALUES (
+    v_budget.client_id,
+    v_budget.seller_id,
+    'Presupuesto N° ' || v_budget.budget_number || ' marcado como rechazado por ' || v_user_name ||
+      CASE WHEN TRIM(COALESCE(p_reason, '')) <> '' THEN '. Motivo: ' || TRIM(p_reason) ELSE '' END,
+    NOW(),
+    'budget_rejected',
+    p_budget_id
+  );
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'id', p_budget_id,
+    'status', 'rejected',
+    'rejection_reason', NULLIF(TRIM(p_reason), '')
+  );
+END;
+$$;
+
+-- 9. ACTUALIZACIÓN DE RPC: CONVERSIÓN DE PRESUPUESTO (convert_budget_transactional)
 -- Incorpora parámetros explícitos para compra en distribuidor, fecha y referencia, preservando compatibilidad anterior
 DROP FUNCTION IF EXISTS public.convert_budget_transactional(UUID, UUID, JSONB, VARCHAR, TEXT, TEXT, TEXT);
 
@@ -391,20 +582,21 @@ BEGIN
     RAISE EXCEPTION 'Debe seleccionar al menos un ítem para convertir.';
   END IF;
 
-  -- D. VALIDACIÓN ESTRICTA DEL CANAL DE VENTA Y DISTRIBUIDOR
+  -- D. VALIDACIÓN ESTRICTA DEL CANAL DE VENTA Y DISTRIBUIDOR CON COMPATIBILIDAD RETROSPECTIVA
   IF p_sale_channel = 'distributor' THEN
     v_order_distributor_id := COALESCE(p_distributor_id, v_budget.distributor_id);
-    IF v_order_distributor_id IS NULL THEN
-      RAISE EXCEPTION 'Debe seleccionar obligatoriamente un distribuidor para registrar la compra.';
-    END IF;
+    IF v_order_distributor_id IS NOT NULL THEN
+      SELECT company_name, is_active INTO v_dist_company_name, v_dist_is_active FROM public.distributors WHERE id = v_order_distributor_id;
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'El distribuidor especificado no existe.';
+      END IF;
 
-    SELECT company_name, is_active INTO v_dist_company_name, v_dist_is_active FROM public.distributors WHERE id = v_order_distributor_id;
-    IF NOT FOUND THEN
-      RAISE EXCEPTION 'El distribuidor especificado no existe.';
-    END IF;
-
-    IF NOT v_dist_is_active THEN
-      RAISE EXCEPTION 'El distribuidor seleccionado no está activo para nuevas operaciones comerciales.';
+      IF NOT v_dist_is_active THEN
+        RAISE EXCEPTION 'El distribuidor seleccionado no está activo para nuevas operaciones comerciales.';
+      END IF;
+    ELSE
+      -- Compatibilidad legacy: llamadas anteriores que convertían a distribuidor sin especificar distribuidor_id
+      v_dist_company_name := 'Distribuidor no registrado';
     END IF;
 
     IF p_purchase_date IS NOT NULL AND p_purchase_date > CURRENT_DATE THEN
@@ -654,9 +846,8 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
--- 8. PROTECCIÓN RLS EN orders Y order_items:
--- AISLAMIENTO ESTRICTO: Distribuidores del portal NO ven órdenes de clientes de vendedores
--- donde solo se registró la tienda física como seguimiento (order_type = 'distributor_sale').
+-- 10. POLÍTICAS RLS (AISLAMIENTO COMERCIAL Y PREVENCIÓN DE ACCESO NO AUTORIZADO)
+-- Evita que el portal de un distribuidor acceda a pedidos de clientes retail registrados por asesores
 DROP POLICY IF EXISTS orders_read_policy ON public.orders;
 CREATE POLICY orders_read_policy ON public.orders
   FOR SELECT
@@ -693,7 +884,7 @@ CREATE POLICY order_items_read_policy ON public.order_items
     )
   );
 
--- 9. PERMISOS Y PRIVILEGIOS
+-- 11. PERMISOS Y PRIVILEGIOS
 -- Restricción estricta de ejecución de RPCs transaccionales
 DO $$
 DECLARE fn RECORD;
@@ -702,7 +893,9 @@ BEGIN
     SELECT p.oid::regprocedure AS signature
     FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname IN (
-      'convert_budget_transactional', 'record_budget_shipment_transactional', 'reopen_budget_transactional'
+      'convert_budget_transactional', 'record_budget_shipment_transactional',
+      'reopen_budget_transactional', 'reject_budget_transactional',
+      'publish_budget_transactional'
     )
   LOOP
     EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', fn.signature);

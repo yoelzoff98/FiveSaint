@@ -1158,20 +1158,42 @@ export async function createBudget(
 }
 
 /**
+ * Rechaza un presupuesto de forma estrictamente transaccional bajo bloqueo FOR UPDATE,
+ * comprobando que no existan operaciones vigentes en la misma transacción.
+ */
+export async function rejectBudget(id: string, rejectionReason?: string) {
+  const ctx = await requireCommercialUser();
+  const supabase = createSupabaseAdminClient();
+
+  const { data, error } = await supabase.rpc("reject_budget_transactional", {
+    p_user_id: ctx.user!.id,
+    p_budget_id: id,
+    p_reason: rejectionReason?.trim() || null
+  });
+
+  if (error) {
+    console.error("Error rejectBudget:", error);
+    throw new Error(error.message || "Error al rechazar el presupuesto");
+  }
+
+  return data;
+}
+
+/**
  * Actualiza el estado comercial de un presupuesto validando transiciones permitidas.
  */
 export async function updateBudgetStatus(id: string, status: string, rejectionReason?: string) {
   const ctx = await requireCommercialUser();
-  const supabase = createSupabaseAdminClient();
 
+  if (status === "rejected") {
+    return rejectBudget(id, rejectionReason);
+  }
+
+  const supabase = createSupabaseAdminClient();
   const budget = await getBudgetById(id);
 
   if (!isValidBudgetTransition(budget.status, status)) {
     throw new Error(`Transición de estado no permitida: de '${budget.status}' a '${status}'`);
-  }
-
-  if (status === "rejected" && budget.has_active_operations) {
-    throw new Error("No se puede rechazar el presupuesto porque posee operaciones comerciales o pedidos vigentes. Cancele los pedidos previamente si desea rechazarlo.");
   }
 
   const updatePayload: Record<string, unknown> = {
@@ -1899,6 +1921,7 @@ export async function searchDistributorsPaginated(params: {
   pageSize?: number;
   onlyActive?: boolean;
 }) {
+  const ctx = await requireCommercialUser();
   const supabase = createSupabaseAdminClient();
   const page = Math.max(1, params.page || 1);
   const pageSize = Math.max(1, Math.min(params.pageSize || 10, 50));
