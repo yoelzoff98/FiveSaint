@@ -1800,115 +1800,49 @@ export async function recordBudgetShipment(
     throw new Error(`Datos de envío inválidos: ${errorMsg}`);
   }
 
-  // 1. Intentar ejecución transaccional vía RPC en PostgreSQL
-  try {
-    const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("record_budget_shipment_transactional", {
-      p_user_id: ctx.user!.id,
-      p_budget_id: budgetId,
-      p_sent_via: medium,
-      p_sent_at: sentAt || new Date().toISOString(),
-      p_notes: notes?.trim() || null
-    });
-
-    if (!rpcError && rpcResult && rpcResult.success) {
-      return rpcResult;
-    }
-  } catch (e) {
-    console.warn("RPC record_budget_shipment_transactional falló o no existe, aplicando fallback:", e);
-  }
-
-  // 2. Fallback defensivo
-  const budget = await getBudgetById(budgetId);
-  if (budget.status === "rejected") {
-    throw new Error("No se puede registrar el envío de un presupuesto rechazado.");
-  }
-
-  const sentTimestamp = sentAt || new Date().toISOString();
-  const userName = ctx.profileName || ctx.user?.email || "Asesor comercial";
-
-  const { error } = await supabaseAdmin
-    .from("budgets")
-    .update({
-      sent_via: medium,
-      sent_at: budget.sent_at || sentTimestamp,
-      sent_by_user_id: ctx.user!.id,
-      sent_by_name: userName,
-      shipment_notes: notes?.trim() || null,
-      status: budget.status === "draft" ? "sent" : budget.status,
-      updated_at: new Date().toISOString()
-    })
-    .eq("id", budgetId);
-
-  if (error) throw error;
-
-  await supabaseAdmin.from("client_notes").insert({
-    client_id: budget.client_id,
-    seller_id: budget.seller_id,
-    content: `Presupuesto N° ${budget.budget_number} enviado vía ${medium} por ${userName}${notes ? " - " + notes.trim() : ""}`,
-    contacted_at: sentTimestamp,
-    note_type: "budget_sent",
-    budget_id: budgetId
+  // Ejecución transaccional estricta vía RPC en PostgreSQL (sin fallbacks de escritura)
+  const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("record_budget_shipment_transactional", {
+    p_user_id: ctx.user!.id,
+    p_budget_id: budgetId,
+    p_sent_via: medium,
+    p_sent_at: sentAt || new Date().toISOString(),
+    p_notes: notes?.trim() || null
   });
 
-  return {
-    success: true,
-    budget_id: budgetId,
-    sent_via: medium,
-    sent_at: sentTimestamp,
-    sent_by_name: userName
-  };
+  if (rpcError) {
+    throw new Error(`Error al registrar envío del presupuesto: ${rpcError.message}`);
+  }
+
+  if (!rpcResult || !rpcResult.success) {
+    throw new Error(rpcResult?.error || "No se pudo registrar el envío del presupuesto.");
+  }
+
+  return rpcResult;
 }
 
 /**
  * Reabre un presupuesto rechazado permitiendo registrar ventas posteriores.
+ * Transaccional estricto vía RPC en PostgreSQL (sin fallbacks de escritura).
  */
 export async function reopenBudget(budgetId: string) {
   const ctx = await requireCommercialUser();
   const supabaseAdmin = createSupabaseAdminClient();
 
-  // 1. Intentar RPC
-  try {
-    const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("reopen_budget_transactional", {
-      p_user_id: ctx.user!.id,
-      p_budget_id: budgetId
-    });
-
-    if (!rpcError && rpcResult && rpcResult.success) {
-      return rpcResult;
-    }
-  } catch (e) {
-    console.warn("RPC reopen_budget_transactional falló o no existe, aplicando fallback:", e);
-  }
-
-  // 2. Fallback
-  const budget = await getBudgetById(budgetId);
-  if (budget.status !== "rejected") {
-    throw new Error("El presupuesto no se encuentra en estado rechazado.");
-  }
-
-  const nextStatus = budget.sent_at ? "sent" : "draft";
-  const { error } = await supabaseAdmin
-    .from("budgets")
-    .update({
-      status: nextStatus,
-      rejection_reason: null,
-      updated_at: new Date().toISOString()
-    })
-    .eq("id", budgetId);
-
-  if (error) throw error;
-
-  const userName = ctx.profileName || ctx.user?.email || "Asesor comercial";
-  await supabaseAdmin.from("client_notes").insert({
-    client_id: budget.client_id,
-    seller_id: budget.seller_id,
-    content: `Presupuesto N° ${budget.budget_number} reabierto para negociación por ${userName}`,
-    contacted_at: new Date().toISOString(),
-    note_type: "manual",
-    budget_id: budgetId
+  // Ejecución transaccional estricta vía RPC en PostgreSQL (sin fallbacks de escritura)
+  const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc("reopen_budget_transactional", {
+    p_user_id: ctx.user!.id,
+    p_budget_id: budgetId
   });
 
-  return { success: true, budget_id: budgetId, status: nextStatus };
+  if (rpcError) {
+    throw new Error(`Error al reabrir el presupuesto: ${rpcError.message}`);
+  }
+
+  if (!rpcResult || !rpcResult.success) {
+    throw new Error(rpcResult?.error || "No se pudo reabrir el presupuesto.");
+  }
+
+  return rpcResult;
 }
 
 /**

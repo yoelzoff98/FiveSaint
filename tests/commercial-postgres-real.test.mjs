@@ -45,12 +45,27 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
         END IF;
       END $$;
 
+      CREATE SCHEMA IF NOT EXISTS auth;
+      CREATE TABLE IF NOT EXISTS auth.users (
+        id UUID PRIMARY KEY,
+        email TEXT
+      );
+
+      INSERT INTO auth.users (id, email) VALUES
+        ('${adminUserId}', 'admin@fivesaint.com'),
+        ('${seller1UserId}', 'v1@fivesaint.com'),
+        ('${seller2UserId}', 'v2@fivesaint.com'),
+        ('${inactiveSellerUserId}', 'inactivo@fivesaint.com'),
+        ('${distributorUserId}', 'dist@fivesaint.com')
+      ON CONFLICT (id) DO NOTHING;
+
       CREATE SEQUENCE IF NOT EXISTS budgets_budget_number_seq START WITH 1;
       CREATE SEQUENCE IF NOT EXISTS orders_order_number_seq START WITH 1;
 
       CREATE TABLE admin_users (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          user_id UUID NOT NULL UNIQUE,
+          user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id),
+          username TEXT NOT NULL UNIQUE,
           full_name TEXT NOT NULL,
           is_active BOOLEAN DEFAULT TRUE,
           created_at TIMESTAMPTZ DEFAULT now()
@@ -159,14 +174,20 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
       );
     `);
 
-    // 3. EJECUTAR LA MIGRACIÓN EXACTA ENTREGADA (Sin reescribir funciones dentro de los tests)
-    const migrationSql = fs.readFileSync('supabase/migrations/20261003000100_commercial_release.sql', 'utf8');
-    await db.exec(migrationSql);
+    // 3. EJECUTAR LAS TRES MIGRACIONES EN ORDEN SECUENCIAL ESTRICTO
+    const migration1 = fs.readFileSync('supabase/migrations/20261003000100_commercial_release.sql', 'utf8');
+    await db.exec(migration1);
+
+    const migration2 = fs.readFileSync('supabase/migrations/20261004000100_sprint1_administration_portal.sql', 'utf8');
+    await db.exec(migration2);
+
+    const migration3 = fs.readFileSync('supabase/migrations/20261005000100_sprint_seller_closing_flow.sql', 'utf8');
+    await db.exec(migration3);
 
     // 4. Poblar datos maestros iniciales
     await db.exec(`
-      INSERT INTO admin_users (user_id, full_name, is_active)
-      VALUES ('${adminUserId}', 'Administrador Five Saint', true);
+      INSERT INTO admin_users (user_id, username, full_name, is_active)
+      VALUES ('${adminUserId}', 'admin_master', 'Administrador Five Saint', true);
 
       INSERT INTO sellers (id, user_id, username, full_name, email, is_active)
       VALUES 
@@ -197,7 +218,7 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
           '${inactiveSellerId}'::UUID
         );
       `);
-    }, /ACCESO DENEGADO: El usuario no posee un rol comercial activo/);
+    }, /ACCESO DENEGADO: El usuario no posee un rol comercial/);
   });
 
   test('2. Permisos en PostgreSQL: Vendedor no puede operar sobre cliente de otro vendedor', async () => {
@@ -755,5 +776,247 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
     const createdB = newBRes.rows[0].result;
     assert.equal(createdB.success, true);
     assert.ok(createdB.budget_number > nextBudgetNum, `El número generado (${createdB.budget_number}) supera el punto de restauración`);
+  });
+
+  test('12. Errores de RPC sin escrituras posteriores (Atomicidad estricta sin mutaciones colaterales)', async () => {
+    // 1. Crear presupuesto de prueba en draft
+    const bRes = await db.query(`
+      SELECT create_budget_transactional(
+        '${seller1UserId}'::UUID,
+        '${client1Id}'::UUID,
+        '[{"productName": "Columna Ducha Acero", "quantity": 1, "unitPrice": 450000}]'::JSONB,
+        '[]'::JSONB, 'Notas internas', 'Publicas', 'rpc_err_test_1', 'hash_rpc_err_1',
+        '{}'::JSONB, '{}'::JSONB, '{}'::JSONB,
+        450000, 450000, 0, 94500, 21.00,
+        '${seller1Id}'::UUID
+      ) as result;
+    `);
+    const budgetId = bRes.rows[0].result.id;
+
+    // 2. Intento no autorizado: Vendedor 2 intenta registrar envío en presupuesto de Vendedor 1
+    await assert.rejects(async () => {
+      await db.query(`
+        SELECT record_budget_shipment_transactional(
+          '${seller2UserId}'::UUID,
+          '${budgetId}'::UUID,
+          'whatsapp',
+          NOW(),
+          'Intento cruzado ilegítimo'
+        );
+      `);
+    }, /ACCESO DENEGADO/);
+
+    // 3. Intento con medio de envío inválido
+    await assert.rejects(async () => {
+      await db.query(`
+        SELECT record_budget_shipment_transactional(
+          '${seller1UserId}'::UUID,
+          '${budgetId}'::UUID,
+          'medio_invalido',
+          NOW(),
+          'Medio inválido'
+        );
+      `);
+    }, /Medio de envío no válido/);
+
+    // 4. Verificar en base de datos: CERO escrituras posteriores
+    const checkBudget = await db.query(`
+      SELECT status, sent_at, first_sent_at, last_sent_at, sent_via
+      FROM budgets WHERE id = '${budgetId}'
+    `);
+    assert.equal(checkBudget.rows[0].status, 'draft');
+    assert.equal(checkBudget.rows[0].sent_at, null);
+    assert.equal(checkBudget.rows[0].first_sent_at, null);
+    assert.equal(checkBudget.rows[0].last_sent_at, null);
+    assert.equal(checkBudget.rows[0].sent_via, null);
+
+    const checkNotes = await db.query(`
+      SELECT COUNT(*) as c FROM client_notes WHERE budget_id = '${budgetId}' AND note_type = 'budget_sent'
+    `);
+    assert.equal(Number(checkNotes.rows[0].c), 0, 'No debe existir ninguna nota de envío tras RPC fallida');
+
+    // 5. Intento de reapertura sobre presupuesto no rechazado
+    await assert.rejects(async () => {
+      await db.query(`
+        SELECT reopen_budget_transactional(
+          '${seller1UserId}'::UUID,
+          '${budgetId}'::UUID
+        );
+      `);
+    }, /no se encuentra en estado rechazado/);
+
+    // Verificar que el estado no cambió
+    const checkBudgetAfterReopenFail = await db.query(`SELECT status FROM budgets WHERE id = '${budgetId}'`);
+    assert.equal(checkBudgetAfterReopenFail.rows[0].status, 'draft');
+  });
+
+  test('13. Dos envíos sucesivos: Primer y último envío con fecha, medio y responsable coherentes', async () => {
+    // 1. Crear presupuesto en draft
+    const bRes = await db.query(`
+      SELECT create_budget_transactional(
+        '${seller1UserId}'::UUID,
+        '${client1Id}'::UUID,
+        '[{"productName": "Bañera Acrílica Premium", "quantity": 1, "unitPrice": 890000}]'::JSONB,
+        '[]'::JSONB, 'Notas internas', 'Publicas', 'two_shipments_key_1', 'hash_ts_1',
+        '{}'::JSONB, '{}'::JSONB, '{}'::JSONB,
+        890000, 890000, 0, 186900, 21.00,
+        '${seller1Id}'::UUID
+      ) as result;
+    `);
+    const budgetId = bRes.rows[0].result.id;
+
+    const t1 = '2026-10-05T10:00:00.000Z';
+    const t2 = '2026-10-05T16:30:00.000Z';
+
+    // 2. Primer envío: Vendedor 1 por WhatsApp
+    const ship1 = await db.query(`
+      SELECT record_budget_shipment_transactional(
+        '${seller1UserId}'::UUID,
+        '${budgetId}'::UUID,
+        'whatsapp',
+        '${t1}'::TIMESTAMPTZ,
+        'Envío inicial con catálogo y cotización en PDF'
+      ) as result;
+    `);
+    assert.equal(ship1.rows[0].result.success, true);
+
+    const bAfter1 = await db.query(`
+      SELECT status, sent_via, sent_at, sent_by_name,
+             first_sent_via, first_sent_at, first_sent_by_name,
+             last_sent_via, last_sent_at, last_sent_by_name, shipment_notes
+      FROM budgets WHERE id = '${budgetId}'
+    `);
+    const r1 = bAfter1.rows[0];
+    assert.equal(r1.status, 'sent');
+    assert.equal(r1.first_sent_via, 'whatsapp');
+    assert.equal(new Date(r1.first_sent_at).toISOString(), t1);
+    assert.equal(r1.first_sent_by_name, 'Vendedor Uno');
+    assert.equal(r1.last_sent_via, 'whatsapp');
+    assert.equal(new Date(r1.last_sent_at).toISOString(), t1);
+    assert.equal(r1.last_sent_by_name, 'Vendedor Uno');
+    assert.equal(r1.shipment_notes, 'Envío inicial con catálogo y cotización en PDF');
+
+    // 3. Segundo envío sucesivo: Administrador reenvía por Email con fecha posterior y notas
+    const ship2 = await db.query(`
+      SELECT record_budget_shipment_transactional(
+        '${adminUserId}'::UUID,
+        '${budgetId}'::UUID,
+        'email',
+        '${t2}'::TIMESTAMPTZ,
+        'Reenvío a casilla contable solicitada por el cliente'
+      ) as result;
+    `);
+    assert.equal(ship2.rows[0].result.success, true);
+
+    const bAfter2 = await db.query(`
+      SELECT status, sent_via, sent_at, sent_by_name,
+             first_sent_via, first_sent_at, first_sent_by_name,
+             last_sent_via, last_sent_at, last_sent_by_name, shipment_notes
+      FROM budgets WHERE id = '${budgetId}'
+    `);
+    const r2 = bAfter2.rows[0];
+    assert.equal(r2.status, 'sent');
+    // Primer envío permanece 100% INTACTO sin mezclarse
+    assert.equal(r2.first_sent_via, 'whatsapp');
+    assert.equal(new Date(r2.first_sent_at).toISOString(), t1);
+    assert.equal(r2.first_sent_by_name, 'Vendedor Uno');
+
+    // Último envío refleja coherentemente el segundo envío
+    assert.equal(r2.last_sent_via, 'email');
+    assert.equal(new Date(r2.last_sent_at).toISOString(), t2);
+    assert.equal(r2.last_sent_by_name, 'admin_master');
+    assert.equal(r2.shipment_notes, 'Reenvío a casilla contable solicitada por el cliente');
+
+    // Verificar que ambas notas quedaron registradas en client_notes
+    const notesRes = await db.query(`
+      SELECT content, note_type FROM client_notes
+      WHERE budget_id = '${budgetId}' AND note_type = 'budget_sent'
+      ORDER BY contacted_at ASC
+    `);
+    assert.equal(notesRes.rows.length, 2);
+    assert.match(notesRes.rows[0].content, /WhatsApp/);
+    assert.match(notesRes.rows[1].content, /Correo Electrónico/);
+  });
+
+  test('14. Reapertura concurrente con otras operaciones (Aislamiento transaccional y coherencia)', async () => {
+    // 1. Crear presupuesto y rechazarlo legítimamente
+    const bRes = await db.query(`
+      SELECT create_budget_transactional(
+        '${seller1UserId}'::UUID,
+        '${client1Id}'::UUID,
+        '[{"productName": "Receptáculo Acrílico", "quantity": 3, "unitPrice": 200000}]'::JSONB,
+        '[]'::JSONB, 'Notas', 'Publicas', 'reopen_conc_b_1', 'hash_rc_1',
+        '{}'::JSONB, '{}'::JSONB, '{}'::JSONB,
+        600000, 600000, 0, 126000, 21.00,
+        '${seller1Id}'::UUID
+      ) as result;
+    `);
+    const budgetId = bRes.rows[0].result.id;
+
+    // Rechazar presupuesto
+    await db.query(`
+      SELECT reject_budget_transactional(
+        '${seller1UserId}'::UUID,
+        '${budgetId}'::UUID,
+        'Cliente evaluando alternativa de menor costo'
+      );
+    `);
+
+    const checkRejected = await db.query(`SELECT status FROM budgets WHERE id = '${budgetId}'`);
+    assert.equal(checkRejected.rows[0].status, 'rejected');
+
+    // 2. Intento de conversión sobre presupuesto rechazado es bloqueado
+    await assert.rejects(async () => {
+      const itRow = await db.query(`SELECT id FROM budget_items WHERE budget_id = '${budgetId}'`);
+      await db.query(`
+        SELECT convert_budget_transactional(
+          '${seller1UserId}'::UUID,
+          '${budgetId}'::UUID,
+          '[{"budgetItemId": "${itRow.rows[0].id}", "quantity": 1}]'::JSONB,
+          'direct',
+          'Intento de venta directa sobre rechazado',
+          'key_bad_conv',
+          'hash_bad_conv'
+        );
+      `);
+    }, /No se puede convertir un presupuesto rechazado/);
+
+    // 3. Reapertura transaccional: Bloqueo FOR UPDATE garantiza exclusión mutua
+    await db.exec('BEGIN;');
+    const lockedBudget = await db.query(`
+      SELECT id, status FROM budgets WHERE id = '${budgetId}' FOR UPDATE;
+    `);
+    assert.equal(lockedBudget.rows[0].status, 'rejected');
+
+    // Ejecutar reapertura dentro de la sesión protegida
+    const reopenRes = await db.query(`
+      SELECT reopen_budget_transactional(
+        '${seller1UserId}'::UUID,
+        '${budgetId}'::UUID
+      ) as result;
+    `);
+    assert.equal(reopenRes.rows[0].result.success, true);
+    assert.equal(reopenRes.rows[0].result.status, 'draft');
+
+    await db.exec('COMMIT;');
+
+    // 4. Tras reapertura exitosa, el presupuesto puede convertirse inmediatamente
+    const itRowOk = await db.query(`SELECT id FROM budget_items WHERE budget_id = '${budgetId}'`);
+    const convOk = await db.query(`
+      SELECT convert_budget_transactional(
+        '${seller1UserId}'::UUID,
+        '${budgetId}'::UUID,
+        '[{"budgetItemId": "${itRowOk.rows[0].id}", "quantity": 3}]'::JSONB,
+        'direct',
+        'Venta directa concretada tras reapertura',
+        'key_conv_after_reopen',
+        'hash_conv_after_reopen'
+      ) as result;
+    `);
+    assert.equal(convOk.rows[0].result.success, true);
+    assert.ok(convOk.rows[0].result.order_id);
+
+    const finalBudget = await db.query(`SELECT status FROM budgets WHERE id = '${budgetId}'`);
+    assert.equal(finalBudget.rows[0].status, 'converted');
   });
 });

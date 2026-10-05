@@ -92,6 +92,14 @@ export interface Budget {
   sent_via?: string | null;
   sent_by_name?: string | null;
   shipment_notes?: string | null;
+  first_sent_at?: string | null;
+  first_sent_via?: string | null;
+  first_sent_by_user_id?: string | null;
+  first_sent_by_name?: string | null;
+  last_sent_at?: string | null;
+  last_sent_via?: string | null;
+  last_sent_by_user_id?: string | null;
+  last_sent_by_name?: string | null;
   sale_channel?: string | null;
   distributor_id?: string | null;
   clients: {
@@ -1049,30 +1057,129 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
                 </p>
               </div>
 
-              <div className="flex flex-col gap-1 p-3 bg-stone-50 rounded-lg border border-stone-200">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-stone-700 text-[11px] uppercase">Envío al Cliente:</span>
-                  <Badge className={
-                    budget.sent_at
-                      ? "bg-emerald-50 text-emerald-800 border-emerald-200 text-[10px]"
-                      : "bg-amber-50 text-amber-800 border-amber-200 text-[10px]"
-                  }>
-                    {budget.sent_at ? "Enviado" : "Pendiente de Envío"}
-                  </Badge>
-                </div>
-                {budget.sent_at ? (
-                  <div className="text-[11px] text-stone-600 mt-1">
-                    <div>Medio: <strong>{budget.sent_via || "No especificado"}</strong></div>
-                    <div>Fecha: {new Date(budget.sent_at).toLocaleDateString("es-AR")}</div>
-                    {budget.sent_by_name && <div>Registrado por: {budget.sent_by_name}</div>}
-                    {budget.shipment_notes && <div className="text-stone-500 italic mt-0.5">&quot;{budget.shipment_notes}&quot;</div>}
+              {/* Bloque de Información de Envíos al Cliente */}
+              {(() => {
+                const firstSentAt = budget.first_sent_at || budget.sent_at;
+                const firstSentVia = budget.first_sent_via || budget.sent_via;
+                const firstSentByName = budget.first_sent_by_name || budget.sent_by_name;
+
+                const lastSentAt = budget.last_sent_at;
+                const lastSentVia = budget.last_sent_via;
+                const lastSentByName = budget.last_sent_by_name;
+
+                const hasMultipleShipments = Boolean(
+                  lastSentAt &&
+                  firstSentAt &&
+                  (lastSentAt !== firstSentAt || lastSentVia !== firstSentVia || lastSentByName !== firstSentByName)
+                );
+
+                const formatMedium = (m?: string | null) => {
+                  if (!m) return "No especificado";
+                  switch (m) {
+                    case "whatsapp": return "WhatsApp / PDF";
+                    case "digital_link": return "Enlace Digital";
+                    case "email": return "Correo Electrónico";
+                    case "printed_pdf": return "PDF Impreso / Mano";
+                    case "other": return "Otro medio comercial";
+                    default: return m;
+                  }
+                };
+
+                const formatDate = (iso?: string | null) => {
+                  if (!iso) return "—";
+                  try {
+                    const d = new Date(iso);
+                    return d.toLocaleDateString("es-AR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric"
+                    }) + " " + d.toLocaleTimeString("es-AR", {
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    });
+                  } catch {
+                    return iso;
+                  }
+                };
+
+                return (
+                  <div className="flex flex-col gap-2 p-3 bg-stone-50 rounded-lg border border-stone-200">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-stone-700 text-[11px] uppercase tracking-wider">
+                        Envíos al Cliente:
+                      </span>
+                      <Badge className={
+                        firstSentAt
+                          ? "bg-emerald-50 text-emerald-800 border-emerald-200 text-[10px]"
+                          : "bg-amber-50 text-amber-800 border-amber-200 text-[10px]"
+                      }>
+                        {firstSentAt ? (hasMultipleShipments ? "Reenviado" : "Enviado") : "Pendiente de Envío"}
+                      </Badge>
+                    </div>
+
+                    {firstSentAt ? (
+                      <div className="flex flex-col gap-2 mt-1">
+                        {hasMultipleShipments ? (
+                          <>
+                            {/* Primer Envío */}
+                            <div className="p-2.5 rounded bg-white border border-stone-200 text-[11px] text-stone-600 shadow-xs">
+                              <div className="font-semibold text-stone-800 text-[11px] mb-1 flex items-center justify-between border-b border-stone-100 pb-1">
+                                <span className="flex items-center gap-1.5 font-bold">
+                                  <span>1.er Envío</span>
+                                  <Badge variant="outline" className="text-[9px] px-1 py-0 bg-stone-100 text-stone-600 border-stone-200 font-normal">Inicial</Badge>
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-1 gap-y-1">
+                                <div><span className="text-stone-500">Fecha:</span> <strong className="text-stone-800">{formatDate(firstSentAt)}</strong></div>
+                                <div><span className="text-stone-500">Medio:</span> <strong className="text-stone-800">{formatMedium(firstSentVia)}</strong></div>
+                                <div><span className="text-stone-500">Responsable:</span> <strong className="text-stone-800">{firstSentByName || "Asesor comercial"}</strong></div>
+                              </div>
+                            </div>
+
+                            {/* Último Envío */}
+                            <div className="p-2.5 rounded bg-emerald-50/70 border border-emerald-200 text-[11px] text-stone-700 shadow-xs">
+                              <div className="font-semibold text-emerald-950 text-[11px] mb-1 flex items-center justify-between border-b border-emerald-200/60 pb-1">
+                                <span className="flex items-center gap-1.5 font-bold">
+                                  <span>Último Envío</span>
+                                  <Badge variant="outline" className="text-[9px] px-1 py-0 bg-emerald-100 text-emerald-800 border-emerald-300 font-medium">Reciente</Badge>
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-1 gap-y-1">
+                                <div><span className="text-stone-500">Fecha:</span> <strong className="text-stone-800">{formatDate(lastSentAt)}</strong></div>
+                                <div><span className="text-stone-500">Medio:</span> <strong className="text-stone-800">{formatMedium(lastSentVia)}</strong></div>
+                                <div><span className="text-stone-500">Responsable:</span> <strong className="text-stone-800">{lastSentByName || "Asesor comercial"}</strong></div>
+                              </div>
+                              {budget.shipment_notes && (
+                                <div className="mt-1.5 text-stone-600 italic text-[10px] bg-white/70 p-1.5 rounded border border-emerald-200/50">
+                                  Nota: &quot;{budget.shipment_notes}&quot;
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        ) : (
+                          /* Envío Único */
+                          <div className="p-2.5 rounded bg-white border border-stone-200 text-[11px] text-stone-600 shadow-xs">
+                            <div className="grid grid-cols-1 gap-y-1">
+                              <div><span className="text-stone-500">Fecha:</span> <strong className="text-stone-800">{formatDate(firstSentAt)}</strong></div>
+                              <div><span className="text-stone-500">Medio:</span> <strong className="text-stone-800">{formatMedium(firstSentVia)}</strong></div>
+                              <div><span className="text-stone-500">Responsable:</span> <strong className="text-stone-800">{firstSentByName || "Asesor comercial"}</strong></div>
+                            </div>
+                            {budget.shipment_notes && (
+                              <div className="mt-1.5 text-stone-600 italic text-[10px] bg-stone-50 p-1.5 rounded border border-stone-200">
+                                Nota: &quot;{budget.shipment_notes}&quot;
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-stone-500 mt-0.5">
+                        Aún no se registró el envío comercial al cliente.
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  <p className="text-[11px] text-stone-500 mt-0.5">
-                    Aún no se registró el envío comercial al cliente.
-                  </p>
-                )}
-              </div>
+                );
+              })()}
 
               {/* Compartir enlace público y WhatsApp */}
               <div className="flex flex-col gap-1.5 mt-1">
