@@ -24,6 +24,7 @@ try {
   await setup.query(base);
   await setup.query(fs.readFileSync('supabase/archive/20261002_commercial_stabilization_v2.sql', 'utf8'));
   await setup.query(fs.readFileSync('supabase/migrations/20261003000100_commercial_release.sql', 'utf8'));
+  await setup.query(fs.readFileSync('supabase/migrations/20261004000100_sprint1_administration_portal.sql', 'utf8'));
   const privileges = await setup.query(`select bool_and(
     not has_function_privilege('anon', p.oid, 'EXECUTE') and
     not has_function_privilege('authenticated', p.oid, 'EXECUTE')

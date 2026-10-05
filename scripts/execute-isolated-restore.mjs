@@ -29,6 +29,10 @@ try {
   const migration = fs.readFileSync('supabase/migrations/20261003000100_commercial_release.sql', 'utf8');
   await db.exec(migration);
   await db.exec(migration);
+
+  const sprint1Migration = fs.readFileSync('supabase/migrations/20261004000100_sprint1_administration_portal.sql', 'utf8');
+  await db.exec(sprint1Migration);
+  await db.exec(sprint1Migration);
   for (const table of order) {
     const after = (await db.query(`select to_jsonb(t) document from public.${table} t order by id`)).rows.map(row => row.document);
     assert.equal(after.length, before[table].length);

@@ -43,6 +43,8 @@ interface OrdersListClientProps {
   initialStatus?: string;
   initialSaleChannel?: string;
   isAdmin: boolean;
+  ordersBasePath?: string;
+  budgetsBasePath?: string;
 }
 
 const PAGE_SIZE = 15;
@@ -55,7 +57,9 @@ export function OrdersListClient({
   initialBudgets,
   initialStatus = "all",
   initialSaleChannel = "all",
-  isAdmin
+  isAdmin,
+  ordersBasePath = "/admin-comercial/pedidos",
+  budgetsBasePath = "/admin-comercial/presupuestos"
 }: OrdersListClientProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"factory" | "distributor">("factory");
@@ -360,7 +364,7 @@ export function OrdersListClient({
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Button variant="outline" size="sm" asChild className="text-xs py-1 px-2.5">
-                              <Link href={`/admin-comercial/pedidos/${o.id}`} className="flex items-center gap-1">
+                              <Link href={`${ordersBasePath}/${o.id}`} className="flex items-center gap-1">
                                 <Eye className="w-3.5 h-3.5" />
                                 <span>Ver</span>
                               </Link>
@@ -419,7 +423,7 @@ export function OrdersListClient({
                         </td>
                         <td className="px-4 py-3 text-right">
                           <Button variant="outline" size="sm" asChild className="text-xs py-1 px-2.5">
-                            <Link href={`/admin-comercial/presupuestos/${b.id}`} className="flex items-center gap-1">
+                            <Link href={`${budgetsBasePath}/${b.id}`} className="flex items-center gap-1">
                               <Eye className="w-3.5 h-3.5" />
                               <span>Detalle</span>
                             </Link>

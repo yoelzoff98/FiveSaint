@@ -31,6 +31,12 @@ interface Order {
   notes: string | null;
   created_at: string;
   budget_id: string | null;
+  status_updated_at?: string | null;
+  status_updated_by?: string | null;
+  status_updated_by_name?: string | null;
+  cancelled_by?: string | null;
+  cancelled_by_name?: string | null;
+  cancellation_reason?: string | null;
   clients: {
     name: string;
     company_name: string | null;
@@ -179,10 +185,30 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
 
             <div>
               <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Vendedor Registrante</h3>
-              <div className="flex items-center gap-2 text-stone-800">
+              <div className="flex items-center gap-2 text-stone-850 mb-1">
                 <User className="w-4 h-4 text-stone-400" />
                 <span>{order.sellers?.full_name || "Admin / Venta Directa"}</span>
               </div>
+              {order.status_updated_at && (
+                <div className="text-xs text-stone-500 mt-2 pt-2 border-t border-stone-100">
+                  <span>Último cambio de estado: </span>
+                  <strong className="text-stone-700">
+                    {new Date(order.status_updated_at).toLocaleString("es-AR")}
+                  </strong>
+                  {order.status_updated_by_name && (
+                    <span className="text-stone-600 block text-[11px] mt-0.5">
+                      Por: {order.status_updated_by_name}
+                    </span>
+                  )}
+                </div>
+              )}
+              {order.status === "cancelled" && (
+                <div className="mt-2 p-2.5 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800">
+                  <div className="font-bold">Pedido Cancelado</div>
+                  {order.cancelled_by_name && <div>Por: {order.cancelled_by_name}</div>}
+                  {order.cancellation_reason && <div className="mt-0.5 italic">Motivo: {order.cancellation_reason}</div>}
+                </div>
+              )}
             </div>
           </div>
 

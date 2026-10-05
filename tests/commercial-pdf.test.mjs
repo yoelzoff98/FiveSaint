@@ -57,5 +57,90 @@ test('Every budget in the local historical backup preserves its issued amounts i
     const html = renderToStaticMarkup(React.createElement(BudgetPrintPdf, { budget: input }));
     assert.ok(html.includes(formatCurrencyARS(totals.netTotal)));
     assert.ok(html.includes(formatCurrencyARS(totals.totalWithTax)));
+    assert.ok(!html.includes('Emitido por:'));
+    assert.ok(html.includes('Asesor Comercial:'));
   }
+});
+
+test('Administrative PDF renders assigned commercial advisor and explicit issuer snapshot', () => {
+  const adminBudget = {
+    id: 'admin-budget-1',
+    budget_number: 999,
+    status: 'draft',
+    created_at: '2026-10-04T12:00:00Z',
+    total_amount: 150000,
+    discounts: [],
+    creator_role: 'administration',
+    author_snapshot: {
+      user_id: 'user-admin-1',
+      name: 'Carla Ferraro (Administración)',
+      role: 'administration',
+      email: 'carla@fivesaint.com'
+    },
+    seller_snapshot: {
+      name: 'Gonzalo Vendedor',
+      full_name: 'Gonzalo Vendedor',
+      seller_id: 'seller-uuid-1',
+      phone: '+54 9 11 5555-1234'
+    },
+    client_snapshot: {
+      name: 'Cliente VIP SA',
+      company_name: 'VIP Corporativo',
+      email: 'vip@empresa.com'
+    },
+    items: [
+      { id: 'it-1', product_name: 'Bañera Hidromasaje', variant_name: 'Premium', quantity: 1, unit_price: 150000, total_price: 150000 }
+    ]
+  };
+
+  const html = renderToStaticMarkup(React.createElement(BudgetPrintPdf, { budget: adminBudget }));
+
+  assert.ok(html.includes('Asesor Comercial Asignado:'));
+  assert.ok(html.includes('Gonzalo Vendedor'));
+  assert.ok(html.includes('Emitido por:'));
+  assert.ok(html.includes('Carla Ferraro (Administración)'));
+  assert.ok(!html.includes('Asesor Comercial:</span>'));
+});
+
+test('Public budget digital view renders correctly for both historical and administrative budgets', async () => {
+  const { PublicBudgetViewClient } = await import('../src/app/(public)/presupuesto/[id]/PublicBudgetViewClient.tsx');
+
+  const historical = {
+    id: 'hist-1',
+    budget_number: 101,
+    status: 'draft',
+    created_at: '2026-10-01T10:00:00Z',
+    total_amount: 50000,
+    discounts: [],
+    client_snapshot: { name: 'Comprador Histórico' },
+    seller_snapshot: { name: 'Vendedor Original' },
+    items: [{ id: 'i1', product_name: 'Spa Clásico', variant_name: null, quantity: 1, unit_price: 50000, total_price: 50000 }]
+  };
+  const htmlHistorical = renderToStaticMarkup(React.createElement(PublicBudgetViewClient, { budget: historical }));
+  assert.ok(htmlHistorical.includes('Presupuesto Digital'));
+  assert.ok(htmlHistorical.includes('N° FS-P-101'));
+  assert.ok(htmlHistorical.includes('Comprador Histórico'));
+  assert.ok(htmlHistorical.includes('Vendedor Original'));
+  assert.ok(!htmlHistorical.includes('Emitido por:'));
+
+  const administrative = {
+    id: 'adm-pub-1',
+    budget_number: 202,
+    status: 'draft',
+    created_at: '2026-10-04T14:00:00Z',
+    total_amount: 90000,
+    discounts: [],
+    creator_role: 'administration',
+    author_snapshot: { name: 'Oficina Central' },
+    seller_snapshot: { full_name: 'Asesor Comercial Asignado Pedro' },
+    client_snapshot: { name: 'Comprador Reciente' },
+    items: [{ id: 'i2', product_name: 'Ducha Escocesa', variant_name: null, quantity: 1, unit_price: 90000, total_price: 90000 }]
+  };
+  const htmlAdmin = renderToStaticMarkup(React.createElement(PublicBudgetViewClient, { budget: administrative }));
+  assert.ok(htmlAdmin.includes('Presupuesto Digital'));
+  assert.ok(htmlAdmin.includes('N° FS-P-202'));
+  assert.ok(htmlAdmin.includes('Asesor Comercial Asignado:'));
+  assert.ok(htmlAdmin.includes('Asesor Comercial Asignado Pedro'));
+  assert.ok(htmlAdmin.includes('Emitido por:'));
+  assert.ok(htmlAdmin.includes('Oficina Central'));
 });

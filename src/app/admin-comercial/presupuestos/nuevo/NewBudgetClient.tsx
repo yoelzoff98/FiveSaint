@@ -31,9 +31,10 @@ interface NewBudgetClientProps {
   clients: Client[];
   initialClientId?: string;
   userId?: string;
+  redirectBase?: string;
 }
 
-export function NewBudgetClient({ clients, initialClientId, userId }: NewBudgetClientProps) {
+export function NewBudgetClient({ clients, initialClientId, userId, redirectBase = "/admin-comercial/presupuestos" }: NewBudgetClientProps) {
   const router = useRouter();
   const creationRequest = useRef<{ payload: string; key: string } | null>(null);
   const storageKey = `fivesaint_draft_budget_${userId || "default"}`;
@@ -267,7 +268,7 @@ export function NewBudgetClient({ clients, initialClientId, userId }: NewBudgetC
         // Ignorar
       }
 
-      router.push(`/admin-comercial/presupuestos/${budget.id}`);
+      router.push(`${redirectBase}/${budget.id}`);
       router.refresh();
     } catch (err: any) {
       console.error(err);

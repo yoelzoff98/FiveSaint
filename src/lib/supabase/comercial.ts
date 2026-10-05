@@ -22,11 +22,13 @@ import {
 export interface CommercialUserContext {
   isLoggedIn: boolean;
   isAdmin: boolean;
+  isAdministration: boolean;
   isSeller: boolean;
   isDistributor: boolean;
   isActive: boolean;
   sellerId?: string; // id from public.sellers table
   distributorId?: string; // id from public.distributors table
+  administrationId?: string; // id from public.administration_users table
   discountPercentage?: number;
   user?: User;
   profileName?: string;
@@ -46,7 +48,7 @@ function hashPayload(payload: unknown): string {
 export async function getCommercialUserContext(): Promise<CommercialUserContext> {
   const user = await getCurrentUser();
   if (!user) {
-    return { isLoggedIn: false, isAdmin: false, isSeller: false, isDistributor: false, isActive: false };
+    return { isLoggedIn: false, isAdmin: false, isAdministration: false, isSeller: false, isDistributor: false, isActive: false };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -63,6 +65,7 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
     return {
       isLoggedIn: true,
       isAdmin: isActive,
+      isAdministration: false,
       isSeller: false,
       isDistributor: false,
       isActive,
@@ -71,6 +74,15 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
     };
   }
 
+  // 1.1 Verificar si es usuario del rol Administración
+  const { data: administrationUser } = await supabase
+    .from("administration_users")
+    .select("id, full_name, is_active")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const isAdministrationActive = Boolean(administrationUser && administrationUser.is_active);
+
   // 2. Verificar si es vendedor
   const { data: sellerUser } = await supabase
     .from("sellers")
@@ -78,19 +90,7 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
     .eq("user_id", user.id)
     .single();
 
-  if (sellerUser) {
-    const isActive = Boolean(sellerUser.is_active);
-    return {
-      isLoggedIn: true,
-      isAdmin: false,
-      isSeller: isActive,
-      isDistributor: false,
-      isActive,
-      sellerId: sellerUser.id,
-      user,
-      profileName: sellerUser.full_name,
-    };
-  }
+  const isSellerActive = Boolean(sellerUser && sellerUser.is_active);
 
   // 3. Verificar si es distribuidor
   const { data: distributorUser } = await supabase
@@ -99,24 +99,62 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
     .eq("user_id", user.id)
     .single();
 
-  if (distributorUser) {
-    const isActive = Boolean(distributorUser.is_active);
+  const isDistributorActive = Boolean(distributorUser && distributorUser.is_active);
+
+  // Si tiene rol Administración ACTIVO:
+  // Administración activa tiene PRIORIDAD en consultas y autorizaciones comerciales.
+  if (isAdministrationActive) {
     return {
       isLoggedIn: true,
       isAdmin: false,
-      isSeller: false,
-      isDistributor: isActive,
-      isActive,
-      distributorId: distributorUser.id,
-      discountPercentage: Number(distributorUser.discount_percentage || 0),
+      isAdministration: true,
+      isSeller: false, // Administración activa tiene prioridad: visión global sin filtrado por seller_id
+      isDistributor: false,
+      isActive: true,
+      administrationId: administrationUser?.id,
+      sellerId: sellerUser?.id, // Preservado como referencia en caso de desactivación
+      distributorId: distributorUser?.id,
       user,
-      profileName: distributorUser.company_name || distributorUser.contact_name,
+      profileName: administrationUser?.full_name || sellerUser?.full_name || "Administración",
+    };
+  }
+
+  // Si Administración está inactiva (o no existe), pero tiene rol comercial VENDEDOR ACTIVO:
+  // Se recupera automáticamente su rol comercial restringido.
+  if (isSellerActive) {
+    return {
+      isLoggedIn: true,
+      isAdmin: false,
+      isAdministration: false, // Administración inactiva o revocada
+      isSeller: true,          // Rol comercial vigente recuperado
+      isDistributor: false,
+      isActive: true,
+      sellerId: sellerUser?.id,
+      user,
+      profileName: sellerUser?.full_name,
+    };
+  }
+
+  // Si Administración está inactiva (o no existe), pero tiene rol comercial DISTRIBUIDOR ACTIVO:
+  if (isDistributorActive) {
+    return {
+      isLoggedIn: true,
+      isAdmin: false,
+      isAdministration: false,
+      isSeller: false,
+      isDistributor: true,
+      isActive: true,
+      distributorId: distributorUser?.id,
+      discountPercentage: Number(distributorUser?.discount_percentage || 0),
+      user,
+      profileName: distributorUser?.company_name || distributorUser?.contact_name,
     };
   }
 
   return {
     isLoggedIn: true,
     isAdmin: false,
+    isAdministration: false,
     isSeller: false,
     isDistributor: false,
     isActive: false,
@@ -130,7 +168,7 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
  */
 export async function requireCommercialUser(): Promise<CommercialUserContext> {
   const ctx = await getCommercialUserContext();
-  if (!ctx.isLoggedIn || !ctx.isActive || (!ctx.isAdmin && !ctx.isSeller && !ctx.isDistributor)) {
+  if (!ctx.isLoggedIn || !ctx.isActive || (!ctx.isAdmin && !ctx.isAdministration && !ctx.isSeller && !ctx.isDistributor)) {
     redirect("/admin-comercial/login");
   }
   return ctx;
@@ -571,6 +609,8 @@ export async function getPaginatedBudgets(params: PaginationParams = {}): Promis
       client_id,
       seller_id,
       distributor_id,
+      created_by_user_id,
+      creator_role,
       clients(id, name, company_name, status),
       sellers(id, full_name),
       distributors(id, company_name)
@@ -586,11 +626,77 @@ export async function getPaginatedBudgets(params: PaginationParams = {}): Promis
     query = query.eq("status", params.status);
   }
 
+  if (params.search && params.search.trim()) {
+    const s = params.search.trim();
+    const num = parseInt(s, 10);
+    if (!isNaN(num) && num > 0 && String(num) === s) {
+      query = query.eq("budget_number", num);
+    } else {
+      query = query.ilike("notes", `%${s}%`);
+    }
+  }
+
   const { data, count, error } = await query
     .order("created_at", { ascending: false })
     .range(from, to);
 
   if (error) {
+    // Si la base conectada aún no aplicó la migración Sprint 1 (columnas de autoría pendientes),
+    // reintentar con las columnas estándar para compatibilidad continua y cero errores en pantalla.
+    if (error.code === "42703" || error.message?.includes("created_by_user_id") || error.message?.includes("creator_role")) {
+      let fallbackQuery = supabase
+        .from("budgets")
+        .select(`
+          id,
+          budget_number,
+          status,
+          total_amount,
+          discounts,
+          created_at,
+          client_id,
+          seller_id,
+          distributor_id,
+          clients(id, name, company_name, status),
+          sellers(id, full_name),
+          distributors(id, company_name)
+        `, { count: "exact" });
+
+      if (!ctx.isAdmin && !ctx.isAdministration && ctx.isSeller && ctx.sellerId) {
+        fallbackQuery = fallbackQuery.eq("seller_id", ctx.sellerId);
+      } else if (ctx.isDistributor && ctx.distributorId) {
+        fallbackQuery = fallbackQuery.eq("distributor_id", ctx.distributorId);
+      }
+
+      if (params.status && params.status !== "all") {
+        fallbackQuery = fallbackQuery.eq("status", params.status);
+      }
+
+      if (params.search && params.search.trim()) {
+        const s = params.search.trim();
+        const num = parseInt(s, 10);
+        if (!isNaN(num) && num > 0 && String(num) === s) {
+          fallbackQuery = fallbackQuery.eq("budget_number", num);
+        } else {
+          fallbackQuery = fallbackQuery.ilike("notes", `%${s}%`);
+        }
+      }
+
+      const { data: fbData, count: fbCount, error: fbError } = await fallbackQuery
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (!fbError && fbData) {
+        const total = fbCount || 0;
+        return {
+          data: fbData,
+          total,
+          page,
+          pageSize,
+          totalPages: Math.ceil(total / pageSize),
+        };
+      }
+    }
+
     console.error("Error getPaginatedBudgets:", error);
     throw new Error("No se pudieron cargar los presupuestos paginados");
   }
@@ -809,9 +915,26 @@ export async function createBudget(
     address: client.address || null
   };
 
-  const sellerSnapshot = {
+  // Snapshot del vendedor asignado al cliente (o el asesor comercial si emite un vendedor)
+  const assignedSeller = client.sellers;
+  const sellerSnapshot = assignedSeller ? {
+    name: assignedSeller.full_name,
+    full_name: assignedSeller.full_name,
+    seller_id: client.seller_id,
+    phone: assignedSeller.phone || null,
+    email: assignedSeller.email || null,
+  } : (ctx.isSeller ? {
     name: ctx.profileName || "Asesor Comercial Five Saint",
-    seller_id: ctx.isSeller ? ctx.sellerId : client.seller_id
+    full_name: ctx.profileName || "Asesor Comercial Five Saint",
+    seller_id: ctx.sellerId,
+  } : null);
+
+  // Snapshot de autoría explícita (quién emite el documento)
+  const authorSnapshot = {
+    user_id: ctx.user!.id,
+    name: ctx.profileName || (ctx.isAdmin ? "Administración Central Five Saint" : "Portal de Administración Five Saint"),
+    role: ctx.isAdmin ? "admin" : (ctx.isAdministration ? "administration" : "seller"),
+    email: ctx.user!.email || null,
   };
 
   const calculationSnapshot = {
@@ -885,6 +1008,7 @@ export async function createBudget(
       p_seller_snapshot: sellerSnapshot,
       p_calculation_snapshot: calculationSnapshot,
       p_seller_id: effectiveSellerId,
+      p_author_snapshot: authorSnapshot,
       p_total_amount: totals.netTotal,
       p_subtotal_amount: totals.subtotal,
       p_discount_amount: totals.discountAmount,
@@ -1146,6 +1270,16 @@ export async function getPaginatedOrders(params: PaginationParams & { saleChanne
     query = query.eq("sale_channel", params.saleChannel);
   }
 
+  if (params.search && params.search.trim()) {
+    const s = params.search.trim();
+    const num = parseInt(s, 10);
+    if (!isNaN(num) && num > 0 && String(num) === s) {
+      query = query.eq("order_number", num);
+    } else {
+      query = query.ilike("notes", `%${s}%`);
+    }
+  }
+
   const { data, count, error } = await query
     .order("created_at", { ascending: false })
     .range(from, to);
@@ -1241,7 +1375,7 @@ export async function getOrderById(id: string) {
  * Actualiza el estado de un pedido garantizando que la cancelación use la vía transaccional única.
  */
 export async function updateOrderStatus(id: string, status: string) {
-  await requireCommercialUser();
+  const ctx = await requireCommercialUser();
 
   if (status === "cancelled") {
     return cancelOrder(id, "Cancelado desde control de producción");
@@ -1252,10 +1386,20 @@ export async function updateOrderStatus(id: string, status: string) {
     throw new Error(`Transición de estado de pedido no permitida: de '${order.status}' a '${status}'`);
   }
 
+  const authorId = ctx.user?.id;
+  const authorName = ctx.profileName || ctx.user?.email || "Usuario autorizado";
+  const nowIso = new Date().toISOString();
+
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
     .from("orders")
-    .update({ status, updated_at: new Date().toISOString() })
+    .update({
+      status,
+      status_updated_at: nowIso,
+      status_updated_by: authorId,
+      status_updated_by_name: authorName,
+      updated_at: nowIso
+    })
     .eq("id", id)
     .eq("status", order.status)
     .select()
@@ -1265,6 +1409,24 @@ export async function updateOrderStatus(id: string, status: string) {
     console.error("Error updateOrderStatus:", error);
     throw new Error("El pedido cambió mientras lo editabas. Recargá la página y volvé a intentar.");
   }
+
+  // Registrar auditoría en client_notes
+  if (order.client_id) {
+    try {
+      await supabase.from("client_notes").insert({
+        client_id: order.client_id,
+        seller_id: order.seller_id,
+        order_id: id,
+        budget_id: order.budget_id,
+        content: `Estado de pedido N° ${order.order_number} actualizado a '${status}' por ${authorName}.`,
+        contacted_at: nowIso,
+        note_type: "order_status_change"
+      });
+    } catch (noteErr) {
+      console.warn("No se pudo registrar la nota de auditoría del pedido:", noteErr);
+    }
+  }
+
   return data;
 }
 
@@ -1644,11 +1806,22 @@ const loadPublicBudget = cache(async (identifier: string): Promise<IssuedBudget>
   const admin = createSupabaseAdminClient();
   // No historical links existed: internal IDs are never accepted as public tokens.
   // Fail closed if publication columns or the published token are unavailable.
-  const { data: budget, error } = await admin.from("budgets").select(`
+  let { data: budget, error } = await admin.from("budgets").select(`
     id, budget_number, status, total_amount, tax_rate, discounts, created_at,
-    public_notes, client_snapshot, seller_snapshot, calculation_snapshot,
+    public_notes, client_snapshot, seller_snapshot, author_snapshot, calculation_snapshot,
+    created_by_user_id, creator_role,
     clients(name, company_name, address), sellers(full_name, email, phone)
   `).eq("public_token", identifier).eq("public_status", "published").maybeSingle();
+
+  if (error && (error.code === "42703" || error.message?.includes("author_snapshot") || error.message?.includes("created_by_user_id"))) {
+    const fallbackRes = await admin.from("budgets").select(`
+      id, budget_number, status, total_amount, tax_rate, discounts, created_at,
+      public_notes, client_snapshot, seller_snapshot, calculation_snapshot,
+      clients(name, company_name, address), sellers(full_name, email, phone)
+    `).eq("public_token", identifier).eq("public_status", "published").maybeSingle();
+    budget = fallbackRes.data as any;
+    error = fallbackRes.error;
+  }
   if (error || !budget) throw new Error("Enlace no disponible");
   const { data: items, error: itemsError } = await admin.from("budget_items")
     .select("id, product_name, variant_name, quantity, unit_price, total_price")

@@ -21,6 +21,14 @@ export interface Budget {
   public_notes?: string | null;
   discounts: number[];
   created_at: string;
+  creator_role?: string | null;
+  created_by_user_id?: string | null;
+  author_snapshot?: {
+    user_id?: string;
+    name?: string;
+    role?: string;
+    email?: string | null;
+  } | null;
   client_snapshot?: {
     name: string;
     company_name?: string | null;
@@ -122,19 +130,50 @@ export const BudgetPrintPdf = forwardRef<HTMLDivElement, BudgetPrintPdfProps>(
             </div>
 
             <div className="border-t sm:border-t-0 sm:border-l border-stone-200 pt-4 sm:pt-0 sm:pl-6">
-              <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-2">
-                Asesor Comercial:
-              </span>
-              <p className="font-bold text-stone-900 text-sm mb-1">
-                {seller?.full_name || ("name" in (seller || {}) ? budget.seller_snapshot?.name : null) || "Five Saint (Administración)"}
-              </p>
-              <p className="text-stone-600 mb-2">
-                WhatsApp: {seller?.whatsapp || seller?.phone || "+54 9 11 3816-1492"}
-              </p>
+              {budget.creator_role === "administration" || budget.creator_role === "admin" ? (
+                <>
+                  <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-2">
+                    Asesor Comercial Asignado:
+                  </span>
+                  <p className="font-bold text-stone-900 text-sm mb-1">
+                    {seller?.full_name || ("name" in (seller || {}) ? (seller as any).name : null) || "Sin asesor comercial asignado"}
+                  </p>
+                  {seller && (seller.whatsapp || (seller as any).phone) && (
+                    <p className="text-stone-600 mb-1">
+                      WhatsApp: {seller.whatsapp || (seller as any).phone}
+                    </p>
+                  )}
 
-              <div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 font-semibold inline-block mt-1">
-                Validez de cotización: 7 días corridos.
-              </div>
+                  <div className="mt-2 pt-2 border-t border-stone-200">
+                    <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-0.5">
+                      Emitido por:
+                    </span>
+                    <p className="font-medium text-stone-800 text-xs">
+                      {budget.author_snapshot?.name || (budget.creator_role === "admin" ? "Administración Central Five Saint" : "Portal de Administración Five Saint")}
+                    </p>
+                  </div>
+
+                  <div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 font-semibold inline-block mt-2">
+                    Validez de cotización: 7 días corridos.
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="font-bold text-stone-500 uppercase tracking-widest text-[9px] block mb-2">
+                    Asesor Comercial:
+                  </span>
+                  <p className="font-bold text-stone-900 text-sm mb-1">
+                    {seller?.full_name || ("name" in (seller || {}) ? budget.seller_snapshot?.name : null) || "Five Saint (Administración)"}
+                  </p>
+                  <p className="text-stone-600 mb-2">
+                    WhatsApp: {seller?.whatsapp || seller?.phone || "+54 9 11 3816-1492"}
+                  </p>
+
+                  <div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 font-semibold inline-block mt-1">
+                    Validez de cotización: 7 días corridos.
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

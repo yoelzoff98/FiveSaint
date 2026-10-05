@@ -48,6 +48,8 @@ interface Budget {
   public_notes?: string | null;
   public_status?: string | null;
   public_token?: string | null;
+  creator_role?: string | null;
+  created_by_user_id?: string | null;
   discounts: number[];
   created_at: string;
   clients: {
@@ -74,9 +76,10 @@ interface Budget {
 
 interface BudgetDetailClientProps {
   initialBudget: Budget;
+  ordersBasePath?: string;
 }
 
-export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
+export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-comercial/pedidos" }: BudgetDetailClientProps) {
   const router = useRouter();
   const [budget, setBudget] = useState<Budget>(initialBudget);
 
@@ -284,11 +287,11 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
       const targetOrderId = (order as any)?.id || (order as any)?.order_id;
       setTimeout(() => {
         if (saleType === "distributor") {
-          router.push(`/admin-comercial/pedidos`);
+          router.push(ordersBasePath);
         } else if (targetOrderId) {
-          router.push(`/admin-comercial/pedidos/${targetOrderId}`);
+          router.push(`${ordersBasePath}/${targetOrderId}`);
         } else {
-          router.push(`/admin-comercial/pedidos`);
+          router.push(ordersBasePath);
         }
         router.refresh();
       }, 1500);
@@ -396,10 +399,22 @@ export function BudgetDetailClient({ initialBudget }: BudgetDetailClientProps) {
 
             <div>
               <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Emisor y Seguimiento</h3>
-              <div className="flex items-center gap-2 text-stone-850 mb-1.5">
-                <User className="w-4 h-4 text-stone-400" />
-                <span>Asesor: {budget.sellers?.full_name || "Five Saint (Administración)"}</span>
-              </div>
+              {budget.creator_role === "administration" || budget.creator_role === "admin" ? (
+                <>
+                  <div className="flex items-center gap-2 text-stone-850 mb-1">
+                    <User className="w-4 h-4 text-stone-400" />
+                    <span>Asesor Asignado: <strong>{budget.sellers?.full_name || "Sin Asignar"}</strong></span>
+                  </div>
+                  <div className="text-xs text-accent-deep font-semibold mb-2 pl-6">
+                    Emitido por: {budget.creator_role === "admin" ? "Administración Central" : "Administración"}
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 text-stone-850 mb-1.5">
+                  <User className="w-4 h-4 text-stone-400" />
+                  <span>Asesor: <strong>{budget.sellers?.full_name || "Five Saint (Administración)"}</strong></span>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-stone-600 text-xs mb-1">
                 <Eye className="w-3.5 h-3.5 text-stone-400" />
                 <span>Visualizaciones web: {budget.view_count || 0} visitas</span>

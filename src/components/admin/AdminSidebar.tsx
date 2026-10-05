@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, PlusSquare, ExternalLink, FolderTree, FolderPlus } from "lucide-react";
+import { LayoutDashboard, Package, PlusSquare, ExternalLink, FolderTree, FolderPlus, Briefcase, ShoppingBag } from "lucide-react";
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -13,6 +13,8 @@ export function AdminSidebar() {
     { href: "/admin-FiveSaint/productos/nuevo", label: "Nuevo Producto", icon: PlusSquare },
     { href: "/admin-FiveSaint/categorias", label: "Categorías", icon: FolderTree },
     { href: "/admin-FiveSaint/categorias/nueva", label: "Nueva Categoría", icon: FolderPlus },
+    { href: "/administracion", label: "Portal Administración", icon: Briefcase },
+    { href: "/admin-comercial/dashboard", label: "Portal Comercial", icon: ShoppingBag },
   ];
 
   return (

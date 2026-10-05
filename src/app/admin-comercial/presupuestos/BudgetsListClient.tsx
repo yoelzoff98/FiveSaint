@@ -16,6 +16,8 @@ interface Budget {
   status: string;
   total_amount: number;
   created_at: string;
+  creator_role?: string | null;
+  created_by_user_id?: string | null;
   clients: { name: string; company_name: string | null; status?: string } | null;
   sellers: { full_name: string } | null;
 }
@@ -29,6 +31,7 @@ interface BudgetsListClientProps {
   initialSearch?: string;
   initialStatus?: string;
   isAdmin: boolean;
+  basePath?: string;
 }
 
 const PAGE_SIZE = 20;
@@ -40,7 +43,8 @@ export function BudgetsListClient({
   serverTotalPages = 1,
   initialSearch = "",
   initialStatus = "all",
-  isAdmin
+  isAdmin,
+  basePath = "/admin-comercial/presupuestos"
 }: BudgetsListClientProps) {
   const router = useRouter();
   const [budgets] = useState<Budget[]>(initialBudgets);
@@ -247,9 +251,16 @@ export function BudgetsListClient({
                       </td>
                       {isAdmin && (
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-1 text-[11px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-full w-max">
-                            <User className="w-3 h-3 text-stone-400" />
-                            <span>{b.sellers?.full_name || "Admin"}</span>
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1 text-[11px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-full w-max">
+                              <User className="w-3 h-3 text-stone-400" />
+                              <span>{b.sellers?.full_name || "Sin Asignar"}</span>
+                            </div>
+                            {b.creator_role && b.creator_role !== "seller" && (
+                              <span className="text-[10px] text-accent-deep font-semibold pl-1">
+                                {b.creator_role === "admin" ? "Por: Admin Central" : "Por: Administración"}
+                              </span>
+                            )}
                           </div>
                         </td>
                       )}
@@ -266,7 +277,7 @@ export function BudgetsListClient({
                           asChild
                           className="cursor-pointer text-xs py-1 px-2.5"
                         >
-                          <Link href={`/admin-comercial/presupuestos/${b.id}`} className="flex items-center gap-1">
+                          <Link href={`${basePath}/${b.id}`} className="flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" />
                             <span>Ver Ficha</span>
                           </Link>
