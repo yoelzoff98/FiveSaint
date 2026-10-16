@@ -26,7 +26,9 @@ try {
   await setup.query(fs.readFileSync('supabase/migrations/20261003000100_commercial_release.sql', 'utf8'));
   await setup.query(fs.readFileSync('supabase/migrations/20261004000100_sprint1_administration_portal.sql', 'utf8'));
   await setup.query(fs.readFileSync('supabase/migrations/20261005000100_sprint_seller_closing_flow.sql', 'utf8'));
+  await setup.query(fs.readFileSync('supabase/migrations/20261006000100_sprint_admin_clients_and_manufacturing.sql', 'utf8'));
 
+  await setup.query(fs.readFileSync('supabase/migrations/20261015000100_catalog_manufacturing_bindings.sql', 'utf8'));
   const privileges = await setup.query(`select bool_and(
     not has_function_privilege('anon', p.oid, 'EXECUTE') and
     not has_function_privilege('authenticated', p.oid, 'EXECUTE')
@@ -34,7 +36,10 @@ try {
   where n.nspname='public' and p.proname in ('create_budget_transactional',
     'convert_budget_transactional', 'cancel_order_transactional',
     'publish_budget_transactional', 'revoke_budget_transactional', 'increment_budget_view',
-    'record_budget_shipment_transactional', 'reopen_budget_transactional', 'reject_budget_transactional')`);
+    'record_budget_shipment_transactional', 'reopen_budget_transactional', 'reject_budget_transactional',
+    'reassign_client_transactional', 'fn_delete_client_safe',
+    'publish_product_composition_transactional', 'issue_manufacturing_order_transactional',
+    'revise_manufacturing_order_transactional', 'review_order_item_configuration_transactional')`);
   assert.equal(privileges.rows[0].secured, true);
 
   const user = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
@@ -168,6 +173,27 @@ try {
   assert.equal((await setup.query('select last_viewed_at from budgets where id=$1', [budget])).rows[0].last_viewed_at.getTime(), views.rows[0].last_viewed_at.getTime());
   await setup.query('select revoke_budget_transactional($1,$2)', [user,budget]);
   assert.equal((await setup.query('select increment_budget_view($1) result', [budget])).rows[0].result.success,false);
+
+  // Manufacturing races: hold the winning emission uncommitted, prove the other PID waits.
+  await setup.query("insert into admin_users(user_id,username,full_name) values($1,'local-admin','Synthetic Admin')", [user]);
+  const category = (await setup.query("insert into product_categories(name,slug) values('Synthetic','synthetic') returning id")).rows[0].id;
+  const product = (await setup.query("insert into products(category_id,name,slug,short_description,description) values($1,'Synthetic product','synthetic-product','Synthetic description','Synthetic long description') returning id", [category])).rows[0].id;
+  const bom = (await setup.query("insert into product_compositions(product_id,version,status,name) values($1,1,'published','Synthetic BOM') returning id", [product])).rows[0].id;
+  const order = (await setup.query("insert into orders(client_id,seller_id,status,sale_channel) values($1,$2,'pending','direct') returning id", [customer,seller])).rows[0].id;
+  const orderItem = (await setup.query("insert into order_items(order_id,product_id,product_name,quantity,unit_price,total_price,configuration_status) values($1,$2,'Synthetic product',2,100,200,'approved') returning id", [order,product])).rows[0].id;
+  const emit = (connection,key,hash=key) => connection.query(`select issue_manufacturing_order_transactional($1,$2,$3,2,$4,'{}','[]','[{"code":"TEST","name":"Synthetic","quantity":2,"unitOfMeasure":"un"}]',null,$5,$6) result`, [user,order,orderItem,bom,key,hash]);
+  await a.query('begin');
+  const emitted = await emit(a,'mfg-same');
+  let emissionResolved = false;
+  const duplicate = emit(b,'mfg-same').then(result => { emissionResolved = true; return result; });
+  await new Promise(resolve => setTimeout(resolve,150));
+  assert.equal(emissionResolved,false);
+  await a.query('commit');
+  assert.deepEqual((await duplicate).rows[0].result,emitted.rows[0].result);
+  await assert.rejects(emit(b,'mfg-same','changed'), /idempotencia/i);
+  await assert.rejects(emit(b,'mfg-other'), /CANTIDAD EXCEDIDA/);
+  assert.equal(Number((await setup.query('select count(*) count from manufacturing_orders where order_item_id=$1',[orderItem])).rows[0].count),1);
+  console.log('PASS: manufacturing independent-session duplicate, payload conflict and balance protection.');
 
   console.log('PASS: independent PostgreSQL sessions: concurrent conversion vs rejection, publishing vs shipment separation, multiple shipment coherence, legacy 7-param compatibility, competing balances, cancel locks.');
 } finally {

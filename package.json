@@ -15,8 +15,10 @@
     "test:commercial": "node --import tsx --test tests/commercial-rules.test.mjs tests/commercial-postgres-real.test.mjs tests/commercial-pdf.test.mjs",
     "test:admin": "node --import tsx --test tests/sprint1-administration.test.mjs",
     "test:closing": "node --import tsx --test tests/sprint-seller-closing.test.mjs",
+    "test:manufacturing": "node --import tsx --test tests/sprint-admin-manufacturing.test.mjs tests/manufacturing-hardening.test.mjs",
     "test:concurrency": "node scripts/verify-native-concurrency.mjs",
-    "test:restore": "node scripts/execute-isolated-restore.mjs"
+    "test:restore": "node scripts/execute-isolated-restore.mjs",
+    "test:manufacturing-print": "node --import tsx scripts/verify-manufacturing-print.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -47,6 +49,7 @@
     "pg": "^8.23.1",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "puppeteer-core": "^25.14.0",
     "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",

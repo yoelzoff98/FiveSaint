@@ -18,6 +18,9 @@ interface Client {
 }
 
 interface BudgetItem {
+  catalogKey?: string;
+  productId?: string;
+  variantId?: string;
   id: string; // ID temporal local
   productName: string;
   variantName?: string;
@@ -25,6 +28,8 @@ interface BudgetItem {
   unitPrice: number;
   isManual?: boolean;
   manualPriceReason?: string;
+  configuration?: Record<string, any>;
+  configurationNotes?: string;
 }
 
 interface NewBudgetClientProps {
@@ -32,9 +37,18 @@ interface NewBudgetClientProps {
   initialClientId?: string;
   userId?: string;
   redirectBase?: string;
+  availableOptions?: any[];
+  manufacturingBindings?: { catalog_key: string; product_id: string; variant_id: string | null }[];
 }
 
-export function NewBudgetClient({ clients, initialClientId, userId, redirectBase = "/admin-comercial/presupuestos" }: NewBudgetClientProps) {
+export function NewBudgetClient({
+  clients,
+  initialClientId,
+  userId,
+  redirectBase = "/admin-comercial/presupuestos",
+  manufacturingBindings = [],
+  availableOptions = []
+}: NewBudgetClientProps) {
   const router = useRouter();
   const creationRequest = useRef<{ payload: string; key: string } | null>(null);
   const storageKey = `fivesaint_draft_budget_${userId || "default"}`;
@@ -53,6 +67,8 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
   const [itemType, setItemType] = useState<"catalog" | "manual">("catalog");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProductKey, setSelectedProductKey] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [itemConfigNotes, setItemConfigNotes] = useState("");
 
   // Custom manual item state
   const [customName, setCustomName] = useState("");
@@ -151,6 +167,13 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
     }
   }, [selectedCategory, officialCatalog]);
 
+  useEffect(() => {
+    setSelectedOptions({});
+  }, [selectedProductKey, itemType]);
+
+  const selectedBinding = manufacturingBindings.find(b => b.catalog_key === selectedProductKey);
+  const applicableOptions = itemType === "catalog" && selectedBinding ? availableOptions.filter(o => !o.product_id || o.product_id === selectedBinding.product_id) : [];
+
   const handleAddItem = () => {
     const qty = Math.max(1, Math.floor(quantity));
 
@@ -158,16 +181,28 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
       const prod = catalogProducts.find((p) => p.key === selectedProductKey);
       if (!prod) return;
 
+      const configuration = Object.fromEntries(applicableOptions.filter(option => selectedOptions[option.code] || option.default_value).map(option => [option.code, selectedOptions[option.code] || option.default_value]));
+      if (applicableOptions.some(option => option.is_required && !configuration[option.code])) {
+        setError("Completá las opciones técnicas obligatorias del producto.");
+        return;
+      }
       const newItem: BudgetItem = {
         id: Math.random().toString(36).substring(7),
+        catalogKey: prod.key,
+        productId: selectedBinding?.product_id,
+        variantId: selectedBinding?.variant_id || undefined,
         productName: prod.name,
         variantName: prod.variantName,
         quantity: qty,
         unitPrice: prod.price,
-        isManual: false
+        isManual: false,
+        configuration,
+        configurationNotes: itemConfigNotes.trim() || undefined
       };
 
       setItems((prev) => [...prev, newItem]);
+      setSelectedOptions({});
+      setItemConfigNotes("");
     } else {
       if (!customName.trim()) {
         setError("El ítem manual debe tener una descripción válida.");
@@ -191,13 +226,16 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
         quantity: qty,
         unitPrice: numPrice,
         isManual: true,
-        manualPriceReason: customReason.trim()
+        manualPriceReason: customReason.trim(),
+        configurationNotes: itemConfigNotes.trim() || undefined
       };
 
       setItems((prev) => [...prev, newItem]);
       setCustomName("");
       setCustomPrice("");
       setCustomReason("");
+      setSelectedOptions({});
+      setItemConfigNotes("");
     }
 
     setQuantity(1);
@@ -246,12 +284,17 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
       const budget = await createBudget(
         clientId,
         items.map(item => ({
+          catalogKey: item.catalogKey,
+          productId: item.productId,
+          variantId: item.variantId,
           productName: item.productName,
           variantName: item.variantName,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           isManual: item.isManual,
-          manualPriceReason: item.manualPriceReason
+          manualPriceReason: item.manualPriceReason,
+          configuration: item.configuration || {},
+          configurationNotes: item.configurationNotes
         })),
         notes,
         validDiscounts,
@@ -448,6 +491,51 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
                   Agregar
                 </Button>
               </div>
+
+              {/* Opciones Técnicas Configurables del Producto */}
+              {applicableOptions.length > 0 && (
+                <div className="md:col-span-12 p-3 bg-stone-50 border border-stone-200 rounded-lg mt-1 space-y-2">
+                  <span className="text-[11px] font-bold text-stone-700 uppercase tracking-wider block">
+                    Configuración técnica del producto:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {applicableOptions.map((opt) => (
+                      <div key={opt.code} className="flex flex-col gap-1">
+                        <label className="text-[11px] font-semibold text-stone-600">
+                          {opt.name} {opt.is_required && <span className="text-rose-500">*</span>}
+                        </label>
+                        <select
+                          value={selectedOptions[opt.code] || ""}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setSelectedOptions((prev) => ({
+                              ...prev,
+                              [opt.code]: val
+                            }));
+                          }}
+                          className="px-2.5 py-1.5 border border-stone-300 rounded text-xs bg-white text-stone-800"
+                        >
+                          <option value="">Predeterminado / Estándar</option>
+                          {opt.allowed_values?.map((v: any) => (
+                            <option key={v.value} value={v.value}>
+                              {v.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="pt-1">
+                    <input
+                      type="text"
+                      placeholder="Aclaraciones técnicas adicionales para fábrica (opcional)..."
+                      value={itemConfigNotes}
+                      onChange={(e) => setItemConfigNotes(e.target.value)}
+                      className="w-full px-2.5 py-1.5 border border-stone-200 rounded text-xs bg-white text-stone-700"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
@@ -541,6 +629,20 @@ export function NewBudgetClient({ clients, initialClientId, userId, redirectBase
                             </span>
                           )}
                         </div>
+                        {item.configuration && Object.keys(item.configuration).length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {Object.entries(item.configuration).map(([k, v]) => (
+                              <span key={k} className="text-[9px] bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded border border-stone-200">
+                                {k.replace(/_/g, ' ')}: <strong>{String(v)}</strong>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {item.configurationNotes && (
+                          <span className="text-[10px] text-stone-500 italic block mt-0.5">
+                            Aclaración: "{item.configurationNotes}"
+                          </span>
+                        )}
                       </td>
                       <td className="p-3 text-right text-stone-700 font-bold">{item.quantity}</td>
                       <td className="p-3 text-right text-stone-600">{formatCurrencyARS(item.unitPrice)}</td>

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 // Ítem individual para presupuesto o pedido
 export const BudgetItemInputSchema = z.object({
+  catalogKey: z.string().max(150).optional(),
   productId: z.string().uuid().optional().nullable(),
   variantId: z.string().uuid().optional().nullable(),
   productName: z
@@ -31,7 +32,9 @@ export const BudgetItemInputSchema = z.object({
   isManual: z.boolean().optional().default(false),
   manualPriceReason: z.string().max(500, "El motivo no puede exceder 500 caracteres").optional().nullable(),
   manualPriceAuthorizedBy: z.string().max(200).optional().nullable(),
-  factoryNotes: z.string().max(1000).optional().nullable()
+  factoryNotes: z.string().max(1000).optional().nullable(),
+  configuration: z.record(z.string(), z.any()).optional().default({}),
+  configurationNotes: z.string().max(1000).optional().nullable()
 }).refine(data => {
   if (data.isManual) {
     return Boolean(data.manualPriceReason && data.manualPriceReason.trim().length >= 3);

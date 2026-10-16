@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
   ShoppingBag, User, Calendar, DollarSign, Building, Mail,
-  Phone, MapPin, RefreshCw, AlertCircle, Check, X, Printer, Hammer, Truck
+  Phone, MapPin, RefreshCw, AlertCircle, Check, X, Printer, Hammer, Truck, Factory
 } from "lucide-react";
+import Link from "next/link";
 import { updateOrderStatus, cancelOrder } from "@/lib/supabase/comercial";
 import { useReactToPrint } from "react-to-print";
 import { OrderPrintPdf } from "@/components/pdf/OrderPrintPdf";
@@ -21,6 +22,8 @@ interface OrderItem {
   unit_price: number;
   total_price: number;
   factory_notes: string | null;
+  configuration?: Record<string, string> | null;
+  configuration_status?: string | null;
 }
 
 interface Order {
@@ -276,6 +279,28 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
                       {item.variant_name && (
                         <div className="text-xs text-stone-500 font-medium mt-0.5">{item.variant_name}</div>
                       )}
+                      {item.configuration && Object.keys(item.configuration).length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {Object.entries(item.configuration).map(([k, v]) => (
+                            <span key={k} className="text-[10px] bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded border border-stone-200">
+                              {k.replace(/_/g, ' ')}: <strong>{String(v)}</strong>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {item.configuration_status && (
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+                            item.configuration_status === 'approved'
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                              : item.configuration_status === 'rejected'
+                              ? 'bg-rose-50 text-rose-800 border-rose-300'
+                              : 'bg-amber-50 text-amber-800 border-amber-300'
+                          }`}>
+                            Técnica: {item.configuration_status === 'approved' ? 'Aprobada' : item.configuration_status === 'rejected' ? 'Rechazada' : 'Pendiente Revisión'}
+                          </span>
+                        </div>
+                      )}
                       {item.factory_notes && (
                         <div className="mt-1.5 p-2 bg-amber-50/60 border border-amber-100 rounded text-xs text-amber-900 font-medium max-w-lg">
                           <span className="font-bold block text-[10px] text-amber-700 uppercase tracking-wide">Aclaración Fábrica:</span>
@@ -338,6 +363,19 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
               >
                 <Truck className="w-4.5 h-4.5" />
                 Marcar como Entregado
+              </Button>
+            )}
+
+            {order.sale_channel !== "distributor" && order.status !== "cancelled" && (
+              <Button
+                variant="outline"
+                asChild
+                className="w-full flex items-center justify-center gap-2 border-stone-300 text-stone-800 hover:bg-stone-50"
+              >
+                <Link href="/administracion/fabricacion">
+                  <Factory className="w-4 h-4 text-accent-deep" />
+                  <span>Preparación de Fabricación (A4)</span>
+                </Link>
               </Button>
             )}
 

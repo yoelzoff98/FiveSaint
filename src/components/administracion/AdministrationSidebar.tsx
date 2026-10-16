@@ -11,7 +11,12 @@ import {
   Users,
   ExternalLink,
   ShieldAlert,
-  ArrowLeft
+  ArrowLeft,
+  Factory,
+  Boxes,
+  Layers,
+  SlidersHorizontal,
+  UserCheck
 } from "lucide-react";
 
 interface AdministrationSidebarProps {
@@ -23,9 +28,14 @@ export function AdministrationSidebar({ isAdmin = false }: AdministrationSidebar
 
   const links = [
     { href: "/administracion", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { href: "/administracion/clientes", label: "Clientes", icon: UserCheck },
     { href: "/administracion/pedidos", label: "Gestión de Pedidos", icon: ShoppingBag },
     { href: "/administracion/presupuestos", label: "Presupuestos", icon: FileText },
     { href: "/administracion/presupuestos/nuevo", label: "Nuevo Presupuesto", icon: FilePlus },
+    { href: "/administracion/fabricacion", label: "Órdenes Fabricación", icon: Factory },
+    { href: "/administracion/insumos", label: "Catálogo de Insumos", icon: Boxes },
+    { href: "/administracion/composiciones", label: "Composiciones (BOM)", icon: Layers },
+    { href: "/administracion/opciones", label: "Opciones Configurables", icon: SlidersHorizontal },
     { href: "/administracion/facturacion", label: "Facturación", icon: Receipt, badge: "Próximamente" },
   ];
 

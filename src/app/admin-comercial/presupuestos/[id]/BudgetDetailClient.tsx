@@ -42,6 +42,8 @@ export interface BudgetItem {
   distributor_quantity?: number;
   cancelled_quantity?: number;
   is_manual?: boolean;
+  configuration?: Record<string, any>;
+  configuration_notes?: string | null;
 }
 
 export interface LinkedOrder {
@@ -420,7 +422,8 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
         productName: item.product_name,
         variantName: item.variant_name || undefined,
         quantity: convertQuantities[item.id] || 1,
-        factoryNotes: selectedChannel === "direct" ? factoryNotes[item.id] || undefined : undefined
+        factoryNotes: selectedChannel === "direct" ? factoryNotes[item.id] || undefined : undefined,
+        configuration: item.configuration || undefined
       }));
 
       const payload = JSON.stringify({
@@ -794,6 +797,15 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
                               <span className="text-[9px] bg-amber-100 text-amber-800 rounded px-1.5 py-0.2">Manual</span>
                             )}
                           </div>
+                          {item.configuration && Object.keys(item.configuration).length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {Object.entries(item.configuration).map(([k, v]) => (
+                                <span key={k} className="text-[9px] bg-stone-100 text-stone-700 px-1.5 py-0.5 rounded border border-stone-200">
+                                  {k.replace(/_/g, ' ')}: <strong>{String(v)}</strong>
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </td>
                         <td className="px-3 py-3 text-center font-bold text-stone-800">{item.quantity}</td>
                         <td className="px-3 py-3 text-center text-emerald-700 font-bold">

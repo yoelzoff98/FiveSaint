@@ -62,6 +62,35 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
       CREATE SEQUENCE IF NOT EXISTS budgets_budget_number_seq START WITH 1;
       CREATE SEQUENCE IF NOT EXISTS orders_order_number_seq START WITH 1;
 
+      CREATE TABLE product_categories (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          is_active BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMPTZ DEFAULT now()
+      );
+
+      CREATE TABLE products (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          category_id UUID REFERENCES product_categories(id),
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL UNIQUE,
+          short_description TEXT NOT NULL DEFAULT '',
+          description TEXT NOT NULL DEFAULT '',
+          is_active BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMPTZ DEFAULT now()
+      );
+
+      CREATE TABLE product_variants (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          product_id UUID REFERENCES products(id),
+          name TEXT NOT NULL,
+          slug TEXT NOT NULL,
+          is_active BOOLEAN DEFAULT TRUE,
+          is_default BOOLEAN DEFAULT FALSE,
+          created_at TIMESTAMPTZ DEFAULT now()
+      );
+
       CREATE TABLE admin_users (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id),
@@ -174,7 +203,7 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
       );
     `);
 
-    // 3. EJECUTAR LAS TRES MIGRACIONES EN ORDEN SECUENCIAL ESTRICTO
+    // 3. EJECUTAR LAS CUATRO MIGRACIONES EN ORDEN SECUENCIAL ESTRICTO
     const migration1 = fs.readFileSync('supabase/migrations/20261003000100_commercial_release.sql', 'utf8');
     await db.exec(migration1);
 
@@ -183,6 +212,9 @@ describe('PRUEBAS DE INTEGRACIÓN REALES EN POSTGRESQL (MOTOR NATIVO PGLITE Y MI
 
     const migration3 = fs.readFileSync('supabase/migrations/20261005000100_sprint_seller_closing_flow.sql', 'utf8');
     await db.exec(migration3);
+
+    const migration4 = fs.readFileSync('supabase/migrations/20261006000100_sprint_admin_clients_and_manufacturing.sql', 'utf8');
+    await db.exec(migration4);
 
     // 4. Poblar datos maestros iniciales
     await db.exec(`

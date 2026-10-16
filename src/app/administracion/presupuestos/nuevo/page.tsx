@@ -1,6 +1,7 @@
 import { requireAdministrationUser } from "@/lib/supabase/administration";
 import { AdministrationShell } from "@/components/administracion/AdministrationShell";
 import { getClients } from "@/lib/supabase/comercial";
+import { getCommercialManufacturingSetup } from "@/lib/supabase/manufacturing";
 import { NewBudgetClient } from "@/app/admin-comercial/presupuestos/nuevo/NewBudgetClient";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -11,7 +12,10 @@ export default async function AdministrationNewBudgetPage({
   searchParams: Promise<{ clientId?: string }>;
 }) {
   const ctx = await requireAdministrationUser();
-  const clients = await getClients();
+  const [clients, options] = await Promise.all([
+    getClients(),
+    getCommercialManufacturingSetup()
+  ]);
   const resolvedSearchParams = await searchParams;
 
   return (
@@ -38,6 +42,8 @@ export default async function AdministrationNewBudgetPage({
           clients={clients}
           initialClientId={resolvedSearchParams.clientId}
           userId={ctx.user?.id}
+          availableOptions={options.options}
+          manufacturingBindings={options.bindings}
           redirectBase="/administracion/presupuestos"
         />
       </div>

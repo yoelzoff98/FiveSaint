@@ -1,5 +1,6 @@
 import { requireCommercialUser, getClients } from "@/lib/supabase/comercial";
 import { CommercialShell } from "@/components/comercial/CommercialShell";
+import { getCommercialManufacturingSetup } from "@/lib/supabase/manufacturing";
 import { NewBudgetClient } from "./NewBudgetClient";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -11,7 +12,10 @@ interface PageProps {
 
 export default async function NewBudgetPage({ searchParams }: PageProps) {
   const ctx = await requireCommercialUser();
-  const clients = await getClients();
+  const [clients, options] = await Promise.all([
+    getClients(),
+    getCommercialManufacturingSetup()
+  ]);
   const { clientId } = await searchParams;
 
   return (
@@ -25,10 +29,16 @@ export default async function NewBudgetPage({ searchParams }: PageProps) {
             </Link>
           </Button>
           <h1 className="text-2xl font-bold text-stone-900 tracking-wide">Crear Presupuesto</h1>
-          <p className="text-stone-500 text-sm">Armá una nueva cotización interactiva seleccionando productos del catálogo.</p>
+          <p className="text-stone-500 text-sm">Armá una nueva cotización interactiva seleccionando productos del catálogo y opciones técnicas.</p>
         </div>
 
-        <NewBudgetClient clients={clients} initialClientId={clientId} userId={ctx.user?.id} />
+        <NewBudgetClient
+          clients={clients}
+          initialClientId={clientId}
+          userId={ctx.user?.id}
+          availableOptions={options.options}
+          manufacturingBindings={options.bindings}
+        />
       </div>
     </CommercialShell>
   );

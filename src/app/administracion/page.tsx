@@ -16,7 +16,10 @@ import {
   FileText,
   AlertTriangle,
   Receipt,
-  Users
+  Users,
+  UserCheck,
+  Factory,
+  Boxes
 } from "lucide-react";
 
 export default async function AdministrationDashboardPage() {
@@ -51,21 +54,27 @@ export default async function AdministrationDashboardPage() {
               </Badge>
             </div>
             <p className="text-sm text-stone-500">
-              Bienvenido, <strong className="text-stone-850 font-semibold">{ctx.profileName}</strong>. Gestión de presupuestos, órdenes de fábrica y entrega.
+              Bienvenido, <strong className="text-stone-850 font-semibold">{ctx.profileName}</strong>. Gestión de clientes, presupuestos, preparación de fabricación A4 y pedidos.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2.5">
-            <Button variant="primary" asChild className="bg-accent-deep hover:bg-accent-hover text-white shadow-xs">
-              <Link href="/administracion/presupuestos/nuevo" className="flex items-center gap-2">
-                <FilePlus className="w-4 h-4" />
-                <span>Nuevo Presupuesto</span>
+            <Button variant="outline" asChild className="border-stone-300 hover:bg-stone-50 text-xs">
+              <Link href="/administracion/clientes" className="flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-accent-deep" />
+                <span>Clientes</span>
               </Link>
             </Button>
-            <Button variant="outline" asChild className="border-stone-300 hover:bg-stone-50">
-              <Link href="/administracion/pedidos" className="flex items-center gap-2">
-                <ShoppingBag className="w-4 h-4" />
-                <span>Ver Pedidos</span>
+            <Button variant="outline" asChild className="border-stone-300 hover:bg-stone-50 text-xs">
+              <Link href="/administracion/fabricacion" className="flex items-center gap-1.5">
+                <Factory className="w-4 h-4 text-accent-deep" />
+                <span>Fabricación A4</span>
+              </Link>
+            </Button>
+            <Button variant="primary" asChild className="bg-accent-deep hover:bg-accent-hover text-white shadow-xs text-xs">
+              <Link href="/administracion/presupuestos/nuevo" className="flex items-center gap-1.5">
+                <FilePlus className="w-4 h-4" />
+                <span>Nuevo Presupuesto</span>
               </Link>
             </Button>
           </div>
@@ -128,6 +137,60 @@ export default async function AdministrationDashboardPage() {
 
         {/* Accesos de Flujo Administrativo */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-accent-deep/10 text-accent-deep flex items-center justify-center mb-4">
+                <UserCheck className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-stone-900">Gestión de Clientes</h3>
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                Supervisá clientes de todos los vendedores. Detección preventiva de duplicados y reasignación auditada de cartera.
+              </p>
+            </div>
+            <Button variant="outline" asChild className="mt-6 w-full justify-between">
+              <Link href="/administracion/clientes">
+                <span>Directorio de Clientes</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-4">
+                <Factory className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-stone-900">Órdenes de Fabricación (A4)</h3>
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                Revisión de configuración técnica, cálculo automático de insumos e impresión en hoja única A4 oficial de planta.
+              </p>
+            </div>
+            <Button variant="outline" asChild className="mt-6 w-full justify-between">
+              <Link href="/administracion/fabricacion">
+                <span>Gestionar Fabricación</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-4">
+                <Boxes className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-stone-900">Insumos y Composiciones</h3>
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                Mantenimiento de materias primas con unidades decimales/enteras y composiciones base (BOM) versionadas por producto.
+              </p>
+            </div>
+            <Button variant="outline" asChild className="mt-6 w-full justify-between">
+              <Link href="/administracion/insumos">
+                <span>Catálogo de Insumos</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+
           <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
             <div>
               <div className="w-10 h-10 rounded-xl bg-accent-deep/10 text-accent-deep flex items-center justify-center mb-4">

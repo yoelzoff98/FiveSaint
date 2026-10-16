@@ -896,6 +896,7 @@ export async function getBudgetById(id: string) {
 }
 
 export interface BudgetInputItem {
+  catalogKey?: string;
   productId?: string;
   variantId?: string;
   productName: string;
@@ -905,6 +906,8 @@ export interface BudgetInputItem {
   isManual?: boolean;
   manualPriceReason?: string;
   manualPriceAuthorizedBy?: string;
+  configuration?: Record<string, any>;
+  configurationNotes?: string;
 }
 
 /**
@@ -937,6 +940,36 @@ export async function createBudget(
   if (!validation.success) {
     const errorMsg = validation.error.issues.map(i => i.message).join(", ");
     throw new Error(`Datos inválidos para crear presupuesto: ${errorMsg}`);
+  }
+
+  // Resolve identity only through an explicit catalog binding; never trust client UUIDs.
+  const keyedItems = items.filter(item => !item.isManual && item.catalogKey);
+  if (keyedItems.length) {
+    const { getOfficialCatalog } = await import("@/lib/catalog-service");
+    const catalog = getOfficialCatalog();
+    const { data: bindings, error } = await supabaseAdmin.from("catalog_manufacturing_bindings").select("catalog_key,product_id,variant_id").in("catalog_key", [...new Set(keyedItems.map(item => item.catalogKey!))]);
+    if (error) throw new Error("No se pudieron validar las vinculaciones técnicas.");
+    for (const item of keyedItems) {
+      const official = catalog.find(entry => entry.key === item.catalogKey);
+      if (!official || official.name !== item.productName || (official.variantName || "") !== (item.variantName || "")) throw new Error("El artículo no corresponde a la clave del catálogo.");
+      const binding = bindings?.find(entry => entry.catalog_key === item.catalogKey);
+      item.productId = binding?.product_id;
+      item.variantId = binding?.variant_id || undefined;
+    }
+  }
+
+  const configuredItems = items.filter(item => item.productId || (item.configuration && Object.keys(item.configuration).length));
+  if (configuredItems.length) {
+    const { validateOptionCompatibility } = await import("@/lib/manufacturing-calculations");
+    const { data: definitions, error } = await supabaseAdmin.from("configurable_options").select("code,name,product_id,allowed_values,is_required,compatibility_rules").eq("is_active", true);
+    if (error) throw new Error("No se pudieron validar las opciones técnicas.");
+    for (const item of configuredItems) {
+      if (!item.productId) throw new Error("Vinculá el artículo con un producto técnico antes de configurar equipamiento.");
+      const applicable = (definitions || []).filter(option => !option.product_id || option.product_id === item.productId);
+      if (Object.keys(item.configuration || {}).some(key => !applicable.some(option => option.code === key))) throw new Error("La configuración contiene opciones ajenas al producto.");
+      const result = validateOptionCompatibility(item.configuration || {}, applicable.map(option => ({ code: option.code, name: option.name, allowedValues: option.allowed_values, isRequired: option.is_required, compatibilityRules: option.compatibility_rules })));
+      if (!result.valid) throw new Error(result.errors.join(" "));
+    }
   }
 
   // 1.1 Validación en servidor de precios oficiales administrables
