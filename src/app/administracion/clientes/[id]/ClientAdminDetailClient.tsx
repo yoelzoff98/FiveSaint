@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CLIENT_CATEGORIES } from "@/lib/client-categories";
+import { EditClientDialog } from "@/components/administracion/EditClientDialog";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -40,6 +41,7 @@ export function ClientAdminDetailClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [editing,setEditing]=useState(false);
 
   // Modal Reasignar
   const [showReassignModal, setShowReassignModal] = useState(false);
@@ -105,6 +107,7 @@ export function ClientAdminDetailClient({
 
   return (
     <div className="flex flex-col gap-6">
+      {editing&&<EditClientDialog client={client} onClose={()=>setEditing(false)} onSaved={updated=>{setClient(updated);setEditing(false);setSuccess("Datos del cliente actualizados.");router.refresh();}}/>}
       {error && (
         <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -133,6 +136,7 @@ export function ClientAdminDetailClient({
         {/* Columna Izquierda: Información del Cliente y Asignación */}
         <div className="flex flex-col gap-6">
           <Card className="p-6 border-stone-200 bg-white">
+            <Button disabled={loading} variant="outline" size="sm" onClick={()=>setEditing(true)} className="mb-4 w-full">Editar datos del cliente</Button>
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-lg font-black text-stone-900">{client.name}</h2>

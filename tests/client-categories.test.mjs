@@ -7,6 +7,8 @@ import {renderToStaticMarkup} from 'react-dom/server';
 import {AppRouterContext} from 'next/dist/shared/lib/app-router-context.shared-runtime.js';
 import {ClientsAdminClient} from '../src/app/administracion/clientes/ClientsAdminClient.tsx';
 import {ClientCategorySchema} from '../src/lib/client-categories.ts';
+import {AdminClientUpdateSchema} from '../src/lib/validations/admin-client.ts';
+import {EditClientDialog} from '../src/components/administracion/EditClientDialog.tsx';
 
 test('Client category migration preserves existing data and operations, defaults new clients, validates categories and can run twice',async()=>{
  const db=new PGlite();
@@ -45,5 +47,20 @@ test('Administration displays category between client and contact and exposes th
  assert.ok(head.indexOf('Categoría')<head.indexOf('Contacto'));
  for(const name of ['Consumidor Final','Arquitecto','Distribuidor','Constructor'])assert.ok(html.includes(name));
  assert.ok(html.includes('Filtrar por categoría'));
+ assert.ok(html.includes('Editar cliente Cliente histórico'));
  assert.ok(html.includes('value="arquitecto" selected=""'));
+});
+
+test('Client editor preserves field values and allows clearing optional data while rejecting invalid input',()=>{
+ const client={id:'client',name:'Nombre original',company_name:'Empresa original',category:'constructor',email:'cliente@example.com',phone:'+54 9 11 1234-5678',address:'Dirección original',notes:'Observaciones originales'};
+ const html=renderToStaticMarkup(React.createElement(EditClientDialog,{client,onClose:()=>{},onSaved:()=>{}}));
+ for(const key of ['name','company_name','category','email','phone','address','notes'])assert.ok(html.includes(`name="${key}"`),key);
+ for(const value of ['Nombre original','Empresa original','cliente@example.com','Dirección original','Observaciones originales','Guardar cambios'])assert.ok(html.includes(value),value);
+ assert.ok(!html.includes('name="seller_id"'),'Seller assignment must remain a separate audited action');
+ assert.equal(AdminClientUpdateSchema.parse({email:'',phone:'',address:'',notes:''}).email,'');
+ assert.equal(AdminClientUpdateSchema.parse({name:'  Nombre válido  '}).name,'Nombre válido');
+ assert.equal(AdminClientUpdateSchema.safeParse({name:'   '}).success,false);
+ assert.equal(AdminClientUpdateSchema.safeParse({email:'invalid'}).success,false);
+ assert.equal(AdminClientUpdateSchema.safeParse({category:'inventada'}).success,false);
+ assert.equal(AdminClientUpdateSchema.safeParse({created_by_user_id:'forged'}).success,false);
 });

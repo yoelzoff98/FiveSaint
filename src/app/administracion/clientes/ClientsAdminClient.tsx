@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { CLIENT_CATEGORIES, clientCategoryLabel } from "@/lib/client-categories";
+import { EditClientDialog } from "@/components/administracion/EditClientDialog";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
 import {
   Plus, Search, Eye, Phone, Mail, Building, MapPin, X, Check,
-  AlertTriangle, UserCheck, ChevronLeft, ChevronRight, RefreshCw, Trash2
+  AlertTriangle, UserCheck, ChevronLeft, ChevronRight, RefreshCw, Trash2, Pencil
 } from "lucide-react";
 import {
   createClientAdmin,
@@ -98,6 +99,7 @@ export function ClientsAdminClient({
   const [sellerId, setSellerId] = useState(initialSellerId);
   const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [category, setCategory] = useState("consumidor_final");
+  const [editingClient,setEditingClient] = useState<Client|null>(null);
 
   // Modal Nuevo Cliente
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -355,6 +357,10 @@ export function ClientsAdminClient({
       </Card>
 
       {/* Tabla de Clientes */}
+      {editingClient&&<EditClientDialog key={editingClient.id} client={editingClient} onClose={()=>setEditingClient(null)} onSaved={updated=>{
+        setClients(previous=>previous.map(item=>item.id===updated.id?{...item,...updated}:item));
+        setEditingClient(null);setSuccess("Datos del cliente actualizados.");router.refresh();
+      }}/>}
       <Card className="border-stone-200 overflow-hidden bg-white">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
@@ -429,6 +435,7 @@ export function ClientsAdminClient({
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        <Button variant="outline" size="sm" onClick={()=>setEditingClient(c)} className="h-7 px-2 text-cyan-700 border-cyan-200" title="Editar cliente" aria-label={`Editar cliente ${c.name}`}><Pencil className="w-3.5 h-3.5"/></Button>
                         <Button
                           variant="outline"
                           size="sm"

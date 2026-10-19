@@ -22,6 +22,7 @@ import {
 } from "@/lib/validations/manufacturing";
 import crypto from "crypto";
 import { ClientCategorySchema } from "@/lib/client-categories";
+import { AdminClientUpdateSchema } from "@/lib/validations/admin-client";
 
 // =========================================================================
 // 1. GESTIÓN DE CLIENTES EN ADMINISTRACIÓN
@@ -251,6 +252,9 @@ export async function updateClientAdmin(
   }
 ) {
   await requireAdministrationUser();
+  const validated=AdminClientUpdateSchema.safeParse(clientData);
+  if(!validated.success) throw new Error(validated.error.issues[0]?.message || "Datos del cliente no válidos.");
+  clientData=validated.data;
   const supabase = createSupabaseAdminClient();
 
   // Control estricto de auditoría: No se permite cambiar seller_id de forma directa.
