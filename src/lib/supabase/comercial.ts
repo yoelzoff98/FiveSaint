@@ -635,10 +635,24 @@ export async function getPaginatedBudgets(params: PaginationParams = {}): Promis
   if (params.search && params.search.trim()) {
     const s = params.search.trim();
     const num = parseInt(s, 10);
+
     if (!isNaN(num) && num > 0 && String(num) === s) {
       query = query.eq("budget_number", num);
     } else {
-      query = query.ilike("notes", `%${s}%`);
+      // Buscar clientes que coincidan por nombre o empresa
+      const { data: matchedClients } = await supabase
+        .from("clients")
+        .select("id")
+        .or(`name.ilike.%${s}%,company_name.ilike.%${s}%`)
+        .limit(100);
+
+      const clientIds = (matchedClients || []).map((c) => c.id);
+
+      if (clientIds.length > 0) {
+        query = query.or(`client_id.in.(${clientIds.join(",")}),notes.ilike.%${s}%`);
+      } else {
+        query = query.ilike("notes", `%${s}%`);
+      }
     }
   }
 
@@ -683,7 +697,19 @@ export async function getPaginatedBudgets(params: PaginationParams = {}): Promis
         if (!isNaN(num) && num > 0 && String(num) === s) {
           fallbackQuery = fallbackQuery.eq("budget_number", num);
         } else {
-          fallbackQuery = fallbackQuery.ilike("notes", `%${s}%`);
+          const { data: matchedClients } = await supabase
+            .from("clients")
+            .select("id")
+            .or(`name.ilike.%${s}%,company_name.ilike.%${s}%`)
+            .limit(100);
+
+          const clientIds = (matchedClients || []).map((c) => c.id);
+
+          if (clientIds.length > 0) {
+            fallbackQuery = fallbackQuery.or(`client_id.in.(${clientIds.join(",")}),notes.ilike.%${s}%`);
+          } else {
+            fallbackQuery = fallbackQuery.ilike("notes", `%${s}%`);
+          }
         }
       }
 

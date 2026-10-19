@@ -64,6 +64,34 @@ export function BudgetsListClient({
     setCurrentPage(serverPage);
   }, [serverPage]);
 
+  useEffect(() => {
+    setSearchTerm(initialSearch);
+  }, [initialSearch]);
+
+  useEffect(() => {
+    setStatusFilter(initialStatus);
+  }, [initialStatus]);
+
+  // Si el usuario busca o cambia el estado, sincronizar con la URL tras un debounce
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      // Solo disparar navegación si los valores difieren de los iniciales del servidor
+      if (searchTerm !== initialSearch || statusFilter !== initialStatus) {
+        const params = new URLSearchParams();
+        params.set("page", "1");
+        if (searchTerm.trim()) {
+          params.set("search", searchTerm.trim());
+        }
+        if (statusFilter && statusFilter !== "all") {
+          params.set("status", statusFilter);
+        }
+        router.push(`${basePath}?${params.toString()}`);
+      }
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm, statusFilter, basePath, router, initialSearch, initialStatus]);
+
   const filteredBudgets = useMemo(() => {
     return budgets.filter((b) => {
       const term = searchTerm.toLowerCase();
