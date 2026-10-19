@@ -10,7 +10,7 @@ interface PageProps {
 }
 
 export default async function OrderDetailPage({ params }: PageProps) {
-  await requireCommercialUser();
+  const ctx=await requireCommercialUser();
   const { id } = await params;
   const order = await getOrderById(id);
 
@@ -28,7 +28,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <p className="text-stone-500 text-sm">Controlá el estado y producción de este pedido.</p>
         </div>
 
-        <OrderDetailClient initialOrder={order} />
+        <OrderDetailClient initialOrder={order} canManageProduction={ctx.isAdmin || ctx.isAdministration} />
       </div>
     </CommercialShell>
   );

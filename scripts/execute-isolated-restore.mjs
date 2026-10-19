@@ -42,6 +42,12 @@ try {
   await db.exec(sprint3Migration);
   await db.exec(sprint3Migration);
   await db.exec(fs.readFileSync('supabase/migrations/20261015000100_catalog_manufacturing_bindings.sql', 'utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261018000100_manufacturing_order_groups.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261018000100_manufacturing_order_groups.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261018000200_order_request_approval.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261018000200_order_request_approval.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261018000300_client_categories.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261018000300_client_categories.sql','utf8'));
   for (const table of order) {
     const after = (await db.query(`select to_jsonb(t) document from public.${table} t order by id`)).rows.map(row => row.document);
     assert.equal(after.length, before[table].length);
@@ -56,8 +62,12 @@ try {
   const client = backup.tables.clients[0];
   const nextBudget = (await db.query(`insert into budgets(client_id, seller_id, total_amount)
     values($1,$2,100) returning id,budget_number`, [client.id, client.seller_id])).rows[0];
-  const nextOrder = (await db.query(`insert into orders(client_id,seller_id,budget_id,total_amount)
-    values($1,$2,$3,100) returning order_number`, [client.id, client.seller_id, nextBudget.id])).rows[0];
+  const {randomUUID}=await import('node:crypto');
+  const restoreActor=randomUUID();
+  await db.query('insert into auth.users(id) values($1)',[restoreActor]);
+  await db.query("insert into admin_users(user_id,username,full_name,is_active) values($1,$2,'Synthetic restore verifier',true)",[restoreActor,'restore-'+restoreActor]);
+  const nextOrder = (await db.query(`insert into orders(client_id,seller_id,budget_id,total_amount,recorded_by_user_id)
+    values($1,$2,$3,100,$4) returning order_number`, [client.id, client.seller_id, nextBudget.id,restoreActor])).rows[0];
   assert.ok(nextBudget.budget_number > Math.max(...backup.tables.budgets.map(row=>row.budget_number)));
   assert.ok(nextOrder.order_number > Math.max(...backup.tables.orders.map(row=>row.order_number)));
   const summary = {

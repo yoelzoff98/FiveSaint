@@ -13,9 +13,7 @@ import {
   ShieldAlert,
   ArrowLeft,
   Factory,
-  Boxes,
   Layers,
-  SlidersHorizontal,
   UserCheck
 } from "lucide-react";
 
@@ -33,9 +31,7 @@ export function AdministrationSidebar({ isAdmin = false }: AdministrationSidebar
     { href: "/administracion/presupuestos", label: "Presupuestos", icon: FileText },
     { href: "/administracion/presupuestos/nuevo", label: "Nuevo Presupuesto", icon: FilePlus },
     { href: "/administracion/fabricacion", label: "Órdenes Fabricación", icon: Factory },
-    { href: "/administracion/insumos", label: "Catálogo de Insumos", icon: Boxes },
-    { href: "/administracion/composiciones", label: "Composiciones (BOM)", icon: Layers },
-    { href: "/administracion/opciones", label: "Opciones Configurables", icon: SlidersHorizontal },
+    { href: "/administracion/fabricacion-productos", label: "Fabricación de productos", icon: Layers },
     { href: "/administracion/facturacion", label: "Facturación", icon: Receipt, badge: "Próximamente" },
   ];
 

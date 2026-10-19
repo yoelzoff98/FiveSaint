@@ -1,4 +1,5 @@
 "use client";
+import {OrderRequestNotifications} from "@/components/comercial/OrderRequestNotifications";
 
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -44,6 +45,7 @@ export function AdministrationHeader({ profileName = "Administración", isAdmin 
       </div>
 
       <div className="flex items-center gap-4">
+        <OrderRequestNotifications />
         <div className="flex items-center gap-2 text-right">
           <div className="w-7 h-7 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-600">
             <User className="w-4 h-4" />

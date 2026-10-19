@@ -29,6 +29,7 @@ try {
   await setup.query(fs.readFileSync('supabase/migrations/20261006000100_sprint_admin_clients_and_manufacturing.sql', 'utf8'));
 
   await setup.query(fs.readFileSync('supabase/migrations/20261015000100_catalog_manufacturing_bindings.sql', 'utf8'));
+  await setup.query(fs.readFileSync('supabase/migrations/20261018000100_manufacturing_order_groups.sql','utf8'));
   const privileges = await setup.query(`select bool_and(
     not has_function_privilege('anon', p.oid, 'EXECUTE') and
     not has_function_privilege('authenticated', p.oid, 'EXECUTE')
@@ -194,6 +195,70 @@ try {
   await assert.rejects(emit(b,'mfg-other'), /CANTIDAD EXCEDIDA/);
   assert.equal(Number((await setup.query('select count(*) count from manufacturing_orders where order_item_id=$1',[orderItem])).rows[0].count),1);
   console.log('PASS: manufacturing independent-session duplicate, payload conflict and balance protection.');
+
+  // One commercial order, main product plus addon: one technical order, atomic balances.
+  const groupOrder = (await setup.query("insert into orders(client_id,seller_id,status,sale_channel,total_amount) values($1,$2,'pending','direct',456) returning id",[customer,seller])).rows[0].id;
+  const makeLine = async (name,qty) => (await setup.query("insert into order_items(order_id,product_id,product_name,quantity,unit_price,total_price,configuration_status) values($1,$2,$3,$4,123,123,'approved') returning id",[groupOrder,product,name,qty])).rows[0].id;
+  const mainLine = await makeLine('Synthetic bathtub',1);
+  const addonLine = await makeLine('Synthetic extra jets',2);
+  const groupLines = [{order_item_id:mainLine,quantity:1,bom_id:bom,configuration:{},product_name:'Synthetic bathtub'}, {order_item_id:addonLine,quantity:2,bom_id:bom,configuration:{},product_name:'Synthetic extra jets'}];
+  const emitGroup = (connection,key,lines=groupLines) => connection.query("select issue_manufacturing_group_transactional($1,$2,$3,$4::jsonb,'{}','[\"Extra jets x 2\"]','[{\"code\":\"TEST\",\"name\":\"Synthetic component\",\"quantity\":3,\"unitOfMeasure\":\"un\"}]',null,$5,$6) result", [user,groupOrder,mainLine,JSON.stringify(lines),key,JSON.stringify(lines)]);
+  await assert.rejects(emitGroup(setup,'group-missing',[groupLines[0]]),/todos los renglones/);
+  await setup.query("update order_items set configuration_status='pending_review' where id=$1",[addonLine]);
+  await assert.rejects(emitGroup(setup,'group-unreviewed'),/Revisión técnica pendiente/);
+  assert.equal(Number((await setup.query('select count(*) count from manufacturing_orders where order_id=$1',[groupOrder])).rows[0].count),0);
+  await setup.query("update order_items set configuration_status='approved' where id=$1",[addonLine]);
+  await a.query('begin');
+  const groupResult = await emitGroup(a,'group-same');
+  let groupFinished=false;
+  const sameGroup=emitGroup(b,'group-same').then(result=>{groupFinished=true;return result;});
+  await new Promise(resolve=>setTimeout(resolve,150));
+  assert.equal(groupFinished,false);
+  await a.query('commit');
+  assert.deepEqual((await sameGroup).rows[0].result,groupResult.rows[0].result);
+  await assert.rejects(emitGroup(b,'group-new'),/CANTIDAD EXCEDIDA/);
+  const manufactured=(await setup.query('select commercial_items_snapshot from manufacturing_orders where order_id=$1',[groupOrder])).rows;
+  assert.equal(manufactured.length,1);
+  assert.equal(manufactured[0].commercial_items_snapshot.length,2);
+  assert.equal(Number((await setup.query('select manufacturing_issued_quantity from order_items where id=$1',[addonLine])).rows[0].manufacturing_issued_quantity),2);
+  assert.equal(Number((await setup.query('select total_amount from orders where id=$1',[groupOrder])).rows[0].total_amount),456);
+  await setup.query('set role anon');
+  await assert.rejects(emitGroup(setup,'anonymous-group'),/permission denied/);
+  await setup.query('reset role');
+  // Legacy emitter cannot manufacture an addon already consumed by the group.
+  await assert.rejects(setup.query("select issue_manufacturing_order_transactional($1,$2,$3,1,$4,'{}','[]','[]',null,'legacy-addon','legacy-addon')",[user,groupOrder,addonLine,bom]),/CANTIDAD EXCEDIDA/);
+  const originalGroupId=groupResult.rows[0].result.manufacturingOrderId;
+  const revised=(await setup.query("select revise_manufacturing_order_transactional($1,$2,'Synthetic revision','{}','[]','[]',null) result",[user,originalGroupId])).rows[0].result;
+  const revision=(await setup.query('select commercial_items_snapshot from manufacturing_orders where id=$1',[revised.newManufacturingOrderId])).rows[0];
+  assert.deepEqual(revision.commercial_items_snapshot,manufactured[0].commercial_items_snapshot);
+  console.log('PASS: grouped order: main product and addon in one emission; concurrent retry, atomic validation, quantities and original commercial total preserved.');
+
+  // Approval migration is applied after legacy regression scenarios: historical orders keep their state.
+  await setup.query(fs.readFileSync('supabase/migrations/20261018000200_order_request_approval.sql','utf8'));
+  const requestingUser='eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee';
+  const acceptingStaff='ffffffff-ffff-ffff-ffff-ffffffffffff';
+  await setup.query('insert into auth.users(id) values($1),($2)',[requestingUser,acceptingStaff]);
+  const requestSeller=(await setup.query("insert into sellers(user_id,username,full_name,email) values($1,'request-seller','Request Seller','requests@example.invalid') returning id",[requestingUser])).rows[0].id;
+  await setup.query("insert into administration_users(user_id,full_name,email) values($1,'Accepting Staff','accept@example.invalid')",[acceptingStaff]);
+  const requestClient=(await setup.query("insert into clients(seller_id,name) values($1,'Request Client') returning id",[requestSeller])).rows[0].id;
+  const requestBudget=(await setup.query("insert into budgets(client_id,seller_id,total_amount,subtotal_amount,tax_rate,tax_amount) values($1,$2,500,500,21,105) returning id",[requestClient,requestSeller])).rows[0].id;
+  const requestItem=(await setup.query("insert into budget_items(budget_id,product_name,quantity,unit_price,total_price) values($1,'Requested bath',5,100,500) returning id",[requestBudget])).rows[0].id;
+  const requestPayload=JSON.stringify([{budgetItemId:requestItem,quantity:2}]);
+  const request=(await setup.query("select submit_order_request($1,$2,$3::jsonb,null,'native-request','native-hash') result",[requestingUser,requestBudget,requestPayload])).rows[0].result;
+  const decide=(connection,actor)=>connection.query("select decide_order_request($1,$2,'approved',null) result",[actor,request.request_id]);
+  await a.query('begin');
+  const accepted=await decide(a,user);
+  let decisionFinished=false;
+  const competingDecision=decide(b,acceptingStaff).then(result=>{decisionFinished=true;return result;});
+  await new Promise(resolve=>setTimeout(resolve,150));
+  assert.equal(decisionFinished,false);
+  await a.query('commit');
+  const secondAccepted=await competingDecision;
+  assert.equal(secondAccepted.rows[0].result.order_id,accepted.rows[0].result.order_id);
+  assert.equal(Number((await setup.query('select count(*) count from orders where accepted_request_id=$1',[request.request_id])).rows[0].count),1);
+  assert.equal((await setup.query('select commercial_approval_status from orders where id=$1',[order])).rows[0].commercial_approval_status,'legacy');
+  assert.equal(Number((await setup.query("select count(*) count from order_request_notifications where request_id=$1 and event='submitted'",[request.request_id])).rows[0].count),2);
+  console.log('PASS: concurrent ADMIN/staff acceptance creates exactly one order and notifies both recipients; historical orders remain legacy.');
 
   console.log('PASS: independent PostgreSQL sessions: concurrent conversion vs rejection, publishing vs shipment separation, multiple shipment coherence, legacy 7-param compatibility, competing balances, cancel locks.');
 } finally {

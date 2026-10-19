@@ -1,4 +1,5 @@
 "use client";
+import {OrderRequestNotifications} from "@/components/comercial/OrderRequestNotifications";
 
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -19,6 +20,7 @@ export function AdminHeader() {
       <div className="font-semibold text-stone-800 tracking-wide">
         Panel de Administración
       </div>
+      <OrderRequestNotifications />
       <button 
         onClick={handleLogout}
         className="flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-red-600 transition-colors"

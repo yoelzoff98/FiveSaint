@@ -76,6 +76,8 @@ export interface OperationsSummary {
 }
 
 export interface Budget {
+  can_accept_orders?: boolean;
+  order_requests?: {id:string;status:string;decision_reason?:string;decided_by_name?:string;order_id?:string}[];
   id: string;
   budget_number: number;
   status: string;
@@ -457,6 +459,13 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
       saleIdempotencyKeyRef.current = null;
       setShowSaleModal(false);
 
+      if (orderResult?.requires_approval) {
+        const refreshed = await getBudgetById(budget.id);
+        setBudget(refreshed as any);
+        setSuccess("Solicitud enviada. El pedido queda pendiente de aceptación por ADMIN o Administración. Todavía no se envió a fábrica.");
+        router.refresh();
+        return;
+      }
       const generatedNum = orderResult?.order_number;
       const generatedId = orderResult?.id || orderResult?.order_id;
 
@@ -618,6 +627,15 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
         </div>
       )}
 
+      {budget.order_requests?.length ? <div className="border border-amber-300 rounded bg-amber-50 p-4 space-y-2">
+        <h3 className="font-bold">Aceptación administrativa del pedido</h3>
+        {budget.order_requests.map(request=><div key={request.id} className="text-sm">
+          <strong>{({pending:"Pendiente de aceptación",approved:"Pedido aceptado",returned:"Devuelta para corregir",rejected:"Solicitud rechazada"} as Record<string,string>)[request.status]}</strong>
+          {request.decided_by_name&&<span> · {request.decided_by_name}</span>}
+          {request.decision_reason&&<p>Motivo: {request.decision_reason}</p>}
+          {request.order_id&&<a className="underline" href={`${ordersBasePath}/${request.order_id}`}>Ver pedido</a>}
+        </div>)}
+      </div>:null}
       {success && (
         <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex items-center gap-3 text-sm">
           <Check className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -967,7 +985,7 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
             {/* Botones de Acción Comercial */}
             <div className="flex flex-col gap-2.5">
               {/* 1. Registrar Venta (Flujo principal) */}
-              {budget.status !== "rejected" && remainingBudgetBalance > 0 && (
+              {budget.status !== "rejected" && remainingBudgetBalance > 0 && !budget.order_requests?.some(request=>request.status==="pending") && (
                 <Button
                   onClick={openSaleModal}
                   disabled={loading}
@@ -1018,7 +1036,7 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
               )}
 
               {/* 5. Rechazar Presupuesto */}
-              {budget.status !== "rejected" && budget.status !== "converted" && (
+              {budget.status !== "rejected" && budget.status !== "converted" && !budget.order_requests?.some(request=>request.status==="pending") && (
                 <div className="relative">
                   <Button
                     variant="ghost"
@@ -1240,7 +1258,7 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-stone-200 my-8">
             <div className="flex justify-between items-start pb-4 border-b border-stone-150">
               <div>
-                <h3 className="text-lg font-black text-stone-900">Registrar Venta de Cotización</h3>
+                <h3 className="text-lg font-black text-stone-900">Confirmación del cliente</h3>
                 <p className="text-xs text-stone-500">
                   Presupuesto N° #{budget.budget_number} • Cliente: <strong>{budget.clients?.name}</strong>
                 </p>
@@ -1612,7 +1630,7 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
                     <Check className="w-4 h-4" />
                     <span>
                       {selectedChannel === "direct"
-                        ? "Confirmar venta y generar pedido"
+                        ? (budget.can_accept_orders ? "Confirmar pedido" : "Cliente confirmó — Solicitar pedido")
                         : "Registrar compra en distribuidor"}
                     </span>
                   </Button>

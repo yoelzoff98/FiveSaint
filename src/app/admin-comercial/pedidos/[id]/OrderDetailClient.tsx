@@ -65,9 +65,10 @@ interface Order {
 
 interface OrderDetailClientProps {
   initialOrder: Order;
+  canManageProduction?: boolean;
 }
 
-export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
+export function OrderDetailClient({ initialOrder, canManageProduction = false }: OrderDetailClientProps) {
   const router = useRouter();
   const [order, setOrder] = useState<Order>(initialOrder);
   const [loading, setLoading] = useState(false);
@@ -344,7 +345,7 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
               <span className="text-2xl font-bold text-accent-deep">{formatCurrency(order.total_amount)}</span>
             </div>
 
-            {order.status === "pending" && (
+            {canManageProduction && order.status === "pending" && (
               <Button
                 onClick={() => handleUpdateStatus("processing")}
                 disabled={loading}
@@ -355,7 +356,7 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
               </Button>
             )}
 
-            {order.status === "processing" && (
+            {canManageProduction && order.status === "processing" && (
               <Button
                 onClick={() => handleUpdateStatus("delivered")}
                 disabled={loading}
@@ -372,7 +373,7 @@ export function OrderDetailClient({ initialOrder }: OrderDetailClientProps) {
                 asChild
                 className="w-full flex items-center justify-center gap-2 border-stone-300 text-stone-800 hover:bg-stone-50"
               >
-                <Link href="/administracion/fabricacion">
+                <Link href={`/administracion/fabricacion?orderId=${order.id}`}>
                   <Factory className="w-4 h-4 text-accent-deep" />
                   <span>Preparación de Fabricación (A4)</span>
                 </Link>

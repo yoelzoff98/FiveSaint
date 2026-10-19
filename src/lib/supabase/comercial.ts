@@ -1,6 +1,7 @@
 "use server";
 
 import crypto from "crypto";
+import { ClientCategorySchema } from "@/lib/client-categories";
 import { cache } from "react";
 import type { Budget as IssuedBudget } from "@/components/pdf/BudgetPrintPdf";
 import { createSupabaseServerClient, createSupabaseAdminClient } from "./server";
@@ -425,6 +426,7 @@ export async function getClientById(id: string) {
 
 export async function createClient(clientData: {
   name: string;
+  category?: string;
   company_name?: string;
   email?: string;
   phone?: string;
@@ -443,6 +445,7 @@ export async function createClient(clientData: {
       .from("clients")
       .insert([{
         name: clientData.name.trim(),
+        category: ClientCategorySchema.parse(clientData.category ?? "consumidor_final"),
         company_name: clientData.company_name?.trim() || null,
         email: clientData.email?.trim() || null,
         phone: clientData.phone?.trim() || null,
@@ -470,6 +473,7 @@ export async function updateClient(
   id: string,
   clientData: {
     name?: string;
+    category?: string;
     company_name?: string;
     email?: string;
     phone?: string;
@@ -492,6 +496,7 @@ export async function updateClient(
     };
 
     if (clientData.name !== undefined) updateFields.name = clientData.name.trim();
+    if (clientData.category !== undefined) updateFields.category = ClientCategorySchema.parse(clientData.category);
     if (clientData.company_name !== undefined) updateFields.company_name = clientData.company_name?.trim() || null;
     if (clientData.email !== undefined) updateFields.email = clientData.email?.trim() || null;
     if (clientData.phone !== undefined) updateFields.phone = clientData.phone?.trim() || null;
@@ -877,8 +882,14 @@ export async function getBudgetById(id: string) {
     closing_label = totalPending === 0 ? "Compra en distribuidor" : "Compra en distribuidor parcial";
   }
 
+  const {data:requestHistory,error:requestError} = await createSupabaseAdminClient().from("order_requests")
+    .select("id,status,submitted_by_name,created_at,decision_reason,decided_by_name,order_id")
+    .eq("budget_id",id).order("created_at",{ascending:false}).limit(10);
+  if (requestError) throw new Error("No se pudo consultar el estado de aceptación. Verificá las migraciones.");
   return {
     ...budget,
+    order_requests: requestHistory || [],
+    can_accept_orders: ctx.isAdmin || ctx.isAdministration,
     items: enrichedItems,
     orders: allLinkedOrders || [],
     has_active_operations: (totalDirect + totalDistributor) > 0,
@@ -1501,6 +1512,7 @@ export async function getOrderById(id: string) {
  */
 export async function updateOrderStatus(id: string, status: string) {
   const ctx = await requireCommercialUser();
+  if (!ctx.isAdmin && !ctx.isAdministration) throw new Error("Solo Administración o ADMIN gestiona el estado del pedido aceptado.");
 
   if (status === "cancelled") {
     return cancelOrder(id, "Cancelado desde control de producción");
@@ -1596,6 +1608,11 @@ export async function convertBudgetToOrder(
   if (!validation.success) {
     const errorMsg = validation.error.issues.map(i => i.message).join(", ");
     throw new Error(`Solicitud de conversión inválida: ${errorMsg}`);
+  }
+
+  if (saleType === "direct" && ctx.isSeller) {
+    const { submitOrderRequest } = await import("./order-requests");
+    return submitOrderRequest({budgetId,itemsToConvert,notes,idempotencyKey:options.idempotencyKey});
   }
 
   // 1.1 Si se provee clave de idempotencia, recuperar resultado previo y validar hash antes de verificar estados o saldos

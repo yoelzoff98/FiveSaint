@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CLIENT_CATEGORIES, clientCategoryLabel } from "@/lib/client-categories";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -89,6 +90,7 @@ interface Client {
   id: string;
   name: string;
   company_name: string | null;
+  category?: string;
   email: string | null;
   phone: string | null;
   address: string | null;
@@ -114,6 +116,9 @@ interface ClientsPageClientProps {
 export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsPageClientProps) {
   const router = useRouter();
   const [clients, setClients] = useState<Client[]>(initialClients);
+  useEffect(()=>setClients(initialClients),[initialClients]);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [category, setCategory] = useState("consumidor_final");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
@@ -138,6 +143,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
   const [error, setError] = useState<string | null>(null);
 
   const resetForm = () => {
+    setCategory("consumidor_final");
     setName("");
     setCompanyName("");
     setEmail("");
@@ -153,6 +159,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
   };
 
   const handleEdit = (client: Client) => {
+    setCategory(client.category || "consumidor_final");
     setEditingClient(client);
     setName(client.name);
     setCompanyName(client.company_name || "");
@@ -174,6 +181,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
 
     const clientPayload = {
       name,
+      category,
       company_name: companyName || undefined,
       email: email || undefined,
       phone: phone || undefined,
@@ -261,7 +269,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       }
     }
 
-    return matchesSearch && matchesStatus && matchesSource && matchesDate;
+    return matchesSearch && matchesStatus && matchesSource && matchesDate && (categoryFilter === "all" || (c.category || "consumidor_final") === categoryFilter);
   });
 
   return (
@@ -298,6 +306,11 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
           )}
 
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <label className="block text-sm font-semibold text-stone-700">Categoría
+              <select value={category} onChange={e=>setCategory(e.target.value)} className="block border rounded-lg p-2 w-full mt-1">
+                {CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
+              </select>
+            </label>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-stone-700">Nombre Completo *</label>
               <input
@@ -436,6 +449,12 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
             />
           </div>
 
+          <label className="flex items-center gap-2 text-xs font-semibold text-stone-500">Categoría:
+            <select aria-label="Filtrar por categoría" value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)} className="border rounded-md px-3 py-2 text-sm bg-white w-full">
+              <option value="all">Todas las categorías</option>
+              {CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </label>
           {/* Filtro Estado */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Estado:</span>
@@ -530,6 +549,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
               <thead>
                 <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-xs font-semibold uppercase tracking-wider">
                   <th className="px-6 py-4">Cliente</th>
+                  <th className="px-6 py-4">Categoría</th>
                   <th className="px-6 py-4">Contacto</th>
                   <th className="px-6 py-4">Origen</th>
                   <th className="px-6 py-4">Ubicación</th>
@@ -550,6 +570,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                         </div>
                       )}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{clientCategoryLabel(client.category)}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         {client.email && (

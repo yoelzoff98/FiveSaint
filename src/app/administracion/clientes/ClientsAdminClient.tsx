@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { CLIENT_CATEGORIES, clientCategoryLabel } from "@/lib/client-categories";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -43,6 +44,7 @@ interface Client {
   id: string;
   name: string;
   company_name: string | null;
+  category?: string;
   email: string | null;
   phone: string | null;
   address: string | null;
@@ -70,6 +72,7 @@ interface ClientsAdminClientProps {
   initialSearch?: string;
   initialStatus?: string;
   initialSellerId?: string;
+  initialCategory?: string;
   isAdmin: boolean;
 }
 
@@ -82,15 +85,19 @@ export function ClientsAdminClient({
   initialSearch = "",
   initialStatus = "all",
   initialSellerId = "all",
+  initialCategory = "all",
   isAdmin
 }: ClientsAdminClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const [clients, setClients] = useState<Client[]>(initialClients);
+  useEffect(() => setClients(initialClients), [initialClients]);
   const [search, setSearch] = useState(initialSearch);
   const [status, setStatus] = useState(initialStatus);
   const [sellerId, setSellerId] = useState(initialSellerId);
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
+  const [category, setCategory] = useState("consumidor_final");
 
   // Modal Nuevo Cliente
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -113,16 +120,18 @@ export function ClientsAdminClient({
   const [success, setSuccess] = useState<string | null>(null);
 
   // Filtros aplicados con URL
-  const applyFilters = (newParams: { search?: string; status?: string; sellerId?: string; page?: number }) => {
+  const applyFilters = (newParams: { search?: string; status?: string; sellerId?: string; category?: string; page?: number }) => {
     const s = newParams.search !== undefined ? newParams.search : search;
     const st = newParams.status !== undefined ? newParams.status : status;
     const sl = newParams.sellerId !== undefined ? newParams.sellerId : sellerId;
+    const cat = newParams.category !== undefined ? newParams.category : categoryFilter;
     const p = newParams.page !== undefined ? newParams.page : 1;
 
     const query = new URLSearchParams();
     if (s) query.set("search", s);
     if (st && st !== "all") query.set("status", st);
     if (sl && sl !== "all") query.set("sellerId", sl);
+    if (cat && cat !== "all") query.set("category", cat);
     if (p > 1) query.set("page", String(p));
 
     startTransition(() => {
@@ -159,6 +168,7 @@ export function ClientsAdminClient({
     try {
       await createClientAdmin({
         name,
+        category,
         company_name: companyName,
         email,
         phone,
@@ -168,6 +178,7 @@ export function ClientsAdminClient({
       });
       setShowCreateModal(false);
       setName("");
+      setCategory("consumidor_final");
       setCompanyName("");
       setEmail("");
       setPhone("");
@@ -301,6 +312,12 @@ export function ClientsAdminClient({
             </select>
 
             {/* Filtro Estado */}
+            <select aria-label="Filtrar por categoría" value={categoryFilter} onChange={e => {
+              setCategoryFilter(e.target.value); applyFilters({ category: e.target.value });
+            }} className="text-xs border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-700">
+              <option value="all">Todas las categorías</option>
+              {CLIENT_CATEGORIES.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
             <select
               value={status}
               onChange={(e) => {
@@ -344,6 +361,7 @@ export function ClientsAdminClient({
             <thead>
               <tr className="bg-stone-50 border-b border-stone-200 text-stone-500 font-semibold uppercase tracking-wider text-[11px]">
                 <th className="py-3 px-4">Cliente / Razón Social</th>
+                <th className="py-3 px-4">Categoría</th>
                 <th className="py-3 px-4">Contacto</th>
                 <th className="py-3 px-4">Asesor Asignado</th>
                 <th className="py-3 px-4">Alta Por</th>
@@ -354,7 +372,7 @@ export function ClientsAdminClient({
             <tbody className="divide-y divide-stone-100">
               {clients.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-stone-400">
+                  <td colSpan={7} className="py-8 text-center text-stone-400">
                     No se encontraron clientes con los filtros aplicados.
                   </td>
                 </tr>
@@ -372,6 +390,7 @@ export function ClientsAdminClient({
                         <span className="text-stone-500 text-[11px] block">{c.company_name}</span>
                       )}
                     </td>
+                    <td className="py-3 px-4 text-stone-600 whitespace-nowrap">{clientCategoryLabel(c.category)}</td>
                     <td className="py-3 px-4 text-stone-600">
                       {c.email && (
                         <div className="flex items-center gap-1.5 truncate max-w-[200px]">
@@ -500,6 +519,11 @@ export function ClientsAdminClient({
             </div>
 
             <form onSubmit={handleCreateSubmit} className="space-y-4">
+              <label className="block text-xs font-semibold text-stone-700">Categoría
+                <select value={category} onChange={e=>setCategory(e.target.value)} className="block w-full border rounded-lg p-2 mt-1">
+                  {CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
+                </select>
+              </label>
               <div>
                 <label className="text-xs font-semibold text-stone-700 block mb-1">
                   Nombre Completo / Razón Social *

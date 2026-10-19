@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CLIENT_CATEGORIES } from "@/lib/client-categories";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -145,6 +146,16 @@ export function ClientAdminDetailClient({
             </div>
 
             <div className="space-y-3 text-xs border-t border-stone-100 pt-3">
+              <label className="block font-medium">Categoría
+                <select value={client.category || "consumidor_final"} disabled={loading} className="block border rounded-lg p-2 w-full mt-1" onChange={async e=>{
+                  const category=e.target.value;setLoading(true);setError(null);setSuccess(null);
+                  try {const updated=await updateClientAdmin(client.id,{category});setClient(updated);setSuccess("Categoría actualizada.");router.refresh();}
+                  catch(cause){setError(cause instanceof Error?cause.message:"No se pudo actualizar la categoría.");}
+                  finally{setLoading(false);}
+                }}>
+                  {CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
+                </select>
+              </label>
               {client.email && (
                 <div className="flex items-center gap-2 text-stone-700">
                   <Mail className="w-4 h-4 text-stone-400 shrink-0" />

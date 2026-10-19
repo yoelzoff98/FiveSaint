@@ -12,6 +12,7 @@ interface AdminManufacturingPageProps {
     page?: string;
     search?: string;
     status?: string;
+    orderId?: string;
   }>;
 }
 
@@ -22,14 +23,16 @@ export default async function AdministrationManufacturingPage({ searchParams }: 
   const search = params.search || "";
   const status = params.status || "all";
 
-  const [paginatedOrders, pendingItems, compositions] = await Promise.all([
+  const [paginatedOrders, pendingResult, compositions] = await Promise.all([
     getManufacturingOrders({
       page,
       pageSize: 20,
       search,
       status
     }),
-    getPendingOrderItemsForManufacturing(),
+    getPendingOrderItemsForManufacturing(params.orderId)
+      .then(items => ({ items, error: null as string | null }))
+      .catch((error: unknown) => ({ items: [], error: error instanceof Error ? error.message : "No se pudieron cargar los pedidos pendientes de fabricación." })),
     getProductCompositions({ status: "published" })
   ]);
 
@@ -45,13 +48,20 @@ export default async function AdministrationManufacturingPage({ searchParams }: 
           </p>
         </div>
 
+        {pendingResult.error && (
+          <div role="alert" className="border border-red-300 bg-red-50 text-red-900 p-4 rounded-xl text-sm">
+            {pendingResult.error}
+          </div>
+        )}
         <ManufacturingClient
           initialOrders={paginatedOrders.data}
           totalCount={paginatedOrders.total}
           serverPage={paginatedOrders.page}
           serverTotalPages={paginatedOrders.totalPages}
-          pendingItems={pendingItems}
+          pendingItems={pendingResult.items}
+          pendingError={pendingResult.error}
           compositions={compositions}
+          initialPendingView={Boolean(params.orderId)}
           initialSearch={search}
           initialStatus={status}
         />

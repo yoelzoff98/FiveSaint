@@ -5,7 +5,8 @@ import { RevisionClient } from "./RevisionClient";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 
-export default async function ManufacturingRevisionPage() {
+export default async function ManufacturingRevisionPage({ searchParams }: { searchParams: Promise<{ orderId?: string }> }) {
+  const { orderId } = await searchParams;
   await requireAdministrationUser();
 
   const [pendingItems, compositions, options] = await Promise.all([
@@ -35,7 +36,7 @@ export default async function ManufacturingRevisionPage() {
         </div>
 
         <RevisionClient
-          pendingItems={pendingItems}
+          pendingItems={orderId ? pendingItems.filter((item:any)=>item.order_id===orderId) : pendingItems}
           compositions={compositions}
           options={options}
         />

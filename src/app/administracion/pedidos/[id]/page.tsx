@@ -34,7 +34,7 @@ export default async function AdministrationOrderDetailPage({
           </div>
         </div>
 
-        <OrderDetailClient initialOrder={order} />
+        <OrderDetailClient initialOrder={order} canManageProduction />
       </div>
     </AdministrationShell>
   );

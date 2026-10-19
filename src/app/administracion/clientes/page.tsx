@@ -10,6 +10,7 @@ interface AdminClientsPageProps {
     search?: string;
     status?: string;
     sellerId?: string;
+    category?: string;
   }>;
 }
 
@@ -20,6 +21,7 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
   const search = params.search || "";
   const status = params.status || "all";
   const sellerId = params.sellerId || "all";
+  const category = params.category || "all";
 
   const [paginatedClients, sellers] = await Promise.all([
     getPaginatedClientsAdmin({
@@ -27,7 +29,8 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
       pageSize: 20,
       search,
       status,
-      sellerId
+      sellerId,
+      category
     }),
     getSellers()
   ]);
@@ -45,6 +48,7 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
         </div>
 
         <ClientsAdminClient
+          key={`${page}:${search}:${status}:${sellerId}:${category}`}
           initialClients={paginatedClients.data}
           totalCount={paginatedClients.total}
           serverPage={paginatedClients.page}
@@ -54,6 +58,7 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
           initialSearch={search}
           initialStatus={status}
           initialSellerId={sellerId}
+          initialCategory={category}
           isAdmin={ctx.isAdmin}
         />
       </div>

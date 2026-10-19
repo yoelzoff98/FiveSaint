@@ -21,6 +21,7 @@ import {
   CheckDuplicatesInputSchema
 } from "@/lib/validations/manufacturing";
 import crypto from "crypto";
+import { ClientCategorySchema } from "@/lib/client-categories";
 
 // =========================================================================
 // 1. GESTIÓN DE CLIENTES EN ADMINISTRACIÓN
@@ -32,6 +33,7 @@ export async function getPaginatedClientsAdmin(params: {
   search?: string;
   status?: string;
   sellerId?: string;
+  category?: string;
 }) {
   await requireAdministrationUser();
   const supabase = createSupabaseAdminClient();
@@ -44,7 +46,7 @@ export async function getPaginatedClientsAdmin(params: {
   let query = supabase
     .from("clients")
     .select(`
-      id, name, company_name, email, phone, address, notes, status, source,
+      id, name, company_name, category, email, phone, address, notes, status, source,
       seller_id, created_by_name, created_by_role, created_at, updated_at,
       sellers(id, full_name, email)
     `, { count: "exact" });
@@ -55,6 +57,10 @@ export async function getPaginatedClientsAdmin(params: {
 
   if (params.status && params.status !== "all") {
     query = query.eq("status", params.status);
+  }
+
+  if (params.category && params.category !== "all") {
+    query = query.eq("category", ClientCategorySchema.parse(params.category));
   }
 
   if (params.search && params.search.trim()) {
@@ -192,6 +198,7 @@ export async function createClientAdmin(clientData: {
   notes?: string;
   seller_id?: string;
   source?: string;
+  category?: string;
 }) {
   const ctx = await requireAdministrationUser();
   const supabase = createSupabaseAdminClient();
@@ -204,6 +211,7 @@ export async function createClientAdmin(clientData: {
     .from("clients")
     .insert([{
       name: clientData.name.trim(),
+      category: ClientCategorySchema.parse(clientData.category ?? "consumidor_final"),
       company_name: clientData.company_name?.trim() || null,
       email: clientData.email?.trim() || null,
       phone: clientData.phone?.trim() || null,
@@ -231,6 +239,7 @@ export async function updateClientAdmin(
   id: string,
   clientData: {
     name?: string;
+    category?: string;
     company_name?: string;
     email?: string;
     phone?: string;
@@ -265,6 +274,7 @@ export async function updateClientAdmin(
   };
 
   if (clientData.name !== undefined) updateFields.name = clientData.name.trim();
+  if (clientData.category !== undefined) updateFields.category = ClientCategorySchema.parse(clientData.category);
   if (clientData.company_name !== undefined) updateFields.company_name = clientData.company_name?.trim() || null;
   if (clientData.email !== undefined) updateFields.email = clientData.email?.trim() || null;
   if (clientData.phone !== undefined) updateFields.phone = clientData.phone?.trim() || null;
@@ -865,9 +875,7 @@ export async function getManufacturingOrderById(id: string) {
     .select(`
       *,
       orders(
-        id, order_number, created_at, notes,
-        clients(name, company_name, phone, email, address),
-        sellers(full_name)
+        id, order_number, created_at, notes
       )
     `)
     .eq("id", id)
@@ -884,30 +892,38 @@ export async function getManufacturingOrderById(id: string) {
 /**
  * Obtiene los ítems de pedidos vigentes pendientes de emitir orden de fabricación.
  */
-export async function getPendingOrderItemsForManufacturing() {
+export async function getPendingOrderItemsForManufacturing(orderId?: string) {
   await requireAdministrationUser();
   const supabase = createSupabaseAdminClient();
 
   // Pedidos vigentes directos que no estén cancelados ni completados (venta distribuidor)
-  const { data, error } = await supabase
+  let query = supabase
     .from("order_items")
     .select(`
       id, order_id, product_id, variant_id, product_name, variant_name, quantity,
       factory_notes, configuration, configuration_status, configuration_review_notes,
       manufacturing_issued_quantity,
       orders!inner(
-        id, order_number, status, sale_channel, created_at,
+        id, order_number, status, sale_channel, commercial_approval_status, created_at,
         clients(name, company_name),
         sellers(full_name)
       )
     `)
     .neq("orders.status", "cancelled")
     .eq("orders.sale_channel", "direct")
+    .in("orders.commercial_approval_status", ["approved","legacy"])
     .order("created_at", { ascending: false });
+  if (orderId) query = query.eq("order_id", orderId);
+  const {data,error} = await query;
 
   if (error) {
-    console.error("Error getPendingOrderItemsForManufacturing:", error);
-    return [];
+    console.error("Error getPendingOrderItemsForManufacturing:", JSON.stringify({
+      code: error.code, message: error.message, details: error.details, hint: error.hint
+    }));
+    if ((error.code === "42703" || error.code === "PGRST204") && error.message.includes("commercial_approval_status")) {
+      throw new Error("Fabricación pendiente no disponible: falta aplicar la migración 20261018000200_order_request_approval.sql en la base de datos de este entorno. No se pueden verificar las aprobaciones de los pedidos.");
+    }
+    throw new Error("No se pudieron cargar los pedidos pendientes de fabricación. Intente nuevamente antes de emitir órdenes.");
   }
 
   // Filtrar ítems que todavía tienen saldo para fabricar
@@ -921,7 +937,7 @@ export async function getPendingOrderItemsForManufacturing() {
  * Emite una orden de fabricación validando BOM, opciones configurables,
  * concurrencia y estricta capacidad de una sola hoja A4.
  */
-export async function issueManufacturingOrderAction(formData: {
+async function prepareManufacturingLine(formData: {
   orderId: string;
   orderItemId: string;
   quantity: number;
@@ -1002,7 +1018,7 @@ export async function issueManufacturingOrderAction(formData: {
   }));
 
   // 4. Cargar opciones configurables del producto y validar compatibilidad
-  const optionsDb = await getConfigurableOptions({ productId: orderItem.product_id || undefined, isActiveOnly: true });
+  const optionsDb = await getConfigurableOptions({ productId: bomRecord.product_id, isActiveOnly: true });
   const optionsDefinitions: ConfigurableOptionDefinition[] = optionsDb.map((o: any) => ({
     code: o.code,
     name: o.name,
@@ -1042,37 +1058,44 @@ export async function issueManufacturingOrderAction(formData: {
     throw new Error(a4Validation.reason || "El contenido excede los límites de una única hoja A4.");
   }
 
-  // 7. Hash de idempotencia
-  const requestHash = crypto
-    .createHash("sha256")
-    .update(JSON.stringify({
-      orderId: formData.orderId,
-      orderItemId: formData.orderItemId,
-      quantity: formData.quantity,
-      bomId: bomRecord.id
-    }))
-    .digest("hex");
+  return { orderItem, bomRecord, supplies, instructions, itemConfig };
+}
 
-  // 8. Llamar RPC transaccional
-  const { data, error } = await supabase.rpc("issue_manufacturing_order_transactional", {
-    p_user_id: ctx.user!.id,
-    p_order_id: formData.orderId,
-    p_order_item_id: formData.orderItemId,
-    p_quantity: formData.quantity,
-    p_bom_id: bomRecord.id,
-    p_configuration_snapshot: itemConfig,
-    p_manufacturing_instructions_snapshot: instructions,
-    p_supplies_snapshot: supplies,
-    p_notes: formData.notes?.trim() || null,
-    p_idempotency_key: formData.idempotencyKey || null,
-    p_request_hash: requestHash
-  });
-
-  if (error) {
-    console.error("Error en issue_manufacturing_order_transactional:", error);
-    throw new Error(error.message || "Error al emitir la orden de fabricación.");
+export async function issueManufacturingOrderAction(formData: {
+  orderId: string; orderItemId: string; quantity: number; bomId?: string | null;
+  notes?: string | null; idempotencyKey?: string | null;
+  additionalItems?: { orderItemId: string; quantity: number; bomId: string }[];
+}) {
+  const ctx = await requireAdministrationUser();
+  const db = createSupabaseAdminClient();
+  const requested = [{orderItemId:formData.orderItemId,quantity:formData.quantity,bomId:formData.bomId}, ...(formData.additionalItems || [])];
+  if (new Set(requested.map(item => item.orderItemId)).size !== requested.length) throw new Error("No se puede incluir dos veces el mismo renglón.");
+  const prepared = [];
+  for (const line of requested) {
+    if (!Number.isInteger(line.quantity) || line.quantity <= 0) throw new Error("Cantidad a fabricar inválida.");
+    const result = await prepareManufacturingLine({...formData,...line});
+    if (result.orderItem.order_id !== formData.orderId) throw new Error("El adicional no pertenece al pedido.");
+    prepared.push(result);
   }
-
+  const primary = prepared[0];
+  const lines = prepared.map((result,index) => ({order_item_id:result.orderItem.id,quantity:requested[index].quantity,bom_id:result.bomRecord.id,product_name:result.orderItem.product_name,variant_name:result.orderItem.variant_name,configuration:result.itemConfig}));
+  const consolidated = new Map<string, SupplyItem>();
+  for (const result of prepared) for (const supply of result.supplies) {
+    const key = JSON.stringify([supply.code,supply.unitOfMeasure,supply.notes || ""]);
+    const previous = consolidated.get(key);
+    consolidated.set(key,{...supply,quantity:(previous?.quantity || 0)+supply.quantity});
+  }
+  const supplies = [...consolidated.values()];
+  const instructions = prepared.flatMap((result,index) => index === 0 ? result.instructions : [`Adicional: ${result.orderItem.product_name} × ${requested[index].quantity}`,...result.instructions]);
+  const capacity = validateSingleA4Capacity({supplies,instructions,configuration:primary.itemConfig,notes:formData.notes});
+  if (!capacity.fitsInSingleA4) throw new Error(capacity.reason);
+  const hash = crypto.createHash("sha256").update(JSON.stringify({orderId:formData.orderId,lines,supplies,instructions,notes:formData.notes || null})).digest("hex");
+  const {data,error} = await db.rpc("issue_manufacturing_group_transactional",{
+    p_user_id:ctx.user!.id,p_order_id:formData.orderId,p_primary_item_id:formData.orderItemId,
+    p_lines:lines,p_configuration:primary.itemConfig,p_instructions:instructions,p_supplies:supplies,
+    p_notes:formData.notes || null,p_key:formData.idempotencyKey || crypto.randomUUID(),p_hash:hash
+  });
+  if (error) throw new Error(error.message);
   return data;
 }
 

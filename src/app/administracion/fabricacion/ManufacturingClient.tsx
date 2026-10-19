@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -32,9 +32,11 @@ interface ManufacturingClientProps {
   serverPage: number;
   serverTotalPages: number;
   pendingItems: any[];
+  pendingError?: string | null;
   compositions: any[];
   initialSearch?: string;
   initialStatus?: string;
+  initialPendingView?: boolean;
 }
 
 export function ManufacturingClient({
@@ -43,19 +45,31 @@ export function ManufacturingClient({
   serverPage,
   serverTotalPages,
   pendingItems,
+  pendingError,
   compositions,
+  initialPendingView = false,
   initialSearch = "",
   initialStatus = "all"
 }: ManufacturingClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"issued" | "pending">("issued");
+  const [activeTab, setActiveTab] = useState<"issued" | "pending">(initialPendingView ? "pending" : "issued");
   const [orders, setOrders] = useState<any[]>(initialOrders);
+  useEffect(()=>setOrders(initialOrders),[initialOrders]);
   const [search, setSearch] = useState(initialSearch);
   const [status, setStatus] = useState(initialStatus);
 
   // Modal de Emisión
   const [selectedPendingItem, setSelectedPendingItem] = useState<any | null>(null);
   const [issueQuantity, setIssueQuantity] = useState(1);
+  const [groupPrimaryId,setGroupPrimaryId] = useState("");
+  const [groupItems,setGroupItems] = useState<any[]>([]);
+  const [additionalBoms,setAdditionalBoms] = useState<Record<string,string>>({});
+  const [additionalQuantities,setAdditionalQuantities] = useState<Record<string,number>>({});
+  const intent = useRef<{payload:string;key:string} | null>(null);
+  const groupedPending = [...pendingItems.reduce((groups: Map<string,any>,item:any) => {
+    const group = groups.get(item.order_id) || {order_id:item.order_id,orders:item.orders,items:[]};
+    group.items.push(item); groups.set(item.order_id,group); return groups;
+  },new Map<string,any>()).values()];
   const [selectedBomId, setSelectedBomId] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -64,29 +78,40 @@ export function ManufacturingClient({
   const [success, setSuccess] = useState<string | null>(null);
 
   const openIssueModal = (item: any) => {
+    const siblings = item.groupItems || [item];
+    setGroupItems(siblings);
+    setGroupPrimaryId("");
+    setAdditionalBoms(Object.fromEntries(siblings.map((row:any) => [row.id,compositions.find((bom:any)=> row.product_id && bom.product_id===row.product_id && (!bom.variant_id || bom.variant_id===row.variant_id))?.id || ""])));
+    setAdditionalQuantities(Object.fromEntries(siblings.map((row:any)=>[row.id,row.quantity-(row.manufacturing_issued_quantity||0)])));
     const remaining = item.quantity - (item.manufacturing_issued_quantity || 0);
     setSelectedPendingItem(item);
     setIssueQuantity(remaining > 0 ? remaining : 1);
     
     // Buscar BOM publicada para el producto
     const matchingBom = compositions.find((c: any) => c.product_id === item.product_id);
-    setSelectedBomId(matchingBom?.id || (compositions[0]?.id || ""));
+    setSelectedBomId(matchingBom?.id || "");
     setNotes("");
     setError(null);
   };
 
   const handleIssueSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPendingItem) return;
+    if (!selectedPendingItem || !groupPrimaryId) return;
 
     setLoading(true);
     setError(null);
 
     try {
+      const additionalItems = groupItems.filter(item=>item.id!==groupPrimaryId).map(item=>({orderItemId:item.id,quantity:additionalQuantities[item.id],bomId:additionalBoms[item.id]}));
+      if (additionalItems.some(item=>!item.bomId)) throw new Error("Seleccioná la composición de cada adicional antes de emitir.");
+      const payload=JSON.stringify({primary:groupPrimaryId,quantity:issueQuantity,bom:selectedBomId,additionalItems,notes});
+      if (intent.current?.payload!==payload) intent.current={payload,key:crypto.randomUUID()};
       const res = await issueManufacturingOrderAction({
         orderId: selectedPendingItem.order_id,
         orderItemId: selectedPendingItem.id,
         quantity: issueQuantity,
+        additionalItems,
+        idempotencyKey:intent.current.key,
         bomId: selectedBomId || null,
         notes: notes.trim() || null
       });
@@ -162,7 +187,7 @@ export function ManufacturingClient({
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>Pendientes de Fabricación ({pendingItems.length})</span>
+          <span>Pendientes de Fabricación ({groupedPending.length})</span>
         </button>
         <Link
           href="/administracion/fabricacion/revision"
@@ -210,7 +235,7 @@ export function ManufacturingClient({
                 <thead>
                   <tr className="bg-stone-50 border-b border-stone-200 text-stone-500 font-semibold uppercase tracking-wider text-[11px]">
                     <th className="py-3 px-4 w-36">N° de Orden</th>
-                    <th className="py-3 px-4">Producto & Variante</th>
+                    <th className="py-3 px-4">Producto y adicionales</th>
                     <th className="py-3 px-4 w-24 text-center">Cantidad</th>
                     <th className="py-3 px-4">Pedido / Cliente</th>
                     <th className="py-3 px-4 w-28">Estado</th>
@@ -303,8 +328,8 @@ export function ManufacturingClient({
                 <tr className="bg-stone-50 border-b border-stone-200 text-stone-500 font-semibold uppercase tracking-wider text-[11px]">
                   <th className="py-3 px-4">Pedido / Fecha</th>
                   <th className="py-3 px-4">Cliente / Asesor</th>
-                  <th className="py-3 px-4">Producto & Variante</th>
-                  <th className="py-3 px-4 w-32 text-center">Cantidades (Vendida / Emitida)</th>
+                  <th className="py-3 px-4">Producto y adicionales</th>
+                  <th className="py-3 px-4 w-32 text-center">Contenido del pedido</th>
                   <th className="py-3 px-4 w-28 text-center">Saldo a Fabricar</th>
                   <th className="py-3 px-4 text-right w-36">Acción</th>
                 </tr>
@@ -313,11 +338,18 @@ export function ManufacturingClient({
                 {pendingItems.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-stone-400">
-                      No hay pedidos directos pendientes de orden de fabricación.
+                      {pendingError ? "Listado no disponible. Revise el aviso de error antes de continuar." : "No hay pedidos directos pendientes de orden de fabricación."}
                     </td>
                   </tr>
                 ) : (
-                  pendingItems.map((it) => {
+                  groupedPending.map((group:any) => {
+                    const first = group.items[0];
+                    const it = {...first,groupItems:group.items,
+                      product_name:group.items.map((row:any)=>`${row.product_name} × ${row.quantity}`).join(" · "),
+                      variant_name:null,
+                      quantity:group.items.reduce((total:number,row:any)=>total+row.quantity,0),
+                      manufacturing_issued_quantity:group.items.reduce((total:number,row:any)=>total+(row.manufacturing_issued_quantity||0),0),
+                      configuration_status:group.items.every((row:any)=>row.configuration_status==='approved')?'approved':'pending_review'};
                     const issued = it.manufacturing_issued_quantity || 0;
                     const remaining = it.quantity - issued;
                     return (
@@ -341,7 +373,7 @@ export function ManufacturingClient({
                         </td>
                         <td className="py-3 px-4">
                           <span className="font-bold text-stone-900 block text-sm">
-                            {it.product_name}
+                            {group.items.map((row:any)=><span key={row.id} className="block mb-1">{row.product_name} <span className="font-normal">× {row.quantity} — pendiente {row.quantity-(row.manufacturing_issued_quantity||0)}</span></span>)}
                           </span>
                           {it.variant_name && (
                             <span className="text-stone-500 text-[11px] block">{it.variant_name}</span>
@@ -353,12 +385,12 @@ export function ManufacturingClient({
                           )}
                         </td>
                         <td className="py-3 px-4 text-center font-mono">
-                          <span className="font-bold text-stone-900">{it.quantity} vendidas</span>
-                          <span className="block text-[10px] text-stone-500">{issued} emitidas</span>
+                          <span className="font-bold text-stone-900">{group.items.length} renglones del pedido</span>
+                          <span className="block text-[10px] text-stone-500">Una orden conjunta</span>
                         </td>
                         <td className="py-3 px-4 text-center">
                           <span className="font-mono font-black text-amber-700 text-sm bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                            {remaining} {remaining === 1 ? 'unidad' : 'unidades'}
+                            {group.items.length} renglones pendientes
                           </span>
                           {it.configuration_status === "approved" ? (
                             <span className="block text-[10px] text-emerald-700 font-bold mt-1">Revisión: Aprobada</span>
@@ -371,7 +403,7 @@ export function ManufacturingClient({
                             <Button
                               variant="primary"
                               size="sm"
-                              onClick={() => openIssueModal(it)}
+                              onClick={() => openIssueModal({...first,groupItems:group.items})}
                               className="bg-accent-deep hover:bg-accent-hover text-white text-xs h-8 px-3"
                             >
                               <Factory className="w-3.5 h-3.5 mr-1" />
@@ -384,7 +416,7 @@ export function ManufacturingClient({
                               asChild
                               className="border-amber-400 text-amber-900 bg-amber-50 hover:bg-amber-100 text-xs h-8 px-3"
                             >
-                              <Link href="/administracion/fabricacion/revision">
+                              <Link href={`/administracion/fabricacion/revision?orderId=${it.order_id}`}>
                                 <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-amber-600" />
                                 <span>Revisar Primero</span>
                               </Link>
@@ -433,6 +465,30 @@ export function ManufacturingClient({
                 </span>
               </div>
 
+              <label className="block text-sm font-bold">Producto principal del pedido
+                <select required className="block w-full border rounded p-2" value={groupPrimaryId} onChange={event=>{
+                  const item=groupItems.find(row=>row.id===event.target.value);
+                  setGroupPrimaryId(event.target.value);
+                  if(item){setSelectedPendingItem(item);setIssueQuantity(item.quantity-(item.manufacturing_issued_quantity||0));setSelectedBomId(additionalBoms[item.id]||"");}
+                }}>
+                  <option value="">Seleccionar producto principal</option>
+                  {groupItems.map(item=><option key={item.id} value={item.id}>{item.product_name}</option>)}
+                </select>
+              </label>
+              {groupPrimaryId && <div className="space-y-3 border rounded p-3">
+                <h4 className="font-bold">Adicionales incluidos en esta misma orden</h4>
+                {groupItems.filter(item=>item.id!==groupPrimaryId).map(item=><div key={item.id} className="space-y-1">
+                  <p className="text-sm">{item.product_name}</p>
+                  <label className="text-xs">Cantidad <input type="number" min={1} max={item.quantity-(item.manufacturing_issued_quantity||0)} required value={additionalQuantities[item.id]||1} onChange={event=>setAdditionalQuantities(previous=>({...previous,[item.id]:Number(event.target.value)}))} className="border p-1 w-20" /></label>
+                  <label className="block text-xs">Composición técnica del adicional
+                    <select required className="w-full border p-2" value={additionalBoms[item.id]||""} onChange={event=>setAdditionalBoms(previous=>({...previous,[item.id]:event.target.value}))}>
+                      <option value="">Seleccionar composición publicada</option>
+                      {compositions.filter(bom=>!item.product_id || (bom.product_id===item.product_id && (!bom.variant_id||bom.variant_id===item.variant_id))).map(bom=><option key={bom.id} value={bom.id}>{bom.name} (v{bom.version})</option>)}
+                    </select>
+                  </label>
+                </div>)}
+                <p className="text-xs">Todos estos renglones se fabricarán juntos. Sus materiales se consolidan sin modificar los valores comerciales del pedido.</p>
+              </div>}
               {/* Cantidad a emitir */}
               <div>
                 <label className="text-xs font-semibold text-stone-700 block mb-1">
@@ -486,7 +542,7 @@ export function ManufacturingClient({
                   className="w-full px-3 py-2 border border-stone-200 rounded-lg text-xs bg-white text-stone-800 outline-none"
                 >
                   <option value="">Selección automática por producto</option>
-                  {compositions.map((c) => (
+                  {compositions.filter((c)=> !selectedPendingItem.product_id || (c.product_id===selectedPendingItem.product_id && (!c.variant_id || c.variant_id===selectedPendingItem.variant_id))).map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name} (v{c.version}) — {c.products?.name}
                     </option>
@@ -526,7 +582,7 @@ export function ManufacturingClient({
                   type="submit"
                   variant="primary"
                   size="sm"
-                  disabled={loading}
+                  disabled={loading || !groupPrimaryId}
                   className="bg-accent-deep text-white text-xs flex items-center gap-1.5"
                 >
                   {loading ? "Emitiendo..." : (

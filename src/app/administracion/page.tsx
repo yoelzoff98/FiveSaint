@@ -80,6 +80,7 @@ export default async function AdministrationDashboardPage() {
           </div>
         </div>
 
+        <Link href="/administracion/solicitudes" className="block border border-orange-300 bg-orange-50 rounded p-4 font-bold">Revisar solicitudes de pedido pendientes de aceptación →</Link>
         {/* Tarjetas de Métricas Operativas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-5 border-amber-200/70 bg-amber-50/40 rounded-xl">
@@ -178,14 +179,14 @@ export default async function AdministrationDashboardPage() {
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-4">
                 <Boxes className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-stone-900">Insumos y Composiciones</h3>
+              <h3 className="text-base font-bold text-stone-900">Fabricación de productos</h3>
               <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-                Mantenimiento de materias primas con unidades decimales/enteras y composiciones base (BOM) versionadas por producto.
+                Elegí un producto del catálogo y completá sus componentes e instrucciones para fábrica.
               </p>
             </div>
             <Button variant="outline" asChild className="mt-6 w-full justify-between">
-              <Link href="/administracion/insumos">
-                <span>Catálogo de Insumos</span>
+              <Link href="/administracion/fabricacion-productos">
+                <span>Preparar productos</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
