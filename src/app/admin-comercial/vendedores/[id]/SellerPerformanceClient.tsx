@@ -1,4 +1,5 @@
 "use client";
+import type {DistributorSale} from "@/lib/distributor-sales";
 
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
@@ -48,9 +49,10 @@ interface SellerPerformanceClientProps {
   seller: Seller;
   budgets: Budget[];
   orders: Order[];
+  distributorSales: DistributorSale[];
 }
 
-export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerformanceClientProps) {
+export function SellerPerformanceClient({ seller, budgets, orders, distributorSales }: SellerPerformanceClientProps) {
   const [commissionRate, setCommissionRate] = useState<number>(5);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("this_month");
 
@@ -58,8 +60,7 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   const isDistributorSale = (item: Budget | Order) => {
     if (item.sale_channel === "distributor" || item.order_type === "distributor_sale") return true;
     if (item.sale_channel === "direct") return false;
-    const status = item.clients?.status?.toLowerCase();
-    return status === "inactivo" || status === "vendido_distribuidor" || item.status === "distributor_sale";
+    return item.status === "distributor_sale";
   };
 
   // Filtrar presupuestos según el período seleccionado
@@ -90,7 +91,15 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   );
   const totalQuotedClients = quotedClientsSet.size;
 
-  const convertedBudgets = filteredBudgets.filter((b) => b.status === "converted" || b.status === "distributor_sale");
+  const directSalesBudgets = filteredBudgets.filter(b=>b.status==="converted"&&!isDistributorSale(b));
+  const distributorSalesBudgets = distributorSales.filter(sale=>{
+    if(selectedPeriod==="all")return true;
+    const date=new Date(sale.created_at),now=new Date();
+    if(selectedPeriod==="this_year")return date.getFullYear()===now.getFullYear();
+    const month=selectedPeriod==="last_month"?new Date(now.getFullYear(),now.getMonth()-1,1):now;
+    return date.getFullYear()===month.getFullYear()&&date.getMonth()===month.getMonth();
+  });
+  const convertedBudgets = [...directSalesBudgets,...distributorSalesBudgets].sort((a,b)=>b.created_at.localeCompare(a.created_at));
   const totalClosedCount = convertedBudgets.length;
 
   // Clientes únicos que concretaron compra (conversión real por cliente)
@@ -99,8 +108,7 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
   );
   const totalConvertedClients = convertedClientsSet.size;
 
-  const directSalesBudgets = convertedBudgets.filter((b) => !isDistributorSale(b));
-  const distributorSalesBudgets = convertedBudgets.filter((b) => isDistributorSale(b));
+
 
   const directRevenue = directSalesBudgets.reduce((acc, curr) => acc + curr.total_amount, 0);
   const distributorRevenue = distributorSalesBudgets.reduce((acc, curr) => acc + curr.total_amount, 0);
@@ -243,11 +251,11 @@ export function SellerPerformanceClient({ seller, budgets, orders }: SellerPerfo
                 </thead>
                 <tbody className="divide-y divide-stone-100 text-stone-800">
                   {convertedBudgets.slice(0, 15).map((b) => {
-                    const isDist = isDistributorSale(b);
+                    const isDist = b.sale_channel === "distributor" || b.status === "distributor_sale";
                     return (
                       <tr key={b.id} className="hover:bg-stone-50/50">
                         <td className="px-4 py-3 font-mono text-stone-900 font-bold">
-                          FS-P-{b.budget_number}
+                          {"order_id" in b && b.order_id ? `Pedido #${b.order_number}` : `FS-P-${b.budget_number}`}
                         </td>
                         <td className="px-4 py-3 text-stone-500 text-xs">
                           {new Date(b.created_at).toLocaleDateString("es-AR")}

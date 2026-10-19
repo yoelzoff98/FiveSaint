@@ -1,5 +1,6 @@
 "use client";
 
+import {ClientDirectory,ClientDirectoryHeader,ClientIdentity,ClientDate} from "@/components/comercial/ClientDirectory";
 import { useEffect, useState } from "react";
 import { CLIENT_CATEGORIES, clientCategoryLabel } from "@/lib/client-categories";
 import { useRouter } from "next/navigation";
@@ -100,6 +101,7 @@ interface Client {
   seller_id: string | null;
   sellers: { full_name: string } | null;
   created_at?: string;
+  updated_at?: string;
 }
 
 interface Seller {
@@ -117,6 +119,8 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
   const router = useRouter();
   const [clients, setClients] = useState<Client[]>(initialClients);
   useEffect(()=>setClients(initialClients),[initialClients]);
+  const [view,setView]=useState("all");
+  const [sort,setSort]=useState("newest");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [category, setCategory] = useState("consumidor_final");
   const [searchTerm, setSearchTerm] = useState("");
@@ -227,7 +231,8 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       (c.email && c.email.toLowerCase().includes(term)) ||
       (c.phone && c.phone.includes(term));
       
-    const matchesStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter ||
+      (["inactivo", "vendido_distribuidor"].includes(statusFilter) && ["inactivo", "vendido_distribuidor"].includes(c.status));
     const matchesSource = sourceFilter === "all" || (c.source || "manual") === sourceFilter;
 
     let matchesDate = true;
@@ -269,23 +274,105 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       }
     }
 
-    return matchesSearch && matchesStatus && matchesSource && matchesDate && (categoryFilter === "all" || (c.category || "consumidor_final") === categoryFilter);
-  });
+    const matchesView = view==="all" || (view==="assigned"&&Boolean(c.seller_id)) || (view==="unassigned"&&!c.seller_id) ||
+      (view==="follow_up"&&["nuevo","contactado","presupuestado","negociacion"].includes(c.status)) || (view==="sold"&&["ganado","vendido","inactivo","vendido_distribuidor"].includes(c.status));
+    return matchesSearch && matchesStatus && matchesSource && matchesDate && matchesView && (categoryFilter === "all" || (c.category || "consumidor_final") === categoryFilter);
+  }).sort((a,b)=>sort==="name"?a.name.localeCompare(b.name,"es",{sensitivity:"base"}):new Date((sort==="updated"?b.updated_at:b.created_at)||0).getTime()-new Date((sort==="updated"?a.updated_at:a.created_at)||0).getTime());
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-stone-900 tracking-wide">Gestión de Clientes</h1>
-          <p className="text-stone-500 text-sm">Administrá tus contactos y controlá sus interacciones.</p>
-        </div>
-        {!showForm && (
-          <Button onClick={() => setShowForm(true)} className="flex items-center gap-2 cursor-pointer">
-            <Plus className="w-4 h-4" />
-            Nuevo Cliente
-          </Button>
+    <ClientDirectory>
+      <ClientDirectoryHeader count={filteredClients.length} subtitle={isAdmin?"Contactos, empresas y seguimiento de tu equipo.":"Tu cartera de clientes y sus oportunidades comerciales."}
+        views={isAdmin?[{value:"all",label:"Todos los clientes"},{value:"assigned",label:"Con asesor"},{value:"unassigned",label:"Sin asignar"}]:[{value:"all",label:"Mis clientes"},{value:"follow_up",label:"En seguimiento"},{value:"sold",label:"Ventas concretadas"}]}
+        view={view} onView={setView} search={searchTerm} onSearch={setSearchTerm} onSearchSubmit={()=>setSearchTerm(value=>value.trim())} sort={sort} onSort={setSort}
+        onCreate={()=>{resetForm();setShowForm(true);}}
+        activeFilters={[searchTerm,statusFilter!=="all",sourceFilter!=="all",dateRangeFilter!=="all",categoryFilter!=="all",view!=="all"].filter(Boolean).length}
+        onClear={()=>{setSearchTerm("");setStatusFilter("all");setSourceFilter("all");setDateRangeFilter("all");setCategoryFilter("all");setStartDate("");setEndDate("");setView("all");}}
+        filters={<>
+          <label className="flex items-center gap-2 text-xs font-semibold text-stone-500">Categoría:
+            <select aria-label="Filtrar por categoría" value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)} className="border rounded-md px-3 py-2 text-sm bg-white w-full">
+              <option value="all">Todas las categorías</option>
+              {CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </label>
+          {/* Filtro Estado */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Estado:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
+            >
+              <option value="all">Todos los Estados</option>
+              {CRM_STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro Origen */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Origen:</span>
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
+            >
+              <option value="all">Todos los Orígenes</option>
+              {Object.entries(SOURCE_LABELS).map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro Período */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Alta:</span>
+            <select
+              value={dateRangeFilter}
+              onChange={(e) => setDateRangeFilter(e.target.value)}
+              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
+            >
+              <option value="all">Cualquier fecha</option>
+              <option value="current_month">Mes actual</option>
+              <option value="previous_month">Mes anterior</option>
+              <option value="last_7">Últimos 7 días</option>
+              <option value="last_14">Últimos 14 días</option>
+              <option value="last_30">Últimos 30 días</option>
+              <option value="custom">Fecha personalizada...</option>
+            </select>
+          </div>
+        {/* Controles de Fecha Personalizada */}
+        {dateRangeFilter === "custom" && (
+          <div className="flex flex-wrap items-center gap-4 bg-stone-50 p-4 border border-stone-200 rounded-lg text-sm transition-all duration-300">
+            <div className="flex items-center gap-2">
+              <span className="text-stone-600 font-semibold">Desde:</span>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="px-3 py-1.5 border border-stone-300 rounded text-stone-850 bg-white"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-stone-600 font-semibold">Hasta:</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="px-3 py-1.5 border border-stone-300 rounded text-stone-850 bg-white"
+              />
+            </div>
+            {(startDate || endDate) && (
+              <button
+                onClick={() => { setStartDate(""); setEndDate(""); }}
+                className="text-xs text-red-650 hover:underline font-semibold cursor-pointer"
+              >
+                Limpiar Fechas
+              </button>
+            )}
+          </div>
         )}
-      </div>
+        </>}/>
 
       {/* Formulario */}
       {showForm && (
@@ -435,110 +522,8 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
       )}
 
       {/* Buscador y filtros */}
-      <div className="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Búsqueda */}
-          <div className="flex items-center bg-stone-50 border border-stone-300 rounded-lg px-3 py-2">
-            <Search className="w-5 h-5 text-stone-400 mr-2 shrink-0" />
-            <input
-              type="text"
-              placeholder="Buscar por nombre, empresa o email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full focus:outline-none text-stone-800 placeholder-stone-400 bg-transparent text-sm"
-            />
-          </div>
-
-          <label className="flex items-center gap-2 text-xs font-semibold text-stone-500">Categoría:
-            <select aria-label="Filtrar por categoría" value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)} className="border rounded-md px-3 py-2 text-sm bg-white w-full">
-              <option value="all">Todas las categorías</option>
-              {CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
-            </select>
-          </label>
-          {/* Filtro Estado */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Estado:</span>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
-            >
-              <option value="all">Todos los Estados</option>
-              {CRM_STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filtro Origen */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Origen:</span>
-            <select
-              value={sourceFilter}
-              onChange={(e) => setSourceFilter(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
-            >
-              <option value="all">Todos los Orígenes</option>
-              {Object.entries(SOURCE_LABELS).map(([val, label]) => (
-                <option key={val} value={val}>{label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filtro Período */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider shrink-0">Alta:</span>
-            <select
-              value={dateRangeFilter}
-              onChange={(e) => setDateRangeFilter(e.target.value)}
-              className="px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-accent-deep text-stone-880 text-sm bg-white cursor-pointer w-full"
-            >
-              <option value="all">Cualquier fecha</option>
-              <option value="current_month">Mes actual</option>
-              <option value="previous_month">Mes anterior</option>
-              <option value="last_7">Últimos 7 días</option>
-              <option value="last_14">Últimos 14 días</option>
-              <option value="last_30">Últimos 30 días</option>
-              <option value="custom">Fecha personalizada...</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Controles de Fecha Personalizada */}
-        {dateRangeFilter === "custom" && (
-          <div className="flex flex-wrap items-center gap-4 bg-stone-50 p-4 border border-stone-200 rounded-lg text-sm transition-all duration-300">
-            <div className="flex items-center gap-2">
-              <span className="text-stone-600 font-semibold">Desde:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-1.5 border border-stone-300 rounded text-stone-850 bg-white"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-stone-600 font-semibold">Hasta:</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-1.5 border border-stone-300 rounded text-stone-850 bg-white"
-              />
-            </div>
-            {(startDate || endDate) && (
-              <button
-                onClick={() => { setStartDate(""); setEndDate(""); }}
-                className="text-xs text-red-650 hover:underline font-semibold cursor-pointer"
-              >
-                Limpiar Fechas
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
       {/* Listado */}
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border-t border-stone-100 overflow-hidden">
         {filteredClients.length === 0 ? (
           <div className="p-8 text-center text-stone-500 text-sm">
             No se encontraron clientes registrados.
@@ -555,21 +540,15 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                   <th className="px-6 py-4">Ubicación</th>
                   {isAdmin && <th className="px-6 py-4">Vendedor</th>}
                   <th className="px-6 py-4">Estado CRM</th>
+                  <th>Fecha de creación</th>
+                  <th>Última actualización</th>
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100 text-sm text-stone-800">
                 {filteredClients.map((client) => (
                   <tr key={client.id} className="hover:bg-stone-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-stone-900">{client.name}</div>
-                      {client.company_name && (
-                        <div className="text-xs text-stone-500 flex items-center gap-1 mt-0.5">
-                          <Building className="w-3.5 h-3.5" />
-                          {client.company_name}
-                        </div>
-                      )}
-                    </td>
+                    <td><ClientIdentity name={client.name} company={client.company_name} href={`/admin-comercial/clientes/${client.id}`}/></td>
                     <td className="px-6 py-4 whitespace-nowrap">{clientCategoryLabel(client.category)}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
@@ -623,6 +602,8 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                         {STATUS_LABELS[client.status] || client.status}
                       </Badge>
                     </td>
+                    <td><ClientDate value={client.created_at}/></td>
+                    <td><ClientDate value={client.updated_at}/></td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end items-center gap-2">
                         <Button 
@@ -639,7 +620,7 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
                           asChild
                           className="cursor-pointer"
                         >
-                          <Link href={`/admin-comercial/clientes/${client.id}`} className="flex items-center gap-1">
+                          <Link prefetch={false} href={`/admin-comercial/clientes/${client.id}`} className="flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" />
                             Seguimiento
                           </Link>
@@ -653,6 +634,6 @@ export function ClientsPageClient({ initialClients, sellers, isAdmin }: ClientsP
           </div>
         )}
       </div>
-    </div>
+    </ClientDirectory>
   );
 }

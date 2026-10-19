@@ -218,6 +218,10 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
 
   // Inicializar selección de ítems disponibles al abrir modal
   const openSaleModal = () => {
+    if(budget.is_historical_reconciliation_pending) {
+      setError("Este presupuesto tiene antecedentes históricos pendientes de conciliación. Administración debe revisarlo antes de registrar otra venta.");
+      return;
+    }
     setSelectedChannel(null); // Elección explícita obligatoria
     setSelectedDistributor(null);
     setDistributorReference("");
@@ -576,6 +580,7 @@ export function BudgetDetailClient({ initialBudget, ordersBasePath = "/admin-com
 
   return (
     <div className="flex flex-col gap-6">
+      {budget.is_historical_reconciliation_pending && <div role="status" className="bg-amber-50 border border-amber-200 p-4 rounded-lg text-sm text-amber-900">Este presupuesto tiene antecedentes de cierre históricos. Requiere conciliación administrativa antes de registrar otra venta.</div>}
       {/* Componente Oculto para Impresión de PDF Oficial */}
       <div style={{ display: "none" }}>
         <BudgetPrintPdf ref={printRef} budget={budget} />

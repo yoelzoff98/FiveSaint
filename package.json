@@ -20,7 +20,9 @@
     "test:restore": "node scripts/execute-isolated-restore.mjs",
     "test:manufacturing-print": "node --import tsx scripts/verify-manufacturing-print.mjs",
     "test:approval": "node --import tsx --test tests/order-request-approval.test.mjs",
-    "test:clients": "node --import tsx --test tests/client-categories.test.mjs"
+    "test:clients": "node --import tsx --test tests/client-categories.test.mjs",
+    "test:distributor-sales": "node --import tsx --test tests/distributor-sales.test.mjs",
+    "test:accounting": "node --import tsx --test tests/accounting-portal.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

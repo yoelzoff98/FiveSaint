@@ -48,6 +48,10 @@ try {
   await db.exec(fs.readFileSync('supabase/migrations/20261018000200_order_request_approval.sql','utf8'));
   await db.exec(fs.readFileSync('supabase/migrations/20261018000300_client_categories.sql','utf8'));
   await db.exec(fs.readFileSync('supabase/migrations/20261018000300_client_categories.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261019000100_accounting_portal.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261019000100_accounting_portal.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261019000200_accounting_document_traceability.sql','utf8'));
+  await db.exec(fs.readFileSync('supabase/migrations/20261019000200_accounting_document_traceability.sql','utf8'));
   for (const table of order) {
     const after = (await db.query(`select to_jsonb(t) document from public.${table} t order by id`)).rows.map(row => row.document);
     assert.equal(after.length, before[table].length);

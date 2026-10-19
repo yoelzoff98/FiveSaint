@@ -1,6 +1,7 @@
+import { getDistributorSales } from "@/lib/supabase/distributor-sales";
 import { requireAdministrationUser } from "@/lib/supabase/administration";
 import { AdministrationShell } from "@/components/administracion/AdministrationShell";
-import { getPaginatedOrders, getPaginatedBudgets } from "@/lib/supabase/comercial";
+import { getPaginatedOrders } from "@/lib/supabase/comercial";
 import { OrdersListClient } from "@/app/admin-comercial/pedidos/OrdersListClient";
 
 interface AdministrationOrdersPageProps {
@@ -26,13 +27,9 @@ export default async function AdministrationOrdersPage({ searchParams }: Adminis
       pageSize: 20,
       status,
       search,
-      saleChannel
+      saleChannel: "direct"
     }),
-    getPaginatedBudgets({
-      page: 1,
-      pageSize: 50,
-      status: "distributor_sale"
-    })
+    getDistributorSales()
   ]);
 
   return (
@@ -53,7 +50,9 @@ export default async function AdministrationOrdersPage({ searchParams }: Adminis
           serverPage={paginatedOrders.page}
           serverPageSize={paginatedOrders.pageSize}
           serverTotalPages={paginatedOrders.totalPages}
-          initialBudgets={paginatedDistributorBudgets.data}
+          initialDistributorSales={paginatedDistributorBudgets.data}
+          unresolvedDistributorClients={paginatedDistributorBudgets.unresolvedClients}
+          distributorIssues={paginatedDistributorBudgets.issues.length}
           initialStatus={status}
           initialSaleChannel={saleChannel}
           isAdmin={true}

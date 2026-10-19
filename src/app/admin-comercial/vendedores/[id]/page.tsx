@@ -1,3 +1,4 @@
+import {getDistributorSales} from "@/lib/supabase/distributor-sales";
 import { requireCommercialUser } from "@/lib/supabase/comercial";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { CommercialShell } from "@/components/comercial/CommercialShell";
@@ -11,8 +12,9 @@ interface PageProps {
 }
 
 export default async function SellerPerformancePage({ params }: PageProps) {
-  await requireCommercialUser();
+  const ctx=await requireCommercialUser();
   const { id } = await params;
+  if(!(ctx.isAdmin||ctx.isAdministration||ctx.isSeller&&ctx.sellerId===id))throw new Error("No autorizado para ver este vendedor.");
   const supabase = createSupabaseAdminClient();
 
   // 1. Obtener datos del vendedor
@@ -35,7 +37,7 @@ export default async function SellerPerformancePage({ params }: PageProps) {
   // 2. Obtener presupuestos (para métricas y cálculos)
   const { data: budgets } = await supabase
     .from("budgets")
-    .select("id, client_id, budget_number, total_amount, status, created_at, clients(name, company_name, status)")
+    .select("id, client_id, budget_number, total_amount, status, sale_channel, created_at, clients(name, company_name, status)")
     .eq("seller_id", id)
     .order("created_at", { ascending: false });
 
@@ -45,6 +47,8 @@ export default async function SellerPerformancePage({ params }: PageProps) {
     .select("id, order_number, total_amount, status, created_at, clients(name, company_name, status)")
     .eq("seller_id", id)
     .order("created_at", { ascending: false });
+
+  const distributorSales=await getDistributorSales(id);
 
   return (
     <CommercialShell>
@@ -63,6 +67,7 @@ export default async function SellerPerformancePage({ params }: PageProps) {
         </div>
 
         <SellerPerformanceClient 
+          distributorSales={distributorSales.data}
           seller={seller} 
           budgets={(budgets as any) || []} 
           orders={(orders as any) || []} 

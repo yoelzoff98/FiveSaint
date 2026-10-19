@@ -1,4 +1,5 @@
-import { requireCommercialUser, getPaginatedOrders, getPaginatedBudgets } from "@/lib/supabase/comercial";
+import { getDistributorSales } from "@/lib/supabase/distributor-sales";
+import { requireCommercialUser, getPaginatedOrders } from "@/lib/supabase/comercial";
 import { CommercialShell } from "@/components/comercial/CommercialShell";
 import { OrdersListClient } from "./OrdersListClient";
 
@@ -18,8 +19,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const saleChannel = params.saleChannel || "all";
 
   const [ordersResult, budgetsResult] = await Promise.all([
-    getPaginatedOrders({ page, pageSize: 20, status, saleChannel }),
-    getPaginatedBudgets({ page: 1, pageSize: 50, status: "distributor_sale" })
+    getPaginatedOrders({ page, pageSize: 20, status, saleChannel: "direct" }),
+    getDistributorSales()
   ]);
 
   return (
@@ -36,7 +37,9 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           serverPage={ordersResult.page}
           serverPageSize={ordersResult.pageSize}
           serverTotalPages={ordersResult.totalPages}
-          initialBudgets={budgetsResult.data}
+          initialDistributorSales={budgetsResult.data}
+          unresolvedDistributorClients={budgetsResult.unresolvedClients}
+          distributorIssues={budgetsResult.issues.length}
           initialStatus={status}
           initialSaleChannel={saleChannel}
           isAdmin={ctx.isAdmin}

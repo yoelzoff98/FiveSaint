@@ -7,9 +7,10 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 interface CommercialHeaderProps {
   profileName: string;
+  showNotifications?: boolean;
 }
 
-export function CommercialHeader({ profileName }: CommercialHeaderProps) {
+export function CommercialHeader({ profileName, showNotifications = false }: CommercialHeaderProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -37,7 +38,7 @@ export function CommercialHeader({ profileName }: CommercialHeaderProps) {
         Seguimiento Comercial
       </div>
       <div className="flex items-center gap-6">
-        <OrderRequestNotifications includeCommercialNotifications />
+        {showNotifications && <OrderRequestNotifications includeCommercialNotifications />}
         <div className="flex items-center gap-2 text-sm text-stone-600 bg-stone-100 px-3 py-1.5 rounded-full font-medium">
           <User className="w-4 h-4 text-stone-500" />
           <span>{profileName}</span>

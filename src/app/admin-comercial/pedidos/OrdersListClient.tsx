@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Search, Eye, Calendar, User, Factory, Store, ChevronLeft, ChevronRight, XCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { formatCurrencyARS } from "@/lib/commercial-calculations";
+import { projectDistributorSales, type DistributorSale } from "@/lib/distributor-sales";
 import { cancelOrder } from "@/lib/supabase/comercial";
 
 interface Order {
@@ -21,6 +22,7 @@ interface Order {
 }
 
 interface Budget {
+  client_id?: string;
   id: string;
   budget_number: number;
   status: string;
@@ -41,7 +43,10 @@ interface OrdersListClientProps {
   serverPage?: number;
   serverPageSize?: number;
   serverTotalPages?: number;
-  initialBudgets: Budget[];
+  initialBudgets?: Budget[];
+  initialDistributorSales?: DistributorSale[];
+  unresolvedDistributorClients?: number;
+  distributorIssues?: number;
   initialStatus?: string;
   initialSaleChannel?: string;
   isAdmin: boolean;
@@ -56,7 +61,10 @@ export function OrdersListClient({
   totalOrdersCount,
   serverPage = 1,
   serverTotalPages = 1,
-  initialBudgets,
+  initialBudgets = [],
+  initialDistributorSales,
+  unresolvedDistributorClients = 0,
+  distributorIssues = 0,
   initialStatus = "all",
   initialSaleChannel = "all",
   isAdmin,
@@ -64,30 +72,26 @@ export function OrdersListClient({
   budgetsBasePath = "/admin-comercial/presupuestos"
 }: OrdersListClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"factory" | "distributor">("factory");
+  const [activeTab, setActiveTab] = useState<"factory" | "distributor">(initialSaleChannel === "distributor" ? "distributor" : "factory");
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [budgets] = useState<Budget[]>(initialBudgets);
+  useEffect(()=>setOrders(initialOrders),[initialOrders]);
+  const budgets = initialBudgets;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [dateRangeFilter, setDateRangeFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [currentPage, setCurrentPage] = useState(serverPage);
+  const [currentPage, setCurrentPage] = useState(initialSaleChannel === "distributor" ? 1 : serverPage);
+  useEffect(()=>{if(activeTab==="factory")setCurrentPage(serverPage);},[serverPage,activeTab]);
 
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  // Filtrar presupuestos/ventas vendidas por distribuidor consultando canal persistido
-  const isDistributorSaleBudget = (b: Budget) => {
-    return b.sale_channel === "distributor" || b.status === "distributor_sale";
-  };
-
-  const distributorBudgetsList = useMemo(() => {
-    return budgets.filter((b) => isDistributorSaleBudget(b));
-  }, [budgets]);
+  // Una sola fuente para filas, contador e importe; los pedidos ya incluyen los cierres parciales.
+  const distributorBudgetsList = useMemo(() => initialDistributorSales ?? projectDistributorSales(orders, [], budgets.map(b=>({...b,client_id:b.client_id||""}))).data, [initialDistributorSales,orders,budgets]);
 
   // Filtro general por fecha
   const passesDateFilter = (created_at: string) => {
@@ -154,7 +158,7 @@ export function OrdersListClient({
       const term = searchTerm.toLowerCase();
       const clientName = b.clients?.name.toLowerCase() || "";
       const companyName = b.clients?.company_name?.toLowerCase() || "";
-      const budgetNum = b.budget_number.toString();
+      const budgetNum = (b.order_number || b.budget_number).toString();
 
       const matchesSearch = clientName.includes(term) || companyName.includes(term) || budgetNum.includes(term);
       const matchesDate = passesDateFilter(b.created_at);
@@ -170,21 +174,16 @@ export function OrdersListClient({
       .reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
   }, [filteredFactoryOrders]);
 
-  const distributorTotalSales = useMemo(() => {
-    const ordersTotal = filteredOrders
-      .filter((o) => o.status !== "cancelled" && (o.sale_channel === "distributor" || o.order_type === "distributor_sale"))
-      .reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
-    const budgetsTotal = filteredDistributorBudgets.reduce((sum, b) => sum + Number(b.total_amount || 0), 0);
-    return ordersTotal + budgetsTotal;
-  }, [filteredOrders, filteredDistributorBudgets]);
+  const distributorTotalSales = useMemo(() => filteredDistributorBudgets.reduce((sum, sale) => sum + Math.round(Number(sale.total_amount) * 100), 0) / 100, [filteredDistributorBudgets]);
 
   // Paginación
   const currentList = activeTab === "factory" ? filteredFactoryOrders : filteredDistributorBudgets;
-  const totalPages = Math.max(1, Math.ceil(currentList.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filteredDistributorBudgets.length / PAGE_SIZE));
   const paginatedList = useMemo(() => {
+    if (activeTab === "factory") return filteredFactoryOrders;
     const startIndex = (currentPage - 1) * PAGE_SIZE;
     return currentList.slice(startIndex, startIndex + PAGE_SIZE);
-  }, [currentList, currentPage]);
+  }, [currentList, currentPage,activeTab,filteredFactoryOrders]);
 
   const handleConfirmCancel = async () => {
     if (!cancellingOrderId) return;
@@ -308,6 +307,10 @@ export function OrdersListClient({
         </div>
       )}
 
+      {activeTab === "distributor" && (unresolvedDistributorClients>0 || distributorIssues>0) && <div role="status" className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-900">
+        {unresolvedDistributorClients>0 && <p>{unresolvedDistributorClients} clientes tienen la marca histórica de venta por distribuidor sin una operación con importe verificable. Requieren revisión y no se suman al total.</p>}
+        {distributorIssues>0 && <p>{distributorIssues} presupuestos tienen cierres históricos con importes inconsistentes u operaciones previas. Requieren revisión y no se suman otra vez.</p>}
+      </div>}
       {/* Tabla de Resultados */}
       <div className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs">
         {currentList.length === 0 ? (
@@ -388,12 +391,12 @@ export function OrdersListClient({
                     );
                   })
                 ) : (
-                  (paginatedList as Budget[]).map((b) => {
+                  (paginatedList as DistributorSale[]).map((b) => {
                     const date = new Date(b.created_at);
                     return (
                       <tr key={b.id} className="hover:bg-stone-50/60 transition-colors">
                         <td className="px-4 py-3 font-mono font-bold text-stone-900">
-                          FS-P-{b.budget_number}
+                          {b.order_id ? `#${b.order_number}` : `FS-P-${b.budget_number}`}
                         </td>
                         <td className="px-4 py-3">
                           <div className="font-semibold text-stone-900">{b.clients?.name}</div>
@@ -402,6 +405,7 @@ export function OrdersListClient({
                           )}
                           <div className="text-[10px] text-teal-850 font-medium">
                             Distribuidor: {b.distributors?.company_name || "Distribuidor no registrado"}
+                            {b.source === "historical_note" && <span className="block text-stone-500">Cierre histórico recuperado del registro del vendedor</span>}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-stone-600">
@@ -428,7 +432,7 @@ export function OrdersListClient({
                         </td>
                         <td className="px-4 py-3 text-right">
                           <Button variant="outline" size="sm" asChild className="text-xs py-1 px-2.5">
-                            <Link href={`${budgetsBasePath}/${b.id}`} className="flex items-center gap-1">
+                            <Link href={b.order_id ? `${ordersBasePath}/${b.order_id}` : `${budgetsBasePath}/${b.budget_id || b.id}`} className="flex items-center gap-1">
                               <Eye className="w-3.5 h-3.5" />
                               <span>Detalle</span>
                             </Link>
@@ -444,10 +448,10 @@ export function OrdersListClient({
         )}
 
         {/* Paginador */}
-        {(serverTotalPages > 1 || totalPages > 1) && (
+        {((activeTab === "factory" ? serverTotalPages : totalPages) > 1) && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-stone-200 bg-stone-50 text-xs">
             <span className="text-stone-500">
-              Página <strong>{currentPage}</strong> de <strong>{Math.max(serverTotalPages, totalPages)}</strong>
+              Página <strong>{currentPage}</strong> de <strong>{(activeTab === "factory" ? serverTotalPages : totalPages)}</strong>
               {totalOrdersCount !== undefined && <span className="ml-2">({totalOrdersCount} ventas totales)</span>}
             </span>
             <div className="flex items-center gap-2">
@@ -459,7 +463,7 @@ export function OrdersListClient({
                   const newP = Math.max(1, currentPage - 1);
                   setCurrentPage(newP);
                   const stParam = statusFilter !== "all" ? `&status=${encodeURIComponent(statusFilter)}` : "";
-                  router.push(`/admin-comercial/pedidos?page=${newP}${stParam}`);
+                  if (activeTab === "factory") router.push(`${ordersBasePath}?page=${newP}${stParam}`);
                 }}
                 className="text-xs px-2.5 py-1 cursor-pointer"
               >
@@ -469,12 +473,12 @@ export function OrdersListClient({
               <Button
                 variant="outline"
                 size="sm"
-                disabled={currentPage >= Math.max(serverTotalPages, totalPages)}
+                disabled={currentPage >= (activeTab === "factory" ? serverTotalPages : totalPages)}
                 onClick={() => {
-                  const newP = Math.min(Math.max(serverTotalPages, totalPages), currentPage + 1);
+                  const newP = Math.min((activeTab === "factory" ? serverTotalPages : totalPages), currentPage + 1);
                   setCurrentPage(newP);
                   const stParam = statusFilter !== "all" ? `&status=${encodeURIComponent(statusFilter)}` : "";
-                  router.push(`/admin-comercial/pedidos?page=${newP}${stParam}`);
+                  if (activeTab === "factory") router.push(`${ordersBasePath}?page=${newP}${stParam}`);
                 }}
                 className="text-xs px-2.5 py-1 cursor-pointer"
               >

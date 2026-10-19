@@ -11,6 +11,8 @@ interface AdminClientsPageProps {
     status?: string;
     sellerId?: string;
     category?: string;
+    assignment?: string;
+    sort?: string;
   }>;
 }
 
@@ -22,6 +24,8 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
   const status = params.status || "all";
   const sellerId = params.sellerId || "all";
   const category = params.category || "all";
+  const assignment=["assigned","unassigned"].includes(params.assignment||"")?params.assignment!:"all";
+  const sort=["name","updated"].includes(params.sort||"")?params.sort!:"newest";
 
   const [paginatedClients, sellers] = await Promise.all([
     getPaginatedClientsAdmin({
@@ -30,25 +34,16 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
       search,
       status,
       sellerId,
-      category
+      category,assignment,sort
     }),
     getSellers()
   ]);
 
   return (
     <AdministrationShell>
-      <div className="flex flex-col gap-6 max-w-7xl mx-auto">
-        <div className="bg-white p-6 rounded-2xl border border-stone-200/80 shadow-xs">
-          <h1 className="text-2xl font-black text-stone-900 tracking-tight">
-            Gestión Centralizada de Clientes
-          </h1>
-          <p className="text-xs text-stone-500 mt-0.5">
-            Consulta y supervisión de clientes de todos los vendedores. Creación con detección de duplicados y reasignación auditada de cartera.
-          </p>
-        </div>
-
+      <div className="w-full min-w-0">
         <ClientsAdminClient
-          key={`${page}:${search}:${status}:${sellerId}:${category}`}
+          key={`${page}:${search}:${status}:${sellerId}:${category}:${assignment}:${sort}`}
           initialClients={paginatedClients.data}
           totalCount={paginatedClients.total}
           serverPage={paginatedClients.page}
@@ -59,6 +54,8 @@ export default async function AdministrationClientsPage({ searchParams }: AdminC
           initialStatus={status}
           initialSellerId={sellerId}
           initialCategory={category}
+          initialAssignment={assignment}
+          initialSort={sort}
           isAdmin={ctx.isAdmin}
         />
       </div>

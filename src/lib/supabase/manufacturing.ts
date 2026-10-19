@@ -35,6 +35,8 @@ export async function getPaginatedClientsAdmin(params: {
   status?: string;
   sellerId?: string;
   category?: string;
+  assignment?: string;
+  sort?: string;
 }) {
   await requireAdministrationUser();
   const supabase = createSupabaseAdminClient();
@@ -52,12 +54,17 @@ export async function getPaginatedClientsAdmin(params: {
       sellers(id, full_name, email)
     `, { count: "exact" });
 
+  if(params.assignment==="assigned")query=query.not("seller_id","is",null);
+  if(params.assignment==="unassigned")query=query.is("seller_id",null);
+
   if (params.sellerId && params.sellerId !== "all") {
     query = query.eq("seller_id", params.sellerId);
   }
 
   if (params.status && params.status !== "all") {
-    query = query.eq("status", params.status);
+    query = ["inactivo", "vendido_distribuidor"].includes(params.status)
+      ? query.in("status", ["inactivo", "vendido_distribuidor"])
+      : query.eq("status", params.status);
   }
 
   if (params.category && params.category !== "all") {
@@ -70,7 +77,8 @@ export async function getPaginatedClientsAdmin(params: {
   }
 
   const { data, count, error } = await query
-    .order("created_at", { ascending: false })
+    .order(params.sort==="name"?"name":params.sort==="updated"?"updated_at":"created_at", { ascending: params.sort==="name" })
+    .order("id", {ascending:true})
     .range(from, to);
 
   if (error) {

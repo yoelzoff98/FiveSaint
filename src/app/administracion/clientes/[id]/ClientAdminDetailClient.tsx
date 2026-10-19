@@ -145,7 +145,7 @@ export function ClientAdminDetailClient({
                 )}
               </div>
               <Badge variant="outline" className="text-xs capitalize font-bold">
-                {client.status || "Nuevo"}
+                {["inactivo", "vendido_distribuidor"].includes(client.status) ? "Vendido por distribuidor" : client.status || "Nuevo"}
               </Badge>
             </div>
 

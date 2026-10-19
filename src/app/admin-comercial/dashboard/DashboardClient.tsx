@@ -1,4 +1,5 @@
 "use client";
+import type {DistributorSale} from "@/lib/distributor-sales";
 
 import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/Card";
@@ -9,7 +10,7 @@ import {
   Receipt, Calendar, ArrowRight, Store, Factory
 } from "lucide-react";
 import { SellerDashboard } from "./SellerDashboard";
-import { formatCurrencyARS, getUnlinkedLegacyDistributorBudgets } from "@/lib/commercial-calculations";
+import { formatCurrencyARS } from "@/lib/commercial-calculations";
 
 interface Client {
   id: string;
@@ -52,6 +53,7 @@ interface DashboardClientProps {
   initialClients: Client[];
   initialBudgets: Budget[];
   initialOrders: Order[];
+  initialDistributorSales: DistributorSale[];
   profileName: string;
   isAdmin: boolean;
   loadError?: string | null;
@@ -63,6 +65,7 @@ export function DashboardClient({
   initialClients,
   initialBudgets,
   initialOrders,
+  initialDistributorSales,
   profileName,
   isAdmin,
   loadError,
@@ -152,21 +155,8 @@ export function DashboardClient({
   );
   const factorySalesTotal = factoryOrders.reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
 
-  // 3. Ventas por distribuidor:
-  // a) Pedidos confirmados asignados a distribuidor
-  const distributorOrders = activeOrders.filter(
-    (o) => o.sale_channel === "distributor" || o.order_type === "distributor_sale"
-  );
-  const distributorOrdersTotal = distributorOrders.reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
-
-  // b) Históricos sin orden asociada que solo tienen presupuesto en distributor_sale
-  const historicalDistributorBudgetsWithoutOrder = getUnlinkedLegacyDistributorBudgets(filteredBudgets, initialOrders);
-  const historicalDistributorSalesTotal = historicalDistributorBudgetsWithoutOrder.reduce(
-    (sum, b) => sum + Number(b.total_amount || 0), 0
-  );
-
-  // Total sin doble conteo: cada operación se suma una única vez
-  const distributorSalesTotal = distributorOrdersTotal + historicalDistributorSalesTotal;
+  // Mismos cierres verificables que el listado de Ventas, filtrados por su fecha de cierre.
+  const distributorSalesTotal = initialDistributorSales.filter(sale=>isDateInPeriod(sale.created_at)).reduce((sum,sale)=>sum+Math.round(sale.total_amount*100),0)/100;
 
   // Total global de ventas comerciales confirmadas (fábrica + distribuidores)
   const totalConfirmedSales = factorySalesTotal + distributorSalesTotal;

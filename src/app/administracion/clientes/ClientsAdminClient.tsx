@@ -1,5 +1,6 @@
 "use client";
 
+import {ClientDirectory,ClientDirectoryHeader,ClientIdentity,ClientDate} from "@/components/comercial/ClientDirectory";
 import { useEffect, useState, useTransition } from "react";
 import { CLIENT_CATEGORIES, clientCategoryLabel } from "@/lib/client-categories";
 import { EditClientDialog } from "@/components/administracion/EditClientDialog";
@@ -27,7 +28,7 @@ const STATUS_LABELS: Record<string, string> = {
   ganado: "Vendido",
   vendido: "Vendido",
   perdido: "Perdido",
-  inactivo: "Inactivo"
+  inactivo: "Vendido por distribuidor"
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -52,6 +53,8 @@ interface Client {
   notes: string | null;
   status: string;
   source?: string;
+  created_at?: string;
+  updated_at?: string;
   seller_id: string | null;
   created_by_name?: string | null;
   created_by_role?: string | null;
@@ -74,6 +77,8 @@ interface ClientsAdminClientProps {
   initialStatus?: string;
   initialSellerId?: string;
   initialCategory?: string;
+  initialAssignment?: string;
+  initialSort?: string;
   isAdmin: boolean;
 }
 
@@ -87,6 +92,8 @@ export function ClientsAdminClient({
   initialStatus = "all",
   initialSellerId = "all",
   initialCategory = "all",
+  initialAssignment = "all",
+  initialSort = "newest",
   isAdmin
 }: ClientsAdminClientProps) {
   const router = useRouter();
@@ -97,6 +104,8 @@ export function ClientsAdminClient({
   const [search, setSearch] = useState(initialSearch);
   const [status, setStatus] = useState(initialStatus);
   const [sellerId, setSellerId] = useState(initialSellerId);
+  const [assignment,setAssignment]=useState(initialAssignment);
+  const [sort,setSort]=useState(initialSort);
   const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [category, setCategory] = useState("consumidor_final");
   const [editingClient,setEditingClient] = useState<Client|null>(null);
@@ -122,11 +131,13 @@ export function ClientsAdminClient({
   const [success, setSuccess] = useState<string | null>(null);
 
   // Filtros aplicados con URL
-  const applyFilters = (newParams: { search?: string; status?: string; sellerId?: string; category?: string; page?: number }) => {
+  const applyFilters = (newParams: { search?: string; status?: string; sellerId?: string; category?: string; assignment?: string; sort?: string; page?: number }) => {
     const s = newParams.search !== undefined ? newParams.search : search;
     const st = newParams.status !== undefined ? newParams.status : status;
     const sl = newParams.sellerId !== undefined ? newParams.sellerId : sellerId;
     const cat = newParams.category !== undefined ? newParams.category : categoryFilter;
+    const ass = newParams.assignment ?? assignment;
+    const order = newParams.sort ?? sort;
     const p = newParams.page !== undefined ? newParams.page : 1;
 
     const query = new URLSearchParams();
@@ -134,6 +145,8 @@ export function ClientsAdminClient({
     if (st && st !== "all") query.set("status", st);
     if (sl && sl !== "all") query.set("sellerId", sl);
     if (cat && cat !== "all") query.set("category", cat);
+    if (ass !== "all") query.set("assignment",ass);
+    if (order !== "newest") query.set("sort",order);
     if (p > 1) query.set("page", String(p));
 
     startTransition(() => {
@@ -253,7 +266,7 @@ export function ClientsAdminClient({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <ClientDirectory>
       {/* Alertas */}
       {error && (
         <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl flex items-center justify-between">
@@ -279,89 +292,25 @@ export function ClientsAdminClient({
         </div>
       )}
 
-      {/* Barra de Filtros y Acciones */}
-      <Card className="p-4 border-stone-200 bg-white">
-        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-          <div className="flex flex-1 flex-wrap gap-2.5">
-            {/* Buscador */}
-            <div className="relative flex-1 min-w-[220px]">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-              <input
-                type="text"
-                placeholder="Buscar por cliente, empresa, email o teléfono..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && applyFilters({ search })}
-                className="w-full pl-9 pr-3 py-2 text-xs border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-deep"
-              />
-            </div>
-
-            {/* Filtro Asesor */}
-            <select
-              value={sellerId}
-              onChange={(e) => {
-                setSellerId(e.target.value);
-                applyFilters({ sellerId: e.target.value });
-              }}
-              className="text-xs border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-700 focus:outline-none"
-            >
-              <option value="all">Todos los asesores</option>
-              {sellers.map((s) => (
-                <option key={s.id} value={s.id}>
-                  Asesor: {s.full_name}
-                </option>
-              ))}
-            </select>
-
-            {/* Filtro Estado */}
-            <select aria-label="Filtrar por categoría" value={categoryFilter} onChange={e => {
-              setCategoryFilter(e.target.value); applyFilters({ category: e.target.value });
-            }} className="text-xs border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-700">
-              <option value="all">Todas las categorías</option>
-              {CLIENT_CATEGORIES.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
-            </select>
-            <select
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
-                applyFilters({ status: e.target.value });
-              }}
-              className="text-xs border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-700 focus:outline-none"
-            >
-              <option value="all">Todos los estados CRM</option>
-              {Object.entries(STATUS_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>{v}</option>
-              ))}
-            </select>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => applyFilters({ search, status, sellerId })}
-              className="text-xs border-stone-200"
-            >
-              Filtrar
-            </Button>
-          </div>
-
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => setShowCreateModal(true)}
-            className="bg-accent-deep hover:bg-accent-hover text-white text-xs flex items-center gap-1.5 shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nuevo Cliente</span>
-          </Button>
-        </div>
-      </Card>
+      <ClientDirectoryHeader count={totalCount} subtitle="Contactos, empresas y seguimiento de todo tu equipo."
+        views={[{value:"all",label:"Todos los clientes"},{value:"assigned",label:"Con asesor"},{value:"unassigned",label:"Sin asignar"}]} view={assignment}
+        onView={value=>{setAssignment(value);setSellerId("all");applyFilters({assignment:value,sellerId:"all"});}}
+        search={search} onSearch={setSearch} onSearchSubmit={()=>applyFilters({search})} sort={sort} onSort={value=>{setSort(value);applyFilters({sort:value});}}
+        onCreate={()=>setShowCreateModal(true)} busy={isPending}
+        activeFilters={[search,status!=="all",sellerId!=="all",categoryFilter!=="all",assignment!=="all"].filter(Boolean).length}
+        onClear={()=>{setSearch("");setStatus("all");setSellerId("all");setCategoryFilter("all");setAssignment("all");applyFilters({search:"",status:"all",sellerId:"all",category:"all",assignment:"all"});}}
+        filters={<>
+          <select aria-label="Filtrar por asesor" value={sellerId} onChange={e=>{setSellerId(e.target.value);setAssignment("all");applyFilters({sellerId:e.target.value,assignment:"all"});}}><option value="all">Todos los asesores</option>{sellers.map(s=><option key={s.id} value={s.id}>{s.full_name}</option>)}</select>
+          <select aria-label="Filtrar por categoría" value={categoryFilter} onChange={e=>{setCategoryFilter(e.target.value);applyFilters({category:e.target.value});}}><option value="all">Todas las categorías</option>{CLIENT_CATEGORIES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}</select>
+          <select aria-label="Filtrar por estado CRM" value={status} onChange={e=>{setStatus(e.target.value);applyFilters({status:e.target.value});}}><option value="all">Todos los estados</option>{Object.entries(STATUS_LABELS).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select>
+        </>}/>
 
       {/* Tabla de Clientes */}
       {editingClient&&<EditClientDialog key={editingClient.id} client={editingClient} onClose={()=>setEditingClient(null)} onSaved={updated=>{
         setClients(previous=>previous.map(item=>item.id===updated.id?{...item,...updated}:item));
         setEditingClient(null);setSuccess("Datos del cliente actualizados.");router.refresh();
       }}/>}
-      <Card className="border-stone-200 overflow-hidden bg-white">
+      <Card padding="none" className="border-0 border-t border-stone-100 rounded-none shadow-none overflow-hidden bg-white">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
@@ -372,30 +321,22 @@ export function ClientsAdminClient({
                 <th className="py-3 px-4">Asesor Asignado</th>
                 <th className="py-3 px-4">Alta Por</th>
                 <th className="py-3 px-4">Estado CRM</th>
+                <th className="py-3 px-4">Fecha de creación</th>
+                <th className="py-3 px-4">Última actualización</th>
                 <th className="py-3 px-4 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
               {clients.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-stone-400">
+                  <td colSpan={9} className="py-8 text-center text-stone-400">
                     No se encontraron clientes con los filtros aplicados.
                   </td>
                 </tr>
               ) : (
                 clients.map((c) => (
                   <tr key={c.id} className="hover:bg-stone-50/70 transition-colors">
-                    <td className="py-3 px-4">
-                      <Link
-                        href={`/administracion/clientes/${c.id}`}
-                        className="font-bold text-stone-900 hover:text-accent-deep transition-colors text-sm block"
-                      >
-                        {c.name}
-                      </Link>
-                      {c.company_name && (
-                        <span className="text-stone-500 text-[11px] block">{c.company_name}</span>
-                      )}
-                    </td>
+                    <td className="py-3 px-4"><ClientIdentity name={c.name} company={c.company_name} href={`/administracion/clientes/${c.id}`}/></td>
                     <td className="py-3 px-4 text-stone-600 whitespace-nowrap">{clientCategoryLabel(c.category)}</td>
                     <td className="py-3 px-4 text-stone-600">
                       {c.email && (
@@ -430,9 +371,11 @@ export function ClientsAdminClient({
                     </td>
                     <td className="py-3 px-4">
                       <Badge className={`px-2 py-0.5 text-[10px] font-semibold border ${STATUS_COLORS[c.status] || STATUS_COLORS.nuevo}`}>
-                        {STATUS_LABELS[c.status] || c.status}
+                        {c.status === "vendido_distribuidor" ? "Vendido por distribuidor" : STATUS_LABELS[c.status] || c.status}
                       </Badge>
                     </td>
+                    <td><ClientDate value={c.created_at}/></td>
+                    <td><ClientDate value={c.updated_at}/></td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <Button variant="outline" size="sm" onClick={()=>setEditingClient(c)} className="h-7 px-2 text-cyan-700 border-cyan-200" title="Editar cliente" aria-label={`Editar cliente ${c.name}`}><Pencil className="w-3.5 h-3.5"/></Button>
@@ -442,7 +385,7 @@ export function ClientsAdminClient({
                           asChild
                           className="h-7 px-2 text-stone-600 border-stone-200"
                         >
-                          <Link href={`/administracion/clientes/${c.id}`} title="Ver Detalle">
+                          <Link prefetch={false} href={`/administracion/clientes/${c.id}`} title="Ver Detalle">
                             <Eye className="w-3.5 h-3.5" />
                           </Link>
                         </Button>
@@ -778,6 +721,6 @@ export function ClientsAdminClient({
           </Card>
         </div>
       )}
-    </div>
+    </ClientDirectory>
   );
 }

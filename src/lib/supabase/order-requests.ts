@@ -1,7 +1,7 @@
 "use server";
 import crypto from "crypto";
 import { revalidatePath } from "next/cache";
-import { requireCommercialUser } from "./comercial";
+import { requireCommercialUser, getBudgetById } from "./comercial";
 import { requireAdministrationUser } from "./administration";
 import { createSupabaseAdminClient } from "./server";
 import { ConvertBudgetInputSchema } from "@/lib/validations/commercial";
@@ -10,6 +10,8 @@ export async function submitOrderRequest(input: { budgetId:string; itemsToConver
  const ctx=await requireCommercialUser();
  if (!ctx.isSeller) throw new Error("Solo el vendedor puede levantar esta solicitud.");
  const parsed=ConvertBudgetInputSchema.parse({...input,saleType:"direct"});
+ const budget=await getBudgetById(parsed.budgetId);
+ if(budget.is_historical_reconciliation_pending) throw new Error("Este presupuesto tiene un cierre histórico pendiente de conciliación. Administración debe revisarlo antes de generar otra venta.");
  const hash=crypto.createHash("sha256").update(JSON.stringify({budget:parsed.budgetId,items:parsed.itemsToConvert,notes:parsed.notes||null})).digest("hex");
  const {data,error}=await createSupabaseAdminClient().rpc("submit_order_request",{p_user_id:ctx.user!.id,p_budget_id:parsed.budgetId,p_items:parsed.itemsToConvert,p_notes:parsed.notes||null,p_key:parsed.idempotencyKey||crypto.randomUUID(),p_hash:hash});
  if(error) throw new Error(error.message);

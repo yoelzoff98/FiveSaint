@@ -781,7 +781,7 @@ export async function getBudgetById(id: string) {
   }
 
   // 1. Obtener todas las órdenes vinculadas (activas y canceladas) para trazabilidad completa
-  const { data: allLinkedOrders } = await supabase
+  const { data: allLinkedOrders, error: linkedOrdersError } = await supabase
     .from("orders")
     .select(`
       id, order_number, status, total_amount, sale_channel, order_type,
@@ -791,6 +791,12 @@ export async function getBudgetById(id: string) {
     `)
     .eq("budget_id", id)
     .order("created_at", { ascending: false });
+
+  if (linkedOrdersError) throw new Error("No se pudieron comprobar las operaciones del presupuesto.");
+  const {data:legacyClosings,error:legacyClosingError}=await supabase.from("client_notes")
+    .select("id").eq("budget_id",id).eq("note_type","distributor_sale").is("order_id",null).limit(1);
+  if(legacyClosingError) throw new Error("No se pudieron comprobar los cierres históricos del presupuesto.");
+  const hasLegacyDistributorClosing=Boolean(legacyClosings?.length);
 
   const allOrderIds = (allLinkedOrders || []).map(o => o.id);
   const directByBudgetItemId: Record<string, number> = {};
@@ -827,7 +833,7 @@ export async function getBudgetById(id: string) {
   // 2. Detección de casos históricos ambiguos que requieren conciliación manual
   const isHistoricalAmbiguous =
     budget.id === "7d53d595-a05b-4faf-8c16-bfa55c0a658e" || // Presupuesto #38
-    Boolean(budget.is_historical_reconciliation_pending);
+    Boolean(budget.is_historical_reconciliation_pending) || hasLegacyDistributorClosing;
 
   // 3. Fuente de verdad unificada para saldos de ítems y desglose por canal
   let totalBudgeted = 0;
@@ -888,6 +894,7 @@ export async function getBudgetById(id: string) {
   if (requestError) throw new Error("No se pudo consultar el estado de aceptación. Verificá las migraciones.");
   return {
     ...budget,
+    has_legacy_distributor_closing: hasLegacyDistributorClosing,
     order_requests: requestHistory || [],
     can_accept_orders: ctx.isAdmin || ctx.isAdministration,
     items: enrichedItems,
