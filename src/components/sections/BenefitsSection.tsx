@@ -12,24 +12,28 @@ export function BenefitsSection() {
   const benefits = [
     {
       title: "Diseño funcional",
-      description: "Productos pensados para integrarse a distintos estilos de baño y espacios de bienestar.",
-      icon: Sparkles
+      description:
+        "Productos pensados para integrarse a distintos estilos de baño y espacios de bienestar.",
+      icon: Sparkles,
     },
     {
       title: "Experiencia industrial",
-      description: "Trayectoria desde 1995 en fabricación y desarrollo de soluciones para el sector.",
-      icon: Calendar
+      description:
+        "Trayectoria desde 1995 en fabricación y desarrollo de soluciones para el sector.",
+      icon: Calendar,
     },
     {
       title: "Variedad de líneas",
-      description: "Bañeras, hidromasajes, spas, platos, columnas, saunas y duchas escocesas.",
-      icon: Layers
+      description:
+        "Bañeras, hidromasajes, spas, platos, columnas, saunas y duchas escocesas.",
+      icon: Layers,
     },
     {
       title: "Asesoramiento",
-      description: "Acompañamiento técnico para elegir la solución adecuada según cada proyecto.",
-      icon: ShieldCheck
-    }
+      description:
+        "Acompañamiento técnico para elegir la solución adecuada según cada proyecto.",
+      icon: ShieldCheck,
+    },
   ];
 
   return (
@@ -41,12 +45,11 @@ export function BenefitsSection() {
       </div>
 
       <Container className="flex flex-col gap-12 relative z-10">
-        
         {/* Título de la Sección */}
         <SectionTitle
           eyebrow="Valores Corporativos"
           title="Por qué elegir Five Saint"
-          description="Nuestra trayectoria y compromiso con la ingeniería del confort nos avalan como líderes del relax sanitario."
+          description="Nuestra trayectoria y compromiso con la ingeniería del confort acompañan cada proyecto de bienestar."
           align="center"
           light={true}
         />
@@ -66,11 +69,11 @@ export function BenefitsSection() {
                 <div className="rounded-xl bg-white/20 text-white p-3.5 shrink-0 group-hover:bg-white group-hover:text-[#087d9f] group-hover:shadow-lg group-hover:scale-110 transition-all duration-500">
                   <Icon className="h-7 w-7" aria-hidden="true" />
                 </div>
-                
+
                 <h3 className="text-xl font-bold text-white leading-tight">
                   {benefit.title}
                 </h3>
-                
+
                 <p className="text-base font-light text-stone-200 leading-relaxed">
                   {benefit.description}
                 </p>
@@ -78,7 +81,6 @@ export function BenefitsSection() {
             );
           })}
         </div>
-
       </Container>
     </section>
   );

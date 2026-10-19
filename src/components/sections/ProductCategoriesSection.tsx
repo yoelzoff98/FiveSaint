@@ -1,3 +1,5 @@
+import { saunaData } from "@/config/price-list-data";
+import { getAvailablePublicCategorySlugs } from "@/lib/supabase/public-category-availability";
 import Link from "next/link";
 import Image from "next/image";
 import { productCategories } from "@/config/product-categories";
@@ -9,12 +11,12 @@ import { ArrowRight, Check } from "lucide-react";
 // Mapeo de imágenes generadas para cada categoría
 const categoryImages: Record<string, string> = {
   "spas-y-minipiscinas": "/images/cat_spas_new.webp",
-  "baneras": "/images/cat_baneras_new.webp",
+  baneras: "/images/cat_baneras_new.webp",
   "platos-de-duchas": "/images/cat_platos_new.webp",
   "columnas-de-ducha": "/images/cat_columnas.webp",
   "ducha-escocesa": "/images/ducha-escocesa/ducha-escocesa-portada.webp",
-  "sauna": "/images/cat_saunas.webp",
-  "adicionales": "/images/duchador-manual.webp"
+  sauna: saunaData.images[3],
+  adicionales: "/images/duchador-manual.webp",
 };
 
 /**
@@ -23,7 +25,8 @@ const categoryImages: Record<string, string> = {
  * "Nuestros Productos" y renderiza las tarjetas de producto utilizando imágenes reales
  * de fondo con capas de overlay oscuras y un panel de detalles interactivo al hacer hover.
  */
-export function ProductCategoriesSection() {
+export async function ProductCategoriesSection() {
+  const availableCategories = await getAvailablePublicCategorySlugs();
   return (
     <section className="py-20 lg:py-28 bg-[#fafcfd] border-b border-stone-200/50">
       <Container className="flex flex-col gap-12">
@@ -33,13 +36,19 @@ export function ProductCategoriesSection() {
           description="Descubre nuestra amplia gama de soluciones diseñadas para brindar la mejor experiencia de bienestar en tus espacios."
           align="center"
         />
-        
 
-          {/* Grilla de Categorías */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {productCategories.map((category) => {
-              const bgImage = categoryImages[category.id] || "/images/cat_baneras.webp";
-              
+        {/* Grilla de Categorías */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {productCategories
+            .filter(
+              (category) =>
+                category.slug === "sauna" ||
+                availableCategories.includes(category.slug),
+            )
+            .map((category) => {
+              const bgImage =
+                categoryImages[category.id] || "/images/cat_baneras.webp";
+
               return (
                 <Card
                   key={category.id}
@@ -86,15 +95,17 @@ export function ProductCategoriesSection() {
                   </div>
 
                   {/* Panel Flotante de Detalles al hacer Hover (Glassmorphism Slide Up) */}
-                  <div className="absolute inset-x-0 bottom-0 h-[88%] bg-[#01161d]/95 backdrop-blur-md border-t border-white/10 p-5 sm:p-6 flex flex-col justify-between transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 rounded-t-2xl">
+                  <div className="absolute inset-x-0 bottom-0 h-[88%] bg-[#01161d]/95 backdrop-blur-md border-t border-white/10 p-5 sm:p-6 flex flex-col justify-between transform translate-y-0 md:translate-y-full md:group-hover:translate-y-0 group-focus-within:translate-y-0 transition-transform duration-500 rounded-t-2xl">
                     <div className="flex flex-col gap-2.5">
                       <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                        <span className="text-base sm:text-lg font-bold text-white">{category.name}</span>
+                        <span className="text-base sm:text-lg font-bold text-white">
+                          {category.name}
+                        </span>
                         <span className="text-[9px] font-bold text-[#c5a880] uppercase tracking-widest bg-[#c5a880]/15 px-2 py-0.5 rounded-md border border-[#c5a880]/20">
                           Premium
                         </span>
                       </div>
-                      
+
                       <p className="text-xs font-light text-stone-300 leading-relaxed">
                         {category.description}
                       </p>
@@ -103,9 +114,15 @@ export function ProductCategoriesSection() {
                       {category.highlights && (
                         <ul className="flex flex-col gap-1.5 mt-1 sm:mt-2">
                           {category.highlights.map((highlight) => (
-                            <li key={highlight} className="flex items-center gap-2 text-[11px] font-light text-stone-200">
+                            <li
+                              key={highlight}
+                              className="flex items-center gap-2 text-[11px] font-light text-stone-200"
+                            >
                               <div className="rounded-full bg-[#087d9f]/20 p-0.5 text-[#9de6f2] shrink-0 border border-[#087d9f]/30">
-                                <Check className="h-2.5 w-2.5 stroke-[3]" aria-hidden="true" />
+                                <Check
+                                  className="h-2.5 w-2.5 stroke-[3]"
+                                  aria-hidden="true"
+                                />
                               </div>
                               <span>{highlight}</span>
                             </li>
@@ -128,20 +145,19 @@ export function ProductCategoriesSection() {
                 </Card>
               );
             })}
-          </div>
+        </div>
 
-          {/* Botón inferior - Ver todos los productos */}
-          <div className="flex justify-center mt-6">
-            <Link
-              href="/productos"
-              className="px-8 py-3.5 border-2 border-[#087d9f] hover:bg-[#087d9f] text-[#087d9f] hover:text-white text-xs font-bold uppercase tracking-widest rounded-full transition-all duration-300 shadow-sm"
-            >
-              Todos Nuestros Productos
-            </Link>
-          </div>
-
-        </Container>
-      </section>
+        {/* Botón inferior - Ver todos los productos */}
+        <div className="flex justify-center mt-6">
+          <Link
+            href="/productos"
+            className="px-8 py-3.5 border-2 border-[#087d9f] hover:bg-[#087d9f] text-[#087d9f] hover:text-white text-xs font-bold uppercase tracking-widest rounded-full transition-all duration-300 shadow-sm"
+          >
+            Todos Nuestros Productos
+          </Link>
+        </div>
+      </Container>
+    </section>
   );
 }
 

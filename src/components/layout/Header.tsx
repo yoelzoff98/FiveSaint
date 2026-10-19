@@ -43,7 +43,7 @@ export default function Header() {
           "sticky top-0 z-40 w-full transition-all duration-300 ease-in-out border-b backdrop-blur-md",
           scrolled
             ? "bg-white/85 shadow-sm border-stone-200/40 py-3"
-            : "bg-white/70 border-stone-100/30 py-5"
+            : "bg-white/70 border-stone-100/30 py-5",
         )}
       >
         <Container className="flex items-center justify-between">
@@ -55,7 +55,7 @@ export default function Header() {
           >
             <div className="relative w-11 h-11 sm:w-12 sm:h-12 overflow-hidden rounded-xl shadow-xs border border-stone-200/50 shrink-0 group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
               <Image
-                src="/logo.webp"
+                src="/LOGO.svg"
                 alt="Five Saint - Equipamientos para Spa"
                 fill
                 className="object-contain"
@@ -65,7 +65,7 @@ export default function Header() {
           </Link>
 
           {/* Menú de Navegación de Escritorio */}
-          <nav className="hidden md:flex items-center gap-8 text-stone-600">
+          <nav className="hidden lg:flex items-center gap-8 text-stone-600">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -74,30 +74,45 @@ export default function Header() {
                   href={item.href}
                   className={cn(
                     "group relative text-xs font-semibold tracking-widest uppercase transition-colors py-1.5 hover:text-stone-950",
-                    isActive ? "text-stone-950 font-bold" : "text-stone-500"
+                    isActive ? "text-stone-950 font-bold" : "text-stone-500",
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
                   {item.label}
-                  <span className={cn(
-                    "absolute bottom-0 left-0 h-[2px] bg-accent-deep rounded-full transition-all duration-300",
-                    isActive ? "w-full" : "w-0 group-hover:w-full"
-                  )} />
+                  <span
+                    className={cn(
+                      "absolute bottom-0 left-0 h-[2px] bg-accent-deep rounded-full transition-all duration-300",
+                      isActive ? "w-full" : "w-0 group-hover:w-full",
+                    )}
+                  />
                 </Link>
               );
             })}
           </nav>
 
           {/* Botón CTA Superior de Escritorio y Buscador */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className="relative w-36 lg:w-44">
+          <div className="hidden lg:flex items-center gap-4">
+            <form
+              action="/productos"
+              role="search"
+              className="relative w-36 lg:w-44"
+            >
               <input
-                type="text"
+                type="search"
+                name="q"
+                maxLength={120}
+                aria-label="Buscar productos"
                 placeholder="Buscar..."
                 className="w-full text-xs font-light px-3 py-1.5 pr-8 rounded-md border border-stone-200/80 focus:outline-none focus:border-accent-deep bg-stone-50/80 focus:bg-white transition-all duration-300"
               />
-              <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400" />
-            </div>
+              <button
+                type="submit"
+                aria-label="Buscar en el catálogo"
+                className="absolute right-0 top-0 bottom-0 w-8 flex items-center justify-center text-stone-500 hover:text-accent-deep"
+              >
+                <Search className="h-3.5 w-3.5" />
+              </button>
+            </form>
             <Button
               variant="outline"
               size="sm"
@@ -111,7 +126,7 @@ export default function Header() {
           {/* Gatillo del Menú Móvil */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="rounded-sm p-2 text-stone-700 hover:bg-stone-100 hover:text-stone-950 md:hidden transition-colors cursor-pointer"
+            className="rounded-sm p-2 text-stone-700 hover:bg-stone-100 hover:text-stone-950 lg:hidden transition-colors cursor-pointer"
             aria-label="Abrir menú de navegación"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-menu"

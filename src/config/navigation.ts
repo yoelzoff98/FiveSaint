@@ -37,23 +37,29 @@ export const navigationItems: NavigationItem[] = [
 export const footerNavigation = {
   company: [
     { title: "Sobre Five Saint", href: "/nosotros" },
-    { title: "Nuestra Planta", href: "/nosotros#planta" },
+    { title: "Cómo trabajamos", href: "/nosotros#proceso" },
     { title: "Trayectoria desde 1995", href: "/nosotros#historia" },
     { title: "Contacto", href: "/contacto" },
   ] as FooterNavItem[],
-  
+
   categories: [
     { title: "Bañeras", href: "/productos?categoria=baneras" },
-    { title: "Spa y Minipiscinas", href: "/productos?categoria=spa-y-minipiscinas" },
-    { title: "Platos de Duchas", href: "/productos?categoria=platos-de-duchas" },
-    { title: "Columnas de Ducha", href: "/productos?categoria=columnas-de-ducha" },
+    {
+      title: "Spa y Minipiscinas",
+      href: "/productos?categoria=spa-y-minipiscinas",
+    },
+    {
+      title: "Platos de Duchas",
+      href: "/productos?categoria=platos-de-duchas",
+    },
+    {
+      title: "Columnas de Ducha",
+      href: "/productos?categoria=columnas-de-ducha",
+    },
     { title: "Ducha Escocesa", href: "/productos?categoria=ducha-escocesa" },
     { title: "Sauna", href: "/productos?categoria=sauna" },
   ] as FooterNavItem[],
 
-  legal: [
-    { title: "Términos y Condiciones", href: "/legal/terminos" },
-    { title: "Políticas de Privacidad", href: "/legal/privacidad" },
-    { title: "Garantía de Productos", href: "/legal/garantia" },
-  ] as FooterNavItem[],
+  // Published legal texts are pending; do not link to nonexistent pages.
+  legal: [] as FooterNavItem[],
 };

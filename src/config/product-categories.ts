@@ -13,19 +13,28 @@ export const productCategories: ProductCategory[] = [
     description: "Soluciones amplias para espacios de descanso y recreación.",
     href: "/productos?categoria=spa-y-minipiscinas",
     tagline: "Tu propio santuario de bienestar en casa",
-    highlights: ["Climatizador digital integrado", "Cromoterapia LED", "Apto para interior y exterior"],
-    featured: true
+    highlights: [
+      "Climatizador digital integrado",
+      "Cromoterapia LED",
+      "Apto para interior y exterior",
+    ],
+    featured: true,
   },
   {
     id: "baneras",
     name: "Bañeras",
     slug: "baneras",
     sortOrder: 2,
-    description: "Diseños pensados para integrar confort, estética y funcionalidad.",
+    description:
+      "Diseños pensados para integrar confort, estética y funcionalidad.",
     href: "/productos?categoria=baneras",
     tagline: "Diseño ergonómico y líneas puras",
-    highlights: ["Acrílico sanitario de alta densidad", "Fácil mantenimiento y limpieza", "Aislación térmica prolongada"],
-    featured: true
+    highlights: [
+      "Acrílico sanitario de alta densidad",
+      "Fácil mantenimiento y limpieza",
+      "Aislación térmica prolongada",
+    ],
+    featured: true,
   },
   {
     id: "platos-de-duchas",
@@ -35,8 +44,12 @@ export const productCategories: ProductCategory[] = [
     description: "Alternativas prácticas, modernas y resistentes.",
     href: "/productos?categoria=platos-de-duchas",
     tagline: "Superficies minimalistas de entrada segura",
-    highlights: ["Tratamiento antideslizante", "Instalación ultra-flat", "Alta resistencia estructural"],
-    featured: false
+    highlights: [
+      "Tratamiento antideslizante",
+      "Instalación ultra-flat",
+      "Alta resistencia estructural",
+    ],
+    featured: false,
   },
   {
     id: "columnas-de-ducha",
@@ -46,8 +59,12 @@ export const productCategories: ProductCategory[] = [
     description: "Equipamiento funcional para renovar la experiencia de ducha.",
     href: "/productos?categoria=columnas-de-ducha",
     tagline: "Una experiencia de ducha vertical renovada",
-    highlights: ["Grifería termostática de precisión", "Jets lumbares integrados", "Duchador de mano anticalcáreo"],
-    featured: false
+    highlights: [
+      "Grifería termostática de precisión",
+      "Jets lumbares integrados",
+      "Duchador de mano anticalcáreo",
+    ],
+    featured: false,
   },
   {
     id: "ducha-escocesa",
@@ -57,18 +74,27 @@ export const productCategories: ProductCategory[] = [
     description: "Sistemas diseñados para confort, relax y recuperación.",
     href: "/productos?categoria=ducha-escocesa",
     tagline: "Estimulación hidráulica a alta presión",
-    highlights: ["Múltiples zonas de estimulación", "Control independiente de presión", "Efecto tonificante inmediato"],
-    featured: true
+    highlights: [
+      "Múltiples zonas de estimulación",
+      "Control independiente de presión",
+      "Efecto tonificante inmediato",
+    ],
+    featured: true,
   },
   {
     id: "sauna",
     name: "Sauna",
     slug: "sauna",
     sortOrder: 6,
-    description: "Bienestar térmico para proyectos residenciales y comerciales.",
+    description:
+      "Cabinas y revestimientos interiores de sauna, con fabricación a medida.",
     href: "/productos?categoria=sauna",
-    tagline: "Calor purificador en maderas selectas",
-    highlights: ["Madera noble seleccionada", "Generador de calor seguro homologado", "Termómetro e higrómetro analógico"],
-    featured: false
-  }
+    tagline: "Saunas a medida para tu espacio",
+    highlights: [
+      "Capacidades de 3 a 7 personas",
+      "Cabina y revestimiento interior",
+      "Cotización a pedido",
+    ],
+    featured: false,
+  },
 ];

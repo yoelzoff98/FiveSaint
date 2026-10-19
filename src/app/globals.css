@@ -91,3 +91,12 @@ body {
   }
 }
 
+
+/* Public website touch targets only; operational portals retain their existing layout. */
+@media (max-width: 767px) {
+ .public-site :where(button, input:not([type="hidden"]), select, textarea) { min-height:44px; }
+ .public-site :where(a,button) { min-height:44px; min-width:44px; }
+ .public-site a:not(.hidden) { display:inline-flex; align-items:center; }
+ .public-site :where(button,a) { touch-action:manipulation; }
+}
+.public-site section[id] { scroll-margin-top:110px; }

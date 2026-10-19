@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductBySlug, getProducts, getRelatedProducts } from "@/lib/supabase/products";
+import {
+  getProductBySlug,
+  getProducts,
+  getRelatedProducts,
+} from "@/lib/supabase/products";
 import { Container } from "@/components/ui/Container";
 import ProductDetailHero from "@/components/products/ProductDetailHero";
 import ProductDetailContent from "@/components/products/ProductDetailContent";
@@ -31,7 +35,9 @@ export async function generateStaticParams() {
 /**
  * Genera los metadatos de SEO de forma dinámica basados en el producto actual.
  */
-export async function generateMetadata(props: { params: Params }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Params;
+}): Promise<Metadata> {
   const { slug } = await props.params;
   const product = await getProductBySlug(slug);
 
@@ -43,11 +49,23 @@ export async function generateMetadata(props: { params: Params }): Promise<Metad
 
   return {
     title: product.seoTitle || `${product.name} | Five Saint`,
-    description: product.seoDescription || product.shortDescription || product.description,
+    description:
+      product.seoDescription || product.shortDescription || product.description,
     openGraph: {
       title: product.seoTitle || `${product.name} | Five Saint`,
-      description: product.seoDescription || product.shortDescription || product.description,
+      description:
+        product.seoDescription ||
+        product.shortDescription ||
+        product.description,
       type: "article",
+      images: [
+        {
+          url: "/og",
+          width: 1200,
+          height: 630,
+          alt: "Five Saint — Fabricación nacional",
+        },
+      ],
     },
   };
 }
@@ -76,10 +94,9 @@ export default async function ProductDetailPage(props: { params: Params }) {
       <section className="py-16 sm:py-20 bg-gradient-to-b from-stone-50/80 via-white to-white relative">
         {/* Elemento decorativo de fondo */}
         <div className="absolute top-0 left-0 w-full h-[500px] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-accent-soft/10 via-transparent to-transparent -z-10" />
-        
+
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start relative z-10">
-            
             {/* Columna Ancha: Descripción y Viñetas Técnicas */}
             <div className="lg:col-span-8 w-full">
               <ProductDetailContent product={product} />
@@ -89,7 +106,6 @@ export default async function ProductDetailPage(props: { params: Params }) {
             <div className="lg:col-span-4 w-full">
               <ProductDetailSidebar product={product} />
             </div>
-            
           </div>
         </Container>
       </section>
@@ -98,7 +114,10 @@ export default async function ProductDetailPage(props: { params: Params }) {
       <ProductVariantsSection variants={product.variants || []} />
 
       {/* 2.75 Galería de Imágenes (Si hay más de 1) */}
-      <ProductImageGallery images={product.images || []} productName={product.name} />
+      <ProductImageGallery
+        images={product.images || []}
+        productName={product.name}
+      />
 
       {/* 3. Productos Relacionados sugeridos */}
       <RelatedProducts products={relatedProducts} />

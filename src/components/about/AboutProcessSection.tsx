@@ -10,9 +10,11 @@ import { Card } from "@/components/ui/Card";
  */
 export function AboutProcessSection() {
   return (
-    <section className="py-20 lg:py-28 bg-stone-50/30 border-b border-stone-200/50">
+    <section
+      id="proceso"
+      className="py-20 lg:py-28 bg-stone-50/30 border-b border-stone-200/50"
+    >
       <Container className="flex flex-col gap-12">
-        
         {/* Título y Copete */}
         <SectionTitle
           eyebrow="Nuestra Metodología"
@@ -29,7 +31,7 @@ export function AboutProcessSection() {
               className="bg-white border border-stone-100/50 shadow-lg shadow-stone-200/40 flex flex-col gap-4 relative overflow-hidden group rounded-3xl hover:-translate-y-1 hover:shadow-xl hover:border-accent-soft/30 transition-all duration-300 p-8"
             >
               {/* Número del paso en gran tamaño difuso de fondo */}
-              <div 
+              <div
                 className="absolute -right-2 -bottom-4 text-8xl font-black text-stone-50 group-hover:text-accent-soft/30 transition-colors select-none"
                 aria-hidden="true"
               >
@@ -40,11 +42,11 @@ export function AboutProcessSection() {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-accent-deep">
                   Paso {step.stepNumber}
                 </span>
-                
+
                 <h3 className="text-lg font-semibold text-stone-900 leading-tight">
                   {step.title}
                 </h3>
-                
+
                 <p className="text-xs sm:text-sm font-light text-stone-500 leading-relaxed mt-2">
                   {step.description}
                 </p>
@@ -52,7 +54,6 @@ export function AboutProcessSection() {
             </Card>
           ))}
         </div>
-
       </Container>
     </section>
   );

@@ -22,7 +22,9 @@
     "test:approval": "node --import tsx --test tests/order-request-approval.test.mjs",
     "test:clients": "node --import tsx --test tests/client-categories.test.mjs",
     "test:distributor-sales": "node --import tsx --test tests/distributor-sales.test.mjs",
-    "test:accounting": "node --import tsx --test tests/accounting-portal.test.mjs"
+    "test:accounting": "node --import tsx --test tests/accounting-portal.test.mjs",
+    "test:public": "node --import tsx --test tests/public-website-review.test.mjs tests/sauna-public-catalog.test.mjs",
+    "test:public:browser": "node scripts/verify-public-website.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

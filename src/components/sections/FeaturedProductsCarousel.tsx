@@ -12,7 +12,9 @@ interface FeaturedProductsCarouselProps {
   products: Product[];
 }
 
-export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselProps) {
+export function FeaturedProductsCarousel({
+  products,
+}: FeaturedProductsCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -26,7 +28,9 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
 
-    const cardWidth = el.firstElementChild ? (el.firstElementChild as HTMLElement).offsetWidth + 24 : 330;
+    const cardWidth = el.firstElementChild
+      ? (el.firstElementChild as HTMLElement).offsetWidth + 24
+      : 330;
     const index = Math.round(scrollLeft / cardWidth);
     setActiveIndex(Math.min(index, products.length - 1));
   };
@@ -123,8 +127,8 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
                     isBanera
                       ? "bg-gradient-to-br from-[#71717a] via-[#8d8d97] to-[#52525b]"
                       : isColumna
-                      ? "bg-gradient-to-b from-stone-100 via-stone-50 to-white"
-                      : "bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 group-hover:from-accent-soft/10 transition-colors"
+                        ? "bg-gradient-to-b from-stone-100 via-stone-50 to-white"
+                        : "bg-gradient-to-br from-stone-50 via-white to-accent-soft/20 group-hover:from-accent-soft/10 transition-colors"
                   }`}
                 >
                   {product.image?.url ? (
@@ -136,8 +140,8 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
                         isBanera
                           ? "object-contain p-1 drop-shadow-[0_20px_25px_rgba(0,0,0,0.55)]"
                           : isColumna
-                          ? "object-contain p-3 drop-shadow-md"
-                          : "object-cover"
+                            ? "object-contain p-3 drop-shadow-md"
+                            : "object-cover"
                       }`}
                     />
                   ) : (
@@ -198,18 +202,20 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
 
       {/* 4. Paginación de Puntos Dots */}
       {products.length > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-2">
+        <div className="flex flex-wrap justify-center items-center gap-1 mt-2">
           {products.map((_, idx) => (
             <button
               key={idx}
               onClick={() => scrollToIndex(idx)}
               aria-label={`Ir al producto ${idx + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === activeIndex
-                  ? "w-8 bg-accent-deep"
-                  : "w-2.5 bg-stone-300 hover:bg-stone-400"
-              }`}
-            />
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full cursor-pointer"
+              aria-current={idx === activeIndex ? "true" : undefined}
+            >
+              <span
+                aria-hidden="true"
+                className={`h-2.5 rounded-full transition-all duration-300 ${idx === activeIndex ? "w-8 bg-accent-deep" : "w-2.5 bg-stone-300"}`}
+              />
+            </button>
           ))}
         </div>
       )}

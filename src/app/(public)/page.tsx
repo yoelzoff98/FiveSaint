@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Five Saint — Hidromasajes, spas y bañeras de fabricación nacional",
+};
 import HeroSection from "@/components/sections/HeroSection";
 import ProductCategoriesSection from "@/components/sections/ProductCategoriesSection";
 import AboutPreviewSection from "@/components/sections/AboutPreviewSection";
