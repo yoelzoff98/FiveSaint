@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -47,13 +47,22 @@ export function BudgetsListClient({
   basePath = "/admin-comercial/presupuestos"
 }: BudgetsListClientProps) {
   const router = useRouter();
-  const [budgets] = useState<Budget[]>(initialBudgets);
+  const [budgets, setBudgets] = useState<Budget[]>(initialBudgets);
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [dateRangeFilter, setDateRangeFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [currentPage, setCurrentPage] = useState(serverPage);
+
+  // Sincronizar presupuestos y página cuando cambian los datos del servidor (paginación / revalidación)
+  useEffect(() => {
+    setBudgets(initialBudgets);
+  }, [initialBudgets]);
+
+  useEffect(() => {
+    setCurrentPage(serverPage);
+  }, [serverPage]);
 
   const filteredBudgets = useMemo(() => {
     return budgets.filter((b) => {
@@ -113,12 +122,17 @@ export function BudgetsListClient({
     return filteredBudgets.reduce((sum, b) => sum + Number(b.total_amount || 0), 0);
   }, [filteredBudgets]);
 
-  // Paginación
-  const totalPages = Math.max(1, Math.ceil(filteredBudgets.length / PAGE_SIZE));
+  // Paginación:
+  // Si los datos ya vienen paginados desde el servidor (serverTotalPages definido), no los volvemos a rebanar
+  const totalPages = serverTotalPages ?? Math.max(1, Math.ceil(filteredBudgets.length / PAGE_SIZE));
   const paginatedBudgets = useMemo(() => {
+    // Si viene del servidor paginado, filteredBudgets contiene la página actual
+    if (serverTotalPages && serverTotalPages > 0) {
+      return filteredBudgets;
+    }
     const startIndex = (currentPage - 1) * PAGE_SIZE;
     return filteredBudgets.slice(startIndex, startIndex + PAGE_SIZE);
-  }, [filteredBudgets, currentPage]);
+  }, [filteredBudgets, currentPage, serverTotalPages]);
 
   const getStatusBadge = (b: Budget) => {
     switch (b.status) {
@@ -295,7 +309,7 @@ export function BudgetsListClient({
         {(serverTotalPages > 1 || totalPages > 1) && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-stone-200 bg-stone-50 text-xs">
             <span className="text-stone-500">
-              Página <strong>{currentPage}</strong> de <strong>{Math.max(serverTotalPages, totalPages)}</strong>
+              Página <strong>{currentPage}</strong> de <strong>{serverTotalPages || totalPages}</strong>
               {totalCount !== undefined && <span className="ml-2">({totalCount} presupuestos totales)</span>}
             </span>
             <div className="flex items-center gap-2">
@@ -308,7 +322,7 @@ export function BudgetsListClient({
                   setCurrentPage(newP);
                   const sParam = searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : "";
                   const stParam = statusFilter !== "all" ? `&status=${encodeURIComponent(statusFilter)}` : "";
-                  router.push(`/admin-comercial/presupuestos?page=${newP}${sParam}${stParam}`);
+                  router.push(`${basePath}?page=${newP}${sParam}${stParam}`);
                 }}
                 className="text-xs px-2.5 py-1 cursor-pointer"
               >
@@ -318,13 +332,14 @@ export function BudgetsListClient({
               <Button
                 variant="outline"
                 size="sm"
-                disabled={currentPage >= Math.max(serverTotalPages, totalPages)}
+                disabled={currentPage >= (serverTotalPages || totalPages)}
                 onClick={() => {
-                  const newP = Math.min(Math.max(serverTotalPages, totalPages), currentPage + 1);
+                  const maxP = serverTotalPages || totalPages;
+                  const newP = Math.min(maxP, currentPage + 1);
                   setCurrentPage(newP);
                   const sParam = searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : "";
                   const stParam = statusFilter !== "all" ? `&status=${encodeURIComponent(statusFilter)}` : "";
-                  router.push(`/admin-comercial/presupuestos?page=${newP}${sParam}${stParam}`);
+                  router.push(`${basePath}?page=${newP}${sParam}${stParam}`);
                 }}
                 className="text-xs px-2.5 py-1 cursor-pointer"
               >
