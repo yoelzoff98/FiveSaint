@@ -21,6 +21,7 @@
     "test:manufacturing-print": "node --import tsx scripts/verify-manufacturing-print.mjs",
     "test:approval": "node --import tsx --test tests/order-request-approval.test.mjs tests/order-workflow.test.mjs",
     "test:order-workflow:browser": "node scripts/verify-order-workflow-browser.mjs",
+    "test:performance": "node --import tsx --test tests/portal-auth-performance.test.mjs && node scripts/verify-notification-performance.mjs",
     "test:clients": "node --import tsx --test tests/client-categories.test.mjs",
     "test:distributor-sales": "node --import tsx --test tests/distributor-sales.test.mjs",
     "test:accounting": "node --import tsx --test tests/accounting-portal.test.mjs",

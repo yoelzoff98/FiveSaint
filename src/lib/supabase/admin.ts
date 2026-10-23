@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "./server";
+import { getSessionUser, getAdminProfile } from "./auth-queries";
 
 /**
  * Obtiene el usuario actualmente logueado.
@@ -7,11 +7,7 @@ import { createSupabaseServerClient } from "./server";
  */
 export async function getCurrentUser() {
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
-    
-    if (error || !user) return null;
-    return user;
+    return await getSessionUser();
   } catch (err) {
     console.error("Error obteniendo usuario actual:", err);
     return null;
@@ -26,14 +22,8 @@ export async function isCurrentUserAdmin(): Promise<boolean> {
   if (!user) return false;
 
   try {
-    const supabase = await createSupabaseServerClient();
-    const { data: adminUser, error } = await supabase
-      .from("admin_users")
-      .select("id, is_active")
-      .eq("user_id", user.id)
-      .single();
-
-    if (error || !adminUser) {
+    const adminUser = await getAdminProfile(user.id);
+    if (!adminUser) {
       return false;
     }
 

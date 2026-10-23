@@ -41,6 +41,7 @@ export function ProductManufacturingClient({
   products,
   variants,
   compositions,
+  productStatuses,
   supplies: initialSupplies,
   productId,
   variantId,
@@ -50,6 +51,7 @@ export function ProductManufacturingClient({
   products: Product[];
   variants: Variant[];
   compositions: Composition[];
+  productStatuses?: { product_id: string; status: string }[];
   supplies: Supply[];
   productId: string;
   variantId: string;
@@ -199,11 +201,11 @@ export function ProductManufacturingClient({
                   {!p.is_active ? " (Inactivo)" : ""}
                 </span>
                 <span className="text-xs text-stone-500">
-                  {compositions.some(
+                  {(productStatuses || compositions).some(
                     (c) => c.product_id === p.id && c.status === "published",
                   )
                     ? "Con receta"
-                    : compositions.some(
+                    : (productStatuses || compositions).some(
                           (c) => c.product_id === p.id && c.status === "draft",
                         )
                       ? "Composiciones pendientes de revisión"

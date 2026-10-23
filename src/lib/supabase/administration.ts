@@ -1,9 +1,11 @@
 "use server";
 
-import { createSupabaseServerClient, createSupabaseAdminClient } from "./server";
+import { createSupabaseAdminClient } from "./server";
 import { getCurrentUser } from "./admin";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { cache } from "react";
+import { getAdminProfile, getAdministrationProfile } from "./auth-queries";
 
 export interface AdministrationUserContext {
   isLoggedIn: boolean;
@@ -33,7 +35,7 @@ export interface AdministrationUser {
  * Retorna true para 'isAdmin' si pertenece a public.admin_users activo.
  * Retorna true para 'isAdministration' si pertenece a public.administration_users activo.
  */
-export async function getAdministrationUserContext(): Promise<AdministrationUserContext> {
+const readAdministrationUserContext = cache(async (): Promise<AdministrationUserContext> => {
   const user = await getCurrentUser();
   if (!user) {
     return {
@@ -44,14 +46,8 @@ export async function getAdministrationUserContext(): Promise<AdministrationUser
     };
   }
 
-  const supabase = await createSupabaseServerClient();
-
   // 1. Verificar si es ADMIN general (admin_users)
-  const { data: adminUser } = await supabase
-    .from("admin_users")
-    .select("id, full_name, is_active")
-    .eq("user_id", user.id)
-    .single();
+  const adminUser = await getAdminProfile(user.id);
 
   if (adminUser) {
     const isActive = Boolean(adminUser.is_active);
@@ -67,11 +63,7 @@ export async function getAdministrationUserContext(): Promise<AdministrationUser
   }
 
   // 2. Verificar si es usuario del rol Administración (administration_users)
-  const { data: adminStaff } = await supabase
-    .from("administration_users")
-    .select("id, full_name, is_active, email")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const adminStaff = await getAdministrationProfile(user.id);
 
   if (adminStaff) {
     const isActive = Boolean(adminStaff.is_active);
@@ -93,6 +85,10 @@ export async function getAdministrationUserContext(): Promise<AdministrationUser
     isActive: false,
     user
   };
+});
+
+export async function getAdministrationUserContext(): Promise<AdministrationUserContext> {
+  return readAdministrationUserContext();
 }
 
 /**

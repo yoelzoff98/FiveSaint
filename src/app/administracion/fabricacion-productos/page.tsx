@@ -4,7 +4,6 @@ import { AdministrationShell } from "@/components/administracion/AdministrationS
 import {
   getProductCompositions,
   getProductCompositionById,
-  getSupplies,
   getConfigurableOptions,
 } from "@/lib/supabase/manufacturing";
 import { ProductManufacturingClient } from "./ProductManufacturingClient";
@@ -22,21 +21,63 @@ export default async function ProductManufacturingPage({
   await requireAdministrationUser();
   const params = await searchParams;
   const db = createSupabaseAdminClient();
+  const selectedProduct =
+    params.product &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      params.product,
+    )
+      ? params.product
+      : null;
   // Administración comparte el catálogo: no requiere los permisos del editor de catálogo del superadmin.
-  const [productResult, variantResult, compositions, supplies] =
-    await Promise.all([
-      db.from("products").select("id,name,is_active").order("name"),
-      db
-        .from("product_variants")
-        .select("id,product_id,name,is_active")
-        .order("name"),
-      getProductCompositions(),
-      getSupplies({ isActive: "all" }),
-    ]);
-  if (productResult.error || variantResult.error)
+  const [
+    productResult,
+    variantResult,
+    compositions,
+    suppliesResult,
+    availability,
+  ] = await Promise.all([
+    db.from("products").select("id,name,is_active").order("name"),
+    selectedProduct
+      ? db
+          .from("product_variants")
+          .select("id,product_id,name,is_active")
+          .eq("product_id", selectedProduct)
+          .order("name")
+      : Promise.resolve({ data: [], error: null }),
+    selectedProduct
+      ? getProductCompositions({ productId: selectedProduct })
+      : Promise.resolve([]),
+    selectedProduct
+      ? db
+          .from("supplies")
+          .select("id,code,name,unit_of_measure,is_active")
+          .order("code")
+      : Promise.resolve({ data: [], error: null }),
+    db
+      .from("product_compositions")
+      .select("product_id,status")
+      .in("status", ["draft", "published"]),
+  ]);
+  if (
+    productResult.error ||
+    variantResult.error ||
+    suppliesResult.error ||
+    availability.error
+  )
     throw new Error("No se pudo cargar el catálogo de productos.");
   const products = productResult.data || [];
   const variants = variantResult.data || [];
+  const supplies = suppliesResult.data || [];
+  const productStatuses = [
+    ...new Set((availability.data || []).map((c) => c.product_id)),
+  ].map((product_id) => ({
+    product_id,
+    status: availability.data!.some(
+      (c) => c.product_id === product_id && c.status === "published",
+    )
+      ? "published"
+      : "draft",
+  }));
   const product = products.find((p) => p.id === params.product);
   const variant = variants.find(
     (v) => v.id === params.variant && v.product_id === product?.id,
@@ -87,6 +128,7 @@ export default async function ProductManufacturingPage({
           products={products}
           variants={variants}
           compositions={compositions}
+          productStatuses={productStatuses}
           supplies={supplies}
           productId={product?.id || ""}
           variantId={variant?.id || ""}

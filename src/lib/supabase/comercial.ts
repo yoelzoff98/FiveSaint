@@ -9,6 +9,7 @@ import { createSupabaseServerClient, createSupabaseAdminClient } from "./server"
 import { getCurrentUser } from "./admin";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { getAdminProfile, getAdministrationProfile, getSellerProfile, getDistributorProfile } from "./auth-queries";
 import {
   calculateCommercialTotals,
   roundCurrency
@@ -48,20 +49,14 @@ function hashPayload(payload: unknown): string {
  * Obtiene el contexto comercial del usuario autenticado.
  * Valida de forma estricta el estado activo (is_active === true) para cada rol.
  */
-export async function getCommercialUserContext(): Promise<CommercialUserContext> {
+const readCommercialUserContext = cache(async (): Promise<CommercialUserContext> => {
   const user = await getCurrentUser();
   if (!user) {
     return { isLoggedIn: false, isAdmin: false, isAdministration: false, isSeller: false, isDistributor: false, isActive: false };
   }
 
-  const supabase = await createSupabaseServerClient();
-
   // 1. Verificar si es admin
-  const { data: adminUser } = await supabase
-    .from("admin_users")
-    .select("id, full_name, is_active")
-    .eq("user_id", user.id)
-    .single();
+  const adminUser = await getAdminProfile(user.id);
 
   if (adminUser) {
     const isActive = Boolean(adminUser.is_active);
@@ -78,30 +73,18 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
   }
 
   // 1.1 Verificar si es usuario del rol Administración
-  const { data: administrationUser } = await supabase
-    .from("administration_users")
-    .select("id, full_name, is_active")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [administrationUser, sellerUser, distributorUser] = await Promise.all([
+    getAdministrationProfile(user.id),
+    getSellerProfile(user.id),
+    getDistributorProfile(user.id),
+  ]);
 
   const isAdministrationActive = Boolean(administrationUser && administrationUser.is_active);
 
   // 2. Verificar si es vendedor
-  const { data: sellerUser } = await supabase
-    .from("sellers")
-    .select("id, full_name, is_active")
-    .eq("user_id", user.id)
-    .single();
-
   const isSellerActive = Boolean(sellerUser && sellerUser.is_active);
 
   // 3. Verificar si es distribuidor
-  const { data: distributorUser } = await supabase
-    .from("distributors")
-    .select("id, company_name, contact_name, discount_percentage, is_active")
-    .eq("user_id", user.id)
-    .single();
-
   const isDistributorActive = Boolean(distributorUser && distributorUser.is_active);
 
   // Si tiene rol Administración ACTIVO:
@@ -163,6 +146,10 @@ export async function getCommercialUserContext(): Promise<CommercialUserContext>
     isActive: false,
     user,
   };
+});
+
+export async function getCommercialUserContext(): Promise<CommercialUserContext> {
+  return readCommercialUserContext();
 }
 
 /**
