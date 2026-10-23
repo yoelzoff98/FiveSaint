@@ -23,7 +23,7 @@ export const SupplyInputSchema = z.object({
     .string()
     .min(2, "El código debe tener al menos 2 caracteres")
     .max(50, "El código no puede superar los 50 caracteres")
-    .regex(/^[A-Za-z0-9\-_.]+$/, "El código solo puede contener letras, números, guiones y puntos")
+    .regex(/^[A-Za-z0-9\-_. ]+$/, "El código solo puede contener letras, números, espacios, guiones y puntos")
     .trim(),
   name: z
     .string()

@@ -21,12 +21,16 @@ export type Supply = {
 type Line = { supplyId: string; quantity: number; notes: string };
 type Recipe = {
   id: string;
+  name: string;
   status: string;
   technical_notes: string | null;
   waste_percentage: number;
   items: { supply_id: string; quantity: number; notes: string | null }[];
 };
 type Composition = {
+  id: string;
+  name: string;
+  technical_notes: string | null;
   product_id: string;
   variant_id: string | null;
   status: string;
@@ -62,7 +66,11 @@ export function ProductManufacturingClient({
       notes: i.notes || "",
     })) || [],
   );
-  const [notes, setNotes] = useState(recipe?.technical_notes || "");
+  const [notes, setNotes] = useState(
+    recipe?.technical_notes?.includes("Excel composiciones ")
+      ? ""
+      : recipe?.technical_notes || "",
+  );
   const [waste, setWaste] = useState(recipe?.waste_percentage || 0);
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -88,14 +96,14 @@ export function ProductManufacturingClient({
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
-  function navigate(id: string, variant = "") {
+  function navigate(id: string, variant = "", recipeId = "") {
     if (
       dirty &&
       !window.confirm("Tenés cambios sin guardar. ¿Salir de esta ficha?")
     )
       return;
     router.push(
-      `/administracion/fabricacion-productos?product=${encodeURIComponent(id)}${variant ? `&variant=${encodeURIComponent(variant)}` : ""}`,
+      `/administracion/fabricacion-productos?product=${encodeURIComponent(id)}${variant ? `&variant=${encodeURIComponent(variant)}` : ""}${recipeId ? `&recipe=${encodeURIComponent(recipeId)}` : ""}`,
     );
   }
   function update(index: number, change: Partial<Line>) {
@@ -111,12 +119,34 @@ export function ProductManufacturingClient({
     setMessage("");
     const content = JSON.stringify({ lines, notes, waste });
     try {
+      if (
+        recipe?.technical_notes?.includes("Excel composiciones ") &&
+        !variantId
+      )
+        throw new Error(
+          "Seleccioná la presentación exacta antes de activar esta composición importada.",
+        );
+      if (
+        lines.some((line) => {
+          const supply = supplies.find((s) => s.id === line.supplyId);
+          return (
+            !supply?.is_active ||
+            /pendiente de revisar la descripci/i.test(supply.name)
+          );
+        })
+      )
+        throw new Error(
+          "Completá las descripciones pendientes y activá los componentes antes de publicar.",
+        );
       let id = savedDraft?.content === content ? savedDraft.id : null;
       if (!id) {
         const draft = await createProductCompositionAction({
           productId,
           variantId: variantId || null,
-          name: `Receta ${product?.name || "producto"}`.slice(0, 200),
+          name: (recipe?.name || `Receta ${product?.name || "producto"}`).slice(
+            0,
+            200,
+          ),
           technicalNotes: notes,
           wastePercentage: waste,
           items: lines,
@@ -173,7 +203,11 @@ export function ProductManufacturingClient({
                     (c) => c.product_id === p.id && c.status === "published",
                   )
                     ? "Con receta"
-                    : "Sin receta activa"}
+                    : compositions.some(
+                          (c) => c.product_id === p.id && c.status === "draft",
+                        )
+                      ? "Composiciones pendientes de revisión"
+                      : "Sin receta activa"}
                 </span>
               </button>
             ))}
@@ -201,7 +235,9 @@ export function ProductManufacturingClient({
                 <select
                   disabled={busy}
                   value={variantId}
-                  onChange={(e) => navigate(productId, e.target.value)}
+                  onChange={(e) =>
+                    navigate(productId, e.target.value, recipe?.id)
+                  }
                   className={`${field} mt-1`}
                 >
                   <option value="">Receta base</option>
@@ -216,6 +252,37 @@ export function ProductManufacturingClient({
                 </select>
               </label>
             )}
+            <label className="block text-sm font-medium">
+              Composición / código de artículo
+              <select
+                className={`${field} mt-1`}
+                disabled={busy}
+                value={recipe?.id || ""}
+                onChange={(e) => navigate(productId, variantId, e.target.value)}
+              >
+                <option value="">Elegí una composición o creá una nueva</option>
+                {compositions
+                  .filter(
+                    (c) => c.product_id === productId && c.status !== "retired",
+                  )
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} ·{" "}
+                      {c.status === "published"
+                        ? "Activa"
+                        : c.technical_notes?.includes(
+                              "Pendiente de revisar la descripción",
+                            )
+                          ? "Pendiente de revisar la descripción"
+                          : "Pendiente de validar presentación"}
+                    </option>
+                  ))}
+              </select>
+              <span className="block text-xs text-stone-500 mt-1">
+                Comprobá medidas, jets y equipamiento. Una composición importada
+                no se aplica automáticamente a todas las presentaciones.
+              </span>
+            </label>
             {!recipe && (
               <p className="bg-amber-50 p-3 rounded text-sm">
                 Todavía no tiene una receta. Agregá los componentes y guardá
@@ -267,7 +334,7 @@ export function ProductManufacturingClient({
                         .filter((s) => s.is_active || s.id === line.supplyId)
                         .map((s) => (
                           <option key={s.id} value={s.id}>
-                            {s.name} ({s.unit_of_measure})
+                            {s.code} — {s.name} ({s.unit_of_measure})
                             {!s.is_active ? " — Inactivo" : ""}
                           </option>
                         ))}

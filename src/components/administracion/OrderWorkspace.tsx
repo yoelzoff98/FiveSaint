@@ -389,9 +389,48 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
                         </label>
                       ) : (
                         <p className="bg-amber-50 text-amber-900 p-3 text-sm rounded">
-                          Falta definir cómo se fabrica este producto. No se
-                          enviará a planta hasta completar su receta.
+                          No hay una receta activa para esta presentación.
+                          Revisá las composiciones disponibles debajo y habilitá
+                          la que corresponda antes de enviarlo a planta.
                         </p>
+                      )}
+                      {data.recipes.some(
+                        (r) =>
+                          r.product_id === line.productId &&
+                          r.status === "draft",
+                      ) && (
+                        <details className="border rounded p-3 text-sm">
+                          <summary className="cursor-pointer font-medium">
+                            Composiciones pendientes de revisión
+                          </summary>
+                          <ul className="mt-2 space-y-2 max-h-64 overflow-auto">
+                            {data.recipes
+                              .filter(
+                                (r) =>
+                                  r.product_id === line.productId &&
+                                  r.status === "draft",
+                              )
+                              .map((r) => (
+                                <li key={r.id}>
+                                  <Link
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline text-accent-deep"
+                                    href={`/administracion/fabricacion-productos?product=${line.productId}${line.variantId ? `&variant=${line.variantId}` : ""}&recipe=${r.id}`}
+                                  >
+                                    {r.name}
+                                  </Link>
+                                  <span className="block text-stone-500">
+                                    {r.technical_notes?.includes(
+                                      "Pendiente de revisar la descripción",
+                                    )
+                                      ? "Pendiente de revisar la descripción"
+                                      : "Revisar presentación y habilitar"}
+                                  </span>
+                                </li>
+                              ))}
+                          </ul>
+                        </details>
                       )}
                       <div className="flex flex-wrap gap-4 text-sm">
                         <Link

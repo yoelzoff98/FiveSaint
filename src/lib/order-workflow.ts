@@ -18,6 +18,8 @@ export type WorkflowRecipe = {
   product_id: string;
   variant_id: string | null;
   version: number;
+  status?: string;
+  technical_notes?: string | null;
 };
 export type WorkflowOption = {
   code: string;
@@ -87,6 +89,7 @@ export function matchingRecipes(
   productId: string,
   variantId: string | null,
 ) {
+  recipes = recipes.filter((r) => !r.status || r.status === "published");
   const exact = recipes.filter(
     (r) =>
       r.product_id === productId &&

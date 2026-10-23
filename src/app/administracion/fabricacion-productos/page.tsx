@@ -13,7 +13,11 @@ import { CatalogBindingForm } from "../composiciones/CatalogBindingForm";
 export default async function ProductManufacturingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ product?: string; variant?: string }>;
+  searchParams: Promise<{
+    product?: string;
+    variant?: string;
+    recipe?: string;
+  }>;
 }) {
   await requireAdministrationUser();
   const params = await searchParams;
@@ -42,9 +46,19 @@ export default async function ProductManufacturingPage({
       c.product_id === product?.id &&
       (c.variant_id || null) === (variant?.id || null),
   );
-  const current =
-    matching.find((c) => c.status === "published") ||
-    matching.find((c) => c.status === "draft");
+  const current = params.recipe
+    ? compositions.find(
+        (c) =>
+          c.id === params.recipe &&
+          c.product_id === product?.id &&
+          c.status !== "retired",
+      )
+    : matching.find((c) => c.status === "published") ||
+      matching.find(
+        (c) =>
+          c.status === "draft" &&
+          !c.technical_notes?.includes("Excel composiciones "),
+      );
   const [recipe, options, bindings] = product
     ? await Promise.all([
         current ? getProductCompositionById(current.id) : Promise.resolve(null),

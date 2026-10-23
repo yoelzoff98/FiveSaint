@@ -67,15 +67,12 @@ export const MAX_A4_OBSERVATIONS_LENGTH = 350;
 
 /**
  * Redondeo técnico según la unidad de medida:
- * - 'un': cantidad entera (redondeo matemático exacto o validación estricta).
- * - 'm', 'kg', 'l', 'm2', etc.: hasta 2 decimales estándar.
+ * Conserva hasta cuatro decimales, igual que composition_items.quantity.
+ * Una unidad de componente también puede representar una fracción de material.
  */
-export function roundSupplyQuantity(qty: number, uom: string): number {
+export function roundSupplyQuantity(qty: number, _uom: string): number {
   if (isNaN(qty) || !isFinite(qty)) return 0;
-  if (uom === 'un') {
-    return Math.round(qty);
-  }
-  return Math.round(qty * 100) / 100;
+  return Math.round(qty * 10000) / 10000;
 }
 
 /**
@@ -84,9 +81,10 @@ export function roundSupplyQuantity(qty: number, uom: string): number {
 export function formatSupplyQuantity(qty: number, uom: string): string {
   const rounded = roundSupplyQuantity(qty, uom);
   if (uom === 'un') {
-    return `${rounded} un`;
+    return `${String(rounded).replace('.', ',')} un`;
   }
-  return `${rounded.toFixed(2).replace('.', ',')} ${uom}`;
+  const decimals = Math.abs(rounded * 100 - Math.round(rounded * 100)) < 1e-8 ? 2 : 4;
+  return `${rounded.toFixed(decimals).replace('.', ',')} ${uom}`;
 }
 
 /**

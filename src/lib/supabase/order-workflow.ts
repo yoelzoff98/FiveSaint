@@ -170,8 +170,8 @@ export async function getOrderWorkflow(input: {
       .order("name"),
     db
       .from("product_compositions")
-      .select("id,name,product_id,variant_id,version")
-      .eq("status", "published"),
+      .select("id,name,product_id,variant_id,version,status,technical_notes")
+      .in("status", ["published", "draft"]),
     db
       .from("configurable_options")
       .select("code,name,product_id,is_required,allowed_values")

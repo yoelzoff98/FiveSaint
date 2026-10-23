@@ -23,9 +23,9 @@ test('Product manufacturing opens an existing recipe with decimal quantities, in
   const html=renderToStaticMarkup(React.createElement(AppRouterContext.Provider,{value:{}},
     React.createElement(ProductManufacturingClient,{
       products:[{id:'bath',name:'Bañera Perla',is_active:true}],variants:[],
-      compositions:[{product_id:'bath',variant_id:null,status:'published'}],productId:'bath',variantId:'',
+      compositions:[{id:'recipe',name:'Receta Perla',technical_notes:null,product_id:'bath',variant_id:null,status:'published'}],productId:'bath',variantId:'',
       supplies:[{id:'resin',code:'RES',name:'Resina histórica',unit_of_measure:'kg',is_active:false}],options:[],
-      recipe:{id:'recipe',status:'published',technical_notes:'Montar motor a la derecha',waste_percentage:4,
+      recipe:{id:'recipe',name:'Receta Perla',status:'published',technical_notes:'Montar motor a la derecha',waste_percentage:4,
         items:[{supply_id:'resin',quantity:0.33,notes:'Reforzar la base'}]}
     })));
   for(const text of ['Bañera Perla','Resina histórica','Inactivo','0.33','Reforzar la base','Montar motor a la derecha','Guardar receta']) assert.ok(html.includes(text),text);

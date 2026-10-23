@@ -621,6 +621,15 @@ export async function publishProductCompositionAction(id: string) {
   const ctx = await requireAdministrationUser();
   const supabase = createSupabaseAdminClient();
 
+  const { data: source, error: sourceError } = await supabase
+    .from("product_compositions")
+    .select("variant_id,technical_notes")
+    .eq("id", id)
+    .single();
+  if (sourceError || !source) throw new Error("No se pudo consultar la composición.");
+  if (source.technical_notes?.includes("Excel composiciones ") && !source.variant_id)
+    throw new Error("Abrí la composición en Fabricación de productos y seleccioná la presentación exacta antes de activarla.");
+
   const { data, error } = await supabase.rpc("publish_product_composition_transactional", {
     p_user_id: ctx.user!.id,
     p_composition_id: id
@@ -631,6 +640,8 @@ export async function publishProductCompositionAction(id: string) {
     throw new Error(error.message || "Error al publicar la composición.");
   }
 
+  revalidatePath("/administracion/fabricacion-productos");
+  revalidatePath("/administracion/pedidos", "layout");
   return data;
 }
 

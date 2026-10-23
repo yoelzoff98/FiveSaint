@@ -164,6 +164,20 @@ try {
   };
   scenario = {
     ...data,
+    recipes: [{...recipe, status:"draft", name:"FSLP1 — LADYPLUS 4J", technical_notes:"Pendiente de revisar la descripción"}],
+    lines: [{...data.lines[0], product_id:data.products[0].id}],
+  };
+  await page.reload();
+  await page.waitForSelector('details summary');
+  await page.click('details summary');
+  const imported = await page.$eval('a[href*="recipe="]', e=>({text:e.textContent,href:e.getAttribute('href')}));
+  assert.ok(imported.text.includes('FSLP1'));
+  assert.ok(imported.href.includes('recipe='+recipe.id));
+  assert.equal(await page.$eval('button[type="submit"]',b=>b.disabled),true);
+  assert.equal(await page.evaluate(()=>window.__calls.length),0);
+  console.log('PASS: imported draft is visible by source code with a review link and cannot issue an OF.');
+  scenario = {
+    ...data,
     recipes: [recipe],
     lines: [{ ...data.lines[0], product_id: data.products[0].id }],
   };
