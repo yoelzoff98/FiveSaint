@@ -2,6 +2,8 @@ import { requireAdministrationUser } from "@/lib/supabase/administration";
 import { AdministrationShell } from "@/components/administracion/AdministrationShell";
 import { getPaginatedOrders, getPaginatedBudgets } from "@/lib/supabase/comercial";
 import { formatCurrencyARS } from "@/lib/commercial-calculations";
+import { getAdministrationWorkflowCounts } from "@/lib/supabase/order-workflow";
+import { orderStatusLabel } from "@/lib/order-workflow";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -26,16 +28,15 @@ export default async function AdministrationDashboardPage() {
   const ctx = await requireAdministrationUser();
 
   // Cargar datos paginados livianos en paralelo
-  const [ordersRes, pendingOrdersRes, processingOrdersRes, budgetsRes] = await Promise.all([
+  const [ordersRes, workflowCounts, budgetsRes] = await Promise.all([
     getPaginatedOrders({ page: 1, pageSize: 6 }),
-    getPaginatedOrders({ page: 1, pageSize: 1, status: "pending" }),
-    getPaginatedOrders({ page: 1, pageSize: 1, status: "processing" }),
+    getAdministrationWorkflowCounts(),
     getPaginatedBudgets({ page: 1, pageSize: 6 }),
   ]);
 
   const recentOrders = ordersRes.data || [];
-  const pendingCount = pendingOrdersRes.total || 0;
-  const processingCount = processingOrdersRes.total || 0;
+  const pendingCount = workflowCounts.preparation;
+  const processingCount = workflowCounts.production;
   const totalOrdersCount = ordersRes.total || 0;
   const totalBudgetsCount = budgetsRes.total || 0;
 
@@ -80,20 +81,20 @@ export default async function AdministrationDashboardPage() {
           </div>
         </div>
 
-        <Link href="/administracion/solicitudes" className="block border border-orange-300 bg-orange-50 rounded p-4 font-bold">Revisar solicitudes de pedido pendientes de aceptación →</Link>
+        {workflowCounts.requests > 0 && <Link href="/administracion/solicitudes" className="block border border-orange-300 bg-orange-50 rounded p-4 font-bold">Revisar solicitudes pendientes de aceptación ({workflowCounts.requests}) →</Link>}
         {/* Tarjetas de Métricas Operativas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-5 border-amber-200/70 bg-amber-50/40 rounded-xl">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-amber-800">
-                Pendientes de Fábrica
+                En preparación
               </span>
               <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
                 <Clock className="w-4 h-4" />
               </div>
             </div>
             <div className="text-3xl font-black text-amber-900">{pendingCount}</div>
-            <p className="text-xs text-amber-700/80 mt-1">Pedidos aguardando inicio de producción</p>
+            <p className="text-xs text-amber-700/80 mt-1">Pedidos aceptados pendientes de emitir su OF</p>
           </Card>
 
           <Card className="p-5 border-sky-200/70 bg-sky-50/40 rounded-xl">
@@ -324,7 +325,7 @@ export default async function AdministrationDashboardPage() {
                         </td>
                         <td className="px-5 py-3.5 text-center">
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badge.color}`}>
-                            {badge.label}
+                            {orderStatusLabel(order)}
                           </span>
                         </td>
                         <td className="px-5 py-3.5 text-right">

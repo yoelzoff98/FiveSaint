@@ -19,7 +19,8 @@
     "test:concurrency": "node scripts/verify-native-concurrency.mjs",
     "test:restore": "node scripts/execute-isolated-restore.mjs",
     "test:manufacturing-print": "node --import tsx scripts/verify-manufacturing-print.mjs",
-    "test:approval": "node --import tsx --test tests/order-request-approval.test.mjs",
+    "test:approval": "node --import tsx --test tests/order-request-approval.test.mjs tests/order-workflow.test.mjs",
+    "test:order-workflow:browser": "node scripts/verify-order-workflow-browser.mjs",
     "test:clients": "node --import tsx --test tests/client-categories.test.mjs",
     "test:distributor-sales": "node --import tsx --test tests/distributor-sales.test.mjs",
     "test:accounting": "node --import tsx --test tests/accounting-portal.test.mjs",
@@ -59,6 +60,7 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "esbuild": "^0.28.2"
   }
 }

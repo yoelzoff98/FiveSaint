@@ -1,6 +1,7 @@
 "use server";
 
 import crypto from "crypto";
+import { revalidatePath } from "next/cache";
 import { ClientCategorySchema } from "@/lib/client-categories";
 import { cache } from "react";
 import type { Budget as IssuedBudget } from "@/components/pdf/BudgetPrintPdf";
@@ -1399,7 +1400,9 @@ export async function publishBudget(id: string) {
 
 export async function getPaginatedOrders(params: PaginationParams & { saleChannel?: string } = {}): Promise<PaginatedResult<any>> {
   const ctx = await requireCommercialUser();
-  const supabase = await createSupabaseServerClient();
+  // Service role is needed for technical status metadata. Apply the authenticated
+  // actor's explicit scope below BEFORE executing the query; never trust a client seller ID.
+  const supabase = createSupabaseAdminClient();
 
   const page = Math.max(1, params.page || 1);
   const pageSize = Math.min(100, Math.max(1, params.pageSize || 20));
@@ -1420,18 +1423,31 @@ export async function getPaginatedOrders(params: PaginationParams & { saleChanne
       budget_id,
       sale_channel,
       order_type,
+      commercial_approval_status,
+      manufacturing_orders(status),
       clients(id, name, company_name, status),
       sellers(id, full_name),
       distributors(id, company_name)
     `, { count: "exact" });
 
-  if (ctx.isSeller && ctx.sellerId) {
+  if (ctx.isAdmin || ctx.isAdministration) {
+    // Both active administrative roles can manage the organization's orders.
+  } else if (ctx.isSeller && ctx.sellerId) {
     query = query.eq("seller_id", ctx.sellerId);
   } else if (ctx.isDistributor && ctx.distributorId) {
     query = query.eq("distributor_id", ctx.distributorId);
+  } else {
+    throw new Error("No autorizado para consultar pedidos.");
   }
 
-  if (params.status && params.status !== "all") {
+  query = query.neq("manufacturing_orders.status", "cancelled");
+  if (params.status === "pending") {
+    query = query.in("status", ["pending", "processing"])
+      .or("commercial_approval_status.eq.approved,and(commercial_approval_status.eq.legacy,status.eq.pending)")
+      .is("manufacturing_orders", null);
+  } else if (params.status === "processing") {
+    query = query.eq("status", "processing").or("commercial_approval_status.eq.legacy,manufacturing_orders.not.is.null");
+  } else if (params.status && params.status !== "all") {
     query = query.eq("status", params.status);
   }
 
@@ -1474,6 +1490,15 @@ export async function getPaginatedOrders(params: PaginationParams & { saleChanne
   };
 }
 
+// Only enrich rows already authorized by the session/RLS query. Never export this service-role helper.
+async function attachManufacturingStates<T extends { id: string }>(orders: T[]) {
+  if (!orders.length) return [] as (T & { manufacturing_orders: { status: string }[] })[];
+  const { data, error } = await createSupabaseAdminClient().from("manufacturing_orders")
+    .select("order_id,status").in("order_id", orders.map(o => o.id));
+  if (error) throw new Error("No se pudo verificar el estado de fabricación.");
+  return orders.map(order => ({ ...order, manufacturing_orders: (data || []).filter(m => m.order_id === order.id).map(m => ({status:m.status})) }));
+}
+
 export async function getOrders(): Promise<any[]> {
   const ctx = await requireCommercialUser();
   const supabase = await createSupabaseServerClient();
@@ -1496,7 +1521,7 @@ export async function getOrders(): Promise<any[]> {
     console.error("Error getOrders:", error);
     throw new Error("No se pudieron cargar los pedidos");
   }
-  return data || [];
+  return attachManufacturingStates(data || []);
 }
 
 export async function getOrderById(id: string) {
@@ -1537,7 +1562,8 @@ export async function getOrderById(id: string) {
     throw new Error("Error al obtener los ítems del pedido");
   }
 
-  return { ...order, items };
+  const [enriched] = await attachManufacturingStates([order]);
+  return { ...enriched, items };
 }
 
 /**
@@ -1556,46 +1582,11 @@ export async function updateOrderStatus(id: string, status: string) {
     throw new Error(`Transición de estado de pedido no permitida: de '${order.status}' a '${status}'`);
   }
 
-  const authorId = ctx.user?.id;
-  const authorName = ctx.profileName || ctx.user?.email || "Usuario autorizado";
-  const nowIso = new Date().toISOString();
-
-  const supabase = createSupabaseAdminClient();
-  const { data, error } = await supabase
-    .from("orders")
-    .update({
-      status,
-      status_updated_at: nowIso,
-      status_updated_by: authorId,
-      status_updated_by_name: authorName,
-      updated_at: nowIso
-    })
-    .eq("id", id)
-    .eq("status", order.status)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updateOrderStatus:", error);
-    throw new Error("El pedido cambió mientras lo editabas. Recargá la página y volvé a intentar.");
-  }
-
-  // Registrar auditoría en client_notes
-  if (order.client_id) {
-    try {
-      await supabase.from("client_notes").insert({
-        client_id: order.client_id,
-        seller_id: order.seller_id,
-        order_id: id,
-        budget_id: order.budget_id,
-        content: `Estado de pedido N° ${order.order_number} actualizado a '${status}' por ${authorName}.`,
-        contacted_at: nowIso,
-        note_type: "order_status_change"
-      });
-    } catch (noteErr) {
-      console.warn("No se pudo registrar la nota de auditoría del pedido:", noteErr);
-    }
-  }
+  const { data, error } = await createSupabaseAdminClient().rpc("set_order_status_audited", {
+    p_user_id: ctx.user!.id, p_order_id: id, p_expected: order.status, p_status: status,
+  });
+  if (error) throw new Error(error.message);
+  for (const path of ["/administracion", "/administracion/pedidos", "/administracion/fabricacion", "/admin-comercial/pedidos", `/administracion/pedidos/${id}`]) revalidatePath(path);
 
   return data;
 }

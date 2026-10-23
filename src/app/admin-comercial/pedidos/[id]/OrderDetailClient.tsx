@@ -13,6 +13,7 @@ import Link from "next/link";
 import { updateOrderStatus, cancelOrder } from "@/lib/supabase/comercial";
 import { useReactToPrint } from "react-to-print";
 import { OrderPrintPdf } from "@/components/pdf/OrderPrintPdf";
+import { orderStatusLabel } from "@/lib/order-workflow";
 
 interface OrderItem {
   id: string;
@@ -30,6 +31,8 @@ interface Order {
   id: string;
   order_number: number;
   status: string;
+  commercial_approval_status?: string;
+  manufacturing_orders?: { status: string }[];
   total_amount: number;
   notes: string | null;
   created_at: string;
@@ -138,9 +141,9 @@ export function OrderDetailClient({ initialOrder, canManageProduction = false }:
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-sm py-1 px-3">Pendiente de Aprobación</Badge>;
+        return <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-sm py-1 px-3">{orderStatusLabel(order)}</Badge>;
       case "processing":
-        return <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-sm py-1 px-3">En Fabricación / Proceso</Badge>;
+        return <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-sm py-1 px-3">{orderStatusLabel(order)}</Badge>;
       case "delivered":
         return <Badge className="bg-green-50 text-green-700 border-green-200 text-sm py-1 px-3">Entregado</Badge>;
       case "completed":
@@ -347,16 +350,15 @@ export function OrderDetailClient({ initialOrder, canManageProduction = false }:
 
             {canManageProduction && order.status === "pending" && (
               <Button
-                onClick={() => handleUpdateStatus("processing")}
+                asChild
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 cursor-pointer bg-blue-700 hover:bg-blue-600 text-white font-semibold"
               >
-                <Hammer className="w-4.5 h-4.5" />
-                Iniciar Fabricación
+                <Link href={`/administracion/pedidos/${order.id}`}>Preparar pedido y emitir OF</Link>
               </Button>
             )}
 
-            {canManageProduction && order.status === "processing" && (
+            {canManageProduction && order.status === "processing" && (order.commercial_approval_status === "legacy" || order.manufacturing_orders?.some(m => m.status !== "cancelled")) && (
               <Button
                 onClick={() => handleUpdateStatus("delivered")}
                 disabled={loading}
@@ -367,13 +369,13 @@ export function OrderDetailClient({ initialOrder, canManageProduction = false }:
               </Button>
             )}
 
-            {order.sale_channel !== "distributor" && order.status !== "cancelled" && (
+            {canManageProduction && order.sale_channel !== "distributor" && ["pending", "processing"].includes(order.status) && (
               <Button
                 variant="outline"
                 asChild
                 className="w-full flex items-center justify-center gap-2 border-stone-300 text-stone-800 hover:bg-stone-50"
               >
-                <Link href={`/administracion/fabricacion?orderId=${order.id}`}>
+                <Link href={`/administracion/pedidos/${order.id}`}>
                   <Factory className="w-4 h-4 text-accent-deep" />
                   <span>Preparación de Fabricación (A4)</span>
                 </Link>

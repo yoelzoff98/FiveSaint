@@ -21,6 +21,7 @@ import {
   CheckDuplicatesInputSchema
 } from "@/lib/validations/manufacturing";
 import crypto from "crypto";
+import { revalidatePath } from "next/cache";
 import { ClientCategorySchema } from "@/lib/client-categories";
 import { AdminClientUpdateSchema } from "@/lib/validations/admin-client";
 
@@ -870,7 +871,7 @@ export async function getManufacturingOrders(params?: {
 
   const total = count || 0;
   return {
-    data: data || [],
+    data: (data || []).map(order => ({ ...order, orders: Array.isArray(order.orders) ? order.orders[0] : order.orders })),
     total,
     page,
     pageSize,
@@ -921,7 +922,7 @@ export async function getPendingOrderItemsForManufacturing(orderId?: string) {
         sellers(full_name)
       )
     `)
-    .neq("orders.status", "cancelled")
+    .in("orders.status", ["pending", "processing"])
     .eq("orders.sale_channel", "direct")
     .in("orders.commercial_approval_status", ["approved","legacy"])
     .order("created_at", { ascending: false });
@@ -942,6 +943,9 @@ export async function getPendingOrderItemsForManufacturing(orderId?: string) {
   return (data || []).filter((item: any) => {
     const issued = item.manufacturing_issued_quantity || 0;
     return item.quantity > issued;
+  }).map(item => {
+    const order = Array.isArray(item.orders) ? item.orders[0] : item.orders;
+    return { ...item, orders: { ...order, clients: Array.isArray(order.clients) ? order.clients[0] : order.clients, sellers: Array.isArray(order.sellers) ? order.sellers[0] : order.sellers } };
   });
 }
 
@@ -973,6 +977,8 @@ async function prepareManufacturingLine(formData: {
   if (oiErr || !orderItem) {
     throw new Error("Ítem de pedido no encontrado.");
   }
+  if (!orderItem.product_id) throw new Error("Identificá el producto técnico desde la ficha del pedido antes de emitir.");
+  if (!["pending", "processing"].includes(orderItem.orders?.status)) throw new Error("Este pedido ya no admite fabricación.");
 
   // 2. Resolver Composición Base (debe estar publicada)
   let bomId: string | null | undefined = formData.bomId;
@@ -1108,6 +1114,7 @@ export async function issueManufacturingOrderAction(formData: {
     p_notes:formData.notes || null,p_key:formData.idempotencyKey || crypto.randomUUID(),p_hash:hash
   });
   if (error) throw new Error(error.message);
+  for (const path of ["/administracion", "/administracion/fabricacion", `/administracion/pedidos/${formData.orderId}`]) revalidatePath(path);
   return data;
 }
 
@@ -1161,6 +1168,7 @@ export async function reviewOrderItemConfigurationAction(formData: {
     console.error("Error en review_order_item_configuration_transactional:", error);
     throw new Error(error.message || "Error al registrar la revisión de la configuración.");
   }
-
+  revalidatePath("/administracion/fabricacion");
+  revalidatePath("/administracion/fabricacion/revision");
   return data;
 }

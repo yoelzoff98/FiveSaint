@@ -4,6 +4,8 @@ import { getOrderById } from "@/lib/supabase/comercial";
 import { OrderDetailClient } from "@/app/admin-comercial/pedidos/[id]/OrderDetailClient";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { getOrderWorkflow } from "@/lib/supabase/order-workflow";
+import { OrderWorkspace } from "@/components/administracion/OrderWorkspace";
 
 export default async function AdministrationOrderDetailPage({
   params,
@@ -13,6 +15,11 @@ export default async function AdministrationOrderDetailPage({
   await requireAdministrationUser();
   const resolvedParams = await params;
   const order = await getOrderById(resolvedParams.id);
+
+  if (order.sale_channel === "direct") {
+    const data = await getOrderWorkflow({ orderId:order.id });
+    return <AdministrationShell><OrderWorkspace key={order.id} data={data} /></AdministrationShell>;
+  }
 
   return (
     <AdministrationShell>

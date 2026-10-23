@@ -2,8 +2,7 @@ import { requireAdministrationUser } from "@/lib/supabase/administration";
 import { AdministrationShell } from "@/components/administracion/AdministrationShell";
 import {
   getManufacturingOrders,
-  getPendingOrderItemsForManufacturing,
-  getProductCompositions
+  getPendingOrderItemsForManufacturing
 } from "@/lib/supabase/manufacturing";
 import { ManufacturingClient } from "./ManufacturingClient";
 
@@ -23,7 +22,7 @@ export default async function AdministrationManufacturingPage({ searchParams }: 
   const search = params.search || "";
   const status = params.status || "all";
 
-  const [paginatedOrders, pendingResult, compositions] = await Promise.all([
+  const [paginatedOrders, pendingResult] = await Promise.all([
     getManufacturingOrders({
       page,
       pageSize: 20,
@@ -32,8 +31,7 @@ export default async function AdministrationManufacturingPage({ searchParams }: 
     }),
     getPendingOrderItemsForManufacturing(params.orderId)
       .then(items => ({ items, error: null as string | null }))
-      .catch((error: unknown) => ({ items: [], error: error instanceof Error ? error.message : "No se pudieron cargar los pedidos pendientes de fabricación." })),
-    getProductCompositions({ status: "published" })
+      .catch((error: unknown) => ({ items: [], error: error instanceof Error ? error.message : "No se pudieron cargar los pedidos pendientes de fabricación." }))
   ]);
 
   return (
@@ -60,8 +58,7 @@ export default async function AdministrationManufacturingPage({ searchParams }: 
           serverTotalPages={paginatedOrders.totalPages}
           pendingItems={pendingResult.items}
           pendingError={pendingResult.error}
-          compositions={compositions}
-          initialPendingView={Boolean(params.orderId)}
+          initialPendingView={Boolean(params.orderId) || (!params.page && !params.search && !params.status)}
           initialSearch={search}
           initialStatus={status}
         />

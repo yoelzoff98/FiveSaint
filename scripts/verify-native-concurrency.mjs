@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import EmbeddedPostgres from 'embedded-postgres';
 import { Client } from 'pg';
+import { seedWorkflow } from '../tests/fixtures/order-workflow-scenario.mjs';
 
 // Local cluster only. Never reads application environment or Supabase credentials.
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fivesaint-pg-'));
@@ -260,6 +261,29 @@ try {
   assert.equal(Number((await setup.query("select count(*) count from order_request_notifications where request_id=$1 and event='submitted'",[request.request_id])).rows[0].count),2);
   console.log('PASS: concurrent ADMIN/staff acceptance creates exactly one order and notifies both recipients; historical orders remain legacy.');
 
+  await setup.query(fs.readFileSync('supabase/migrations/20261022000100_simplified_order_manufacturing_flow.sql','utf8'));
+  const workflow=await seedWorkflow(setup);
+  const full=await workflow.quote();
+  const fullLines=workflow.lines(full);
+  const fullSupplies=workflow.products.map(p=>({code:p.supply,name:p.name+' component',quantity:1,unitOfMeasure:'un'}));
+  const emitWorkspace=(connection,actor,key)=>connection.query("select prepare_and_issue_order($1,$2,null,$3,$4::jsonb,$5::jsonb,'[]',null,$6,'concurrent-workspace') result",[actor,full.request,full.items[0].budgetItemId,JSON.stringify(fullLines),JSON.stringify(fullSupplies),key]);
+  await a.query('begin');
+  const completeFirst=await emitWorkspace(a,workflow.adminUser,'workspace-a');
+  let completeSecondFinished=false;
+  const completeSecond=emitWorkspace(b,workflow.staffUser,'workspace-b').then(result=>({result}),error=>({error})).then(result=>{completeSecondFinished=true;return result;});
+  await new Promise(resolve=>setTimeout(resolve,150));
+  assert.equal(completeSecondFinished,false);
+  await a.query('commit');
+  const completedSecond=await completeSecond;
+  assert.ok(completedSecond.error);
+  assert.notEqual(completedSecond.error.code,'40P01');
+  assert.match(completedSecond.error.message,/renglones pendientes|Saldo insuficiente|preparación cambió/);
+  assert.deepEqual((await emitWorkspace(b,workflow.adminUser,'workspace-a')).rows[0].result,completeFirst.rows[0].result);
+  const completedOrder=completeFirst.rows[0].result.orderId;
+  assert.equal(Number((await setup.query('select count(*) c from orders where accepted_request_id=$1',[full.request])).rows[0].c),1);
+  assert.equal(Number((await setup.query('select count(*) c from manufacturing_orders where order_id=$1',[completedOrder])).rows[0].c),1);
+  assert.equal((await setup.query('select manufacturing_issued_quantity from order_items where order_id=$1',[completedOrder])).rows.every(i=>i.manufacturing_issued_quantity===1),true);
+  console.log('PASS: two independent PostgreSQL sessions accept/review/issue together: one order, one grouped OF, stable quantities, idempotent retry and no deadlock.');
   console.log('PASS: independent PostgreSQL sessions: concurrent conversion vs rejection, publishing vs shipment separation, multiple shipment coherence, legacy 7-param compatibility, competing balances, cancel locks.');
 } finally {
   await Promise.all(clients.map(c=>c.end()));

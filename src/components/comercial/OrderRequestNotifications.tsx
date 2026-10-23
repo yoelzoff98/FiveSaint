@@ -63,7 +63,7 @@ export function OrderRequestNotifications({includeCommercialNotifications=false}
    {!feed?.data.length&&!commercial.length&&<p className="text-sm text-stone-500">Sin novedades pendientes.</p>}
    {feed?.data.map(notification=><div key={notification.id} className="border-b py-2 text-sm">
     <Link onClick={()=>{void markRequestNotificationRead(notification.id).then(()=>setFeed(previous=>previous?{...previous,count:Math.max(0,previous.count-1),data:previous.data.filter(item=>item.id!==notification.id)}:previous)).catch(()=>setError("No se pudo marcar el aviso como leído."));setOpen(false);}}
-     href={feed.isAdministration?`/administracion/solicitudes?status=all&requestId=${notification.request_id}`:`/admin-comercial/presupuestos/${(notification.order_requests as unknown as {budget_id:string})?.budget_id}`}>
+     href={feed.isAdministration?`/administracion/solicitudes/${notification.request_id}`:`/admin-comercial/presupuestos/${(notification.order_requests as unknown as {budget_id:string})?.budget_id}`}>
      <strong>{notification.title}</strong><p>{notification.message}</p>
     </Link>
    </div>)}

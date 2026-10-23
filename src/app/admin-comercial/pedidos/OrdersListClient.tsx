@@ -1,4 +1,5 @@
 "use client";
+import { orderStatusLabel, orderWorkflowStage } from "@/lib/order-workflow";
 
 import { useState, useMemo, useEffect } from "react";
 import { Badge } from "@/components/ui/Badge";
@@ -13,6 +14,8 @@ interface Order {
   id: string;
   order_number: number;
   status: string;
+  commercial_approval_status?: string;
+  manufacturing_orders?: { status: string }[];
   total_amount: number;
   created_at: string;
   sale_channel?: string | null;
@@ -139,7 +142,7 @@ export function OrdersListClient({
       const orderNum = o.order_number.toString();
 
       const matchesSearch = clientName.includes(term) || companyName.includes(term) || orderNum.includes(term);
-      const matchesStatus = statusFilter === "all" || o.status === statusFilter;
+      const matchesStatus = statusFilter === "all" || (statusFilter === "pending" ? orderWorkflowStage(o) === "preparation" : statusFilter === "processing" ? orderWorkflowStage(o) === "production" : o.status === statusFilter);
       const matchesDate = passesDateFilter(o.created_at);
 
       return matchesSearch && matchesStatus && matchesDate;
@@ -202,12 +205,12 @@ export function OrdersListClient({
     }
   };
 
-  const getOrderStatusBadge = (status: string) => {
-    switch (status) {
+  const getOrderStatusBadge = (order: Order) => {
+    switch (order.status) {
       case "pending":
-        return <Badge className="bg-amber-50 text-amber-800 border-amber-300 font-bold text-xs py-0.5 px-2">Pendiente Fábrica</Badge>;
+        return <Badge className="bg-amber-50 text-amber-800 border-amber-300 font-bold text-xs py-0.5 px-2">{orderStatusLabel(order)}</Badge>;
       case "processing":
-        return <Badge className="bg-blue-50 text-blue-800 border-blue-300 font-bold text-xs py-0.5 px-2">En Producción</Badge>;
+        return <Badge className="bg-blue-50 text-blue-800 border-blue-300 font-bold text-xs py-0.5 px-2">{orderStatusLabel(order)}</Badge>;
       case "completed":
         return <Badge className="bg-purple-50 text-purple-800 border-purple-300 font-bold text-xs py-0.5 px-2">Venta confirmada</Badge>;
       case "delivered":
@@ -215,7 +218,7 @@ export function OrdersListClient({
       case "cancelled":
         return <Badge className="bg-rose-50 text-rose-800 border-rose-300 font-bold text-xs py-0.5 px-2">Cancelado</Badge>;
       default:
-        return <Badge className="bg-stone-100 text-stone-600 border-stone-300 text-xs py-0.5 px-2">{status}</Badge>;
+        return <Badge className="bg-stone-100 text-stone-600 border-stone-300 text-xs py-0.5 px-2">{order.status}</Badge>;
     }
   };
 
@@ -272,12 +275,12 @@ export function OrdersListClient({
             {activeTab === "factory" && (
               <select
                 value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); router.push(`${ordersBasePath}?page=1&status=${encodeURIComponent(e.target.value)}`); }}
                 className="px-3 py-2 border border-stone-300 rounded-lg text-xs font-semibold text-stone-700 bg-white"
               >
                 <option value="all">Todos los Estados</option>
-                <option value="pending">Pendiente Fábrica</option>
-                <option value="processing">En Producción</option>
+                <option value="pending">Aceptado · en preparación</option>
+                <option value="processing">En fabricación</option>
                 <option value="completed">Venta confirmada</option>
                 <option value="delivered">Entregado</option>
                 <option value="cancelled">Cancelado</option>
@@ -364,7 +367,7 @@ export function OrdersListClient({
                           {formatCurrencyARS(o.total_amount)}
                         </td>
                         <td className="px-4 py-3 text-center">
-                          {getOrderStatusBadge(o.status)}
+                          {getOrderStatusBadge(o)}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">

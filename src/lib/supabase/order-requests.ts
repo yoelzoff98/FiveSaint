@@ -26,7 +26,8 @@ export async function decideOrderRequest(id:string,decision:"approved"|"returned
  if(decision!=="approved" && (!reason || reason.trim().length<3)) throw new Error("Indicá el motivo.");
  const {data,error}=await createSupabaseAdminClient().rpc("decide_order_request",{p_user_id:ctx.user!.id,p_request_id:id,p_decision:decision,p_reason:reason?.trim()||null});
  if(error) throw new Error(error.message);
- for(const path of ["/administracion/solicitudes","/administracion/pedidos","/administracion/fabricacion","/admin-comercial/presupuestos"]) revalidatePath(path);
+ for(const path of ["/administracion","/administracion/solicitudes","/administracion/pedidos","/administracion/fabricacion","/admin-comercial/presupuestos"]) revalidatePath(path);
+ if(data.order_id) revalidatePath(`/administracion/pedidos/${data.order_id}`);
  return data;
 }
 
