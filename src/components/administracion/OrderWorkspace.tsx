@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { ProductManufacturingClient } from "@/app/administracion/fabricacion-productos/ProductManufacturingClient";
+import { getOrderMaterialsEditor } from "@/lib/supabase/manufacturing";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +12,10 @@ import {
   ArrowLeft,
   AlertTriangle,
 } from "lucide-react";
-import { emitOrderFromWorkspace } from "@/lib/supabase/order-workflow";
+import {
+  getOrderWorkflow,
+  emitOrderFromWorkspace,
+} from "@/lib/supabase/order-workflow";
 import { decideOrderRequest } from "@/lib/supabase/order-requests";
 import { cancelOrder, updateOrderStatus } from "@/lib/supabase/comercial";
 import { matchingRecipes, type WorkflowData } from "@/lib/order-workflow";
@@ -18,7 +23,35 @@ import { formatCurrencyARS } from "@/lib/commercial-calculations";
 
 const field =
   "w-full rounded-lg border border-stone-300 bg-white p-2.5 text-sm";
-export function OrderWorkspace({ data }: { data: WorkflowData }) {
+export function OrderWorkspace({ data: initialData }: { data: WorkflowData }) {
+  const [materials, setMaterials] = useState<WorkflowData["recipes"] | null>(
+    null,
+  );
+  const data = materials ? { ...initialData, recipes: materials } : initialData;
+  const [editor, setEditor] = useState<Awaited<
+    ReturnType<typeof getOrderMaterialsEditor>
+  > | null>(null);
+  useEffect(() => {
+    if (editor) document.getElementById("order-materials-editor")?.focus();
+  }, [editor]);
+  async function refreshMaterials() {
+    const fresh = await getOrderWorkflow({
+      orderId: data.orderId,
+      requestId: data.requestId,
+    });
+    setMaterials(fresh.recipes);
+    setLines((current) =>
+      current.map((line) => ({
+        ...line,
+        bomId:
+          matchingRecipes(fresh.recipes, line.productId, line.variantId).sort(
+            (a, b) => b.version - a.version,
+          )[0]?.id || "",
+      })),
+    );
+    setConfirmed(false);
+    setEditor(null);
+  }
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -34,14 +67,11 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
       productId: line.product_id || "",
       variantId: line.variant_id,
       bomId:
-        matchingRecipes(data.recipes, line.product_id || "", line.variant_id)
-          .length === 1
-          ? matchingRecipes(
-              data.recipes,
-              line.product_id || "",
-              line.variant_id,
-            )[0].id
-          : "",
+        matchingRecipes(
+          data.recipes,
+          line.product_id || "",
+          line.variant_id,
+        ).sort((a, b) => b.version - a.version)[0]?.id || "",
       quantity: line.quantity,
       configuration: line.configuration,
     })),
@@ -58,9 +88,9 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
       line.productId,
       line.variantId,
     );
-    if (!choices.length) return [`Falta definir cómo se fabrica ${name}.`];
+    if (!choices.length) return [`Falta cargar los materiales de ${name}.`];
     if (!choices.some((r) => r.id === line.bomId))
-      return [`Elegí la receta de ${name}.`];
+      return [`Revisá los materiales de ${name}.`];
     return [];
   });
   function update(id: string, changes: Partial<(typeof lines)[number]>) {
@@ -319,7 +349,8 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
                             productId: e.target.value,
                             variantId: null,
                             bomId:
-                              available.length === 1 ? available[0].id : "",
+                              available.sort((a, b) => b.version - a.version)[0]
+                                ?.id || "",
                           });
                         }}
                       >
@@ -350,7 +381,8 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
                           update(line.id, {
                             variantId,
                             bomId:
-                              available.length === 1 ? available[0].id : "",
+                              available.sort((a, b) => b.version - a.version)[0]
+                                ?.id || "",
                           });
                         }}
                       >
@@ -367,88 +399,32 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
                   </div>
                   {line.productId && (
                     <div className="space-y-2">
-                      {recipes.length > 0 ? (
-                        <label className="block text-sm">
-                          Receta de fabricación
-                          <select
-                            aria-label={`Receta: ${source.product_name}`}
-                            required
-                            className={field}
-                            value={line.bomId}
-                            onChange={(e) =>
-                              update(line.id, { bomId: e.target.value })
-                            }
-                          >
-                            <option value="">Elegir receta vigente</option>
-                            {recipes.map((r) => (
-                              <option key={r.id} value={r.id}>
-                                {r.name} · versión {r.version}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      ) : (
-                        <p className="bg-amber-50 text-amber-900 p-3 text-sm rounded">
-                          No hay una receta activa para esta presentación.
-                          Revisá las composiciones disponibles debajo y habilitá
-                          la que corresponda antes de enviarlo a planta.
-                        </p>
-                      )}
-                      {data.recipes.some(
-                        (r) =>
-                          r.product_id === line.productId &&
-                          r.status === "draft",
-                      ) && (
-                        <details className="border rounded p-3 text-sm">
-                          <summary className="cursor-pointer font-medium">
-                            Composiciones pendientes de revisión
-                          </summary>
-                          <ul className="mt-2 space-y-2 max-h-64 overflow-auto">
-                            {data.recipes
-                              .filter(
-                                (r) =>
-                                  r.product_id === line.productId &&
-                                  r.status === "draft",
-                              )
-                              .map((r) => (
-                                <li key={r.id}>
-                                  <Link
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="underline text-accent-deep"
-                                    href={`/administracion/fabricacion-productos?product=${line.productId}${line.variantId ? `&variant=${line.variantId}` : ""}&recipe=${r.id}`}
-                                  >
-                                    {r.name}
-                                  </Link>
-                                  <span className="block text-stone-500">
-                                    {r.technical_notes?.includes(
-                                      "Pendiente de revisar la descripción",
-                                    )
-                                      ? "Pendiente de revisar la descripción"
-                                      : "Revisar presentación y habilitar"}
-                                  </span>
-                                </li>
-                              ))}
-                          </ul>
-                        </details>
-                      )}
-                      <div className="flex flex-wrap gap-4 text-sm">
-                        <Link
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline text-accent-deep"
-                          href={`/administracion/fabricacion-productos?product=${line.productId}${line.variantId ? `&variant=${line.variantId}` : ""}`}
-                        >
-                          Ver / completar receta en otra pestaña
-                        </Link>
-                        <button
-                          type="button"
-                          className="underline"
-                          onClick={() => router.refresh()}
-                        >
-                          Actualizar recetas
-                        </button>
-                      </div>
+                      <p
+                        className={`rounded-lg p-3 text-sm ${recipes.length ? "bg-emerald-50 text-emerald-900" : "bg-amber-50 text-amber-900"}`}
+                      >
+                        {recipes.length
+                          ? "Materiales listos. Calculamos automáticamente lo necesario para esta cantidad."
+                          : "Faltan los materiales para fabricar este producto. Completalos aquí para continuar."}
+                      </p>
+                      <button
+                        type="button"
+                        disabled={pending}
+                        className="underline text-sm"
+                        onClick={() =>
+                          execute(async () => {
+                            setEditor(
+                              await getOrderMaterialsEditor(
+                                line.productId,
+                                line.variantId,
+                              ),
+                            );
+                          })
+                        }
+                      >
+                        {recipes.length
+                          ? "Ver / editar materiales"
+                          : "Completar materiales"}
+                      </button>
                     </div>
                   )}
                   <label className="block text-sm">
@@ -542,7 +518,13 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
             </label>
             <button
               type="submit"
-              disabled={pending || !confirmed || !primary || missing.length > 0}
+              disabled={
+                pending ||
+                editor !== null ||
+                !confirmed ||
+                !primary ||
+                missing.length > 0
+              }
               className="inline-flex gap-2 items-center rounded-lg bg-emerald-700 text-white font-semibold px-5 py-3 disabled:opacity-40"
             >
               <Factory size={18} />
@@ -558,6 +540,43 @@ export function OrderWorkspace({ data }: { data: WorkflowData }) {
             </p>
           </section>
         </form>
+      )}
+      {editor && (
+        <section
+          id="order-materials-editor"
+          tabIndex={-1}
+          role="region"
+          aria-label="Materiales de fabricación"
+          className="border-2 border-cyan-700 rounded-2xl p-4 space-y-4"
+        >
+          <header className="flex flex-wrap justify-between gap-3">
+            <h2 className="font-bold">Materiales de fabricación</h2>
+            <button
+              type="button"
+              className="underline text-sm"
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "¿Cerrar el editor? Los cambios sin guardar se perderán.",
+                  )
+                )
+                  setEditor(null);
+              }}
+            >
+              Cerrar editor
+            </button>
+          </header>
+          <p className="text-sm text-stone-600">
+            Guardalos una vez para este producto o presentación. También se
+            usarán en próximos pedidos.
+          </p>
+          <ProductManufacturingClient
+            key={`${editor.productId}:${editor.variantId}`}
+            {...editor}
+            embedded
+            onSaved={refreshMaterials}
+          />
+        </section>
       )}
       {data.requestId && !closed && (
         <section className="border rounded-2xl bg-white p-5 space-y-3">

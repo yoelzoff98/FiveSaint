@@ -306,9 +306,10 @@ test("Existing accepted request is shown as preparation, with actionable missing
     ),
   );
   assert.ok(html.includes("Aceptado · en preparación"));
-  assert.ok(html.includes("Falta definir cómo se fabrica"));
+  assert.ok(html.includes("Falta cargar los materiales de"));
   assert.ok(html.includes("Emitir orden de fabricación"));
   assert.ok(!html.includes("Iniciar Fabricación"));
   assert.ok(!html.includes("Confirmar pedido y emitir OF"));
-  assert.ok(html.includes("fabricacion-productos?product=product"));
+  assert.ok(html.includes("Completar materiales"));
+  assert.ok(!html.includes("Receta de fabricación"));
 });

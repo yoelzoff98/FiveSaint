@@ -31,7 +31,7 @@ export function AdministrationSidebar({ isAdmin = false }: AdministrationSidebar
     { href: "/administracion/presupuestos", label: "Presupuestos", icon: FileText },
     { href: "/administracion/presupuestos/nuevo", label: "Nuevo Presupuesto", icon: FilePlus },
     { href: "/administracion/fabricacion", label: "Órdenes Fabricación", icon: Factory },
-    { href: "/administracion/fabricacion-productos", label: "Fabricación de productos", icon: Layers },
+    { href: "/administracion/fabricacion-productos", label: "Materiales de fabricación", icon: Layers },
     { href: "/contable", label: "Portal Contable", icon: Receipt },
     { href: "/administracion/facturacion", label: "Facturación", icon: Receipt, badge: "Próximamente" },
   ];

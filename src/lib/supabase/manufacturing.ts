@@ -1183,3 +1183,25 @@ export async function reviewOrderItemConfigurationAction(formData: {
   revalidatePath("/administracion/fabricacion/revision");
   return data;
 }
+
+/** Minimal authenticated setup for the materials editor inside an order. */
+export async function getOrderMaterialsEditor(productId: string, variantId: string | null) {
+  await requireAdministrationUser();
+  const db = createSupabaseAdminClient();
+  const [product, variant, supplies, compositions] = await Promise.all([
+    db.from("products").select("id,name,is_active").eq("id", productId).single(),
+    variantId ? db.from("product_variants").select("id,name,is_active,product_id").eq("id", variantId).eq("product_id", productId).single() : Promise.resolve({data: null, error: null}),
+    db.from("supplies").select("id,code,name,unit_of_measure,is_active").order("name"),
+    getProductCompositions({productId}),
+  ]);
+  if (product.error || variant.error || supplies.error || !product.data) throw new Error("No se pudieron cargar los materiales del producto.");
+  const matching = compositions.filter(c => (c.variant_id || null) === variantId);
+  const current = matching.find(c => c.status === "published") ||
+    (variantId ? compositions.find(c => !c.variant_id && c.status === "published") : undefined) ||
+    matching.find(c => c.status === "draft" && !c.technical_notes?.includes("Excel composiciones "));
+  return {
+    products: [product.data], variants: variant.data ? [variant.data] : [],
+    compositions: [], supplies: supplies.data || [], productId, variantId: variantId || "",
+    recipe: current ? await getProductCompositionById(current.id) : null, options: [],
+  };
+}

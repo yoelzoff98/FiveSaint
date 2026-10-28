@@ -118,7 +118,7 @@ export default async function ProductManufacturingPage({
     <AdministrationShell>
       <div className="max-w-6xl mx-auto space-y-5">
         <div>
-          <h1 className="text-2xl font-bold">Fabricación de productos</h1>
+          <h1 className="text-2xl font-bold">Materiales de fabricación</h1>
           <p className="text-sm text-stone-500 mt-1">
             Elegí un producto y detallá qué lleva y cómo se fabrica.
           </p>

@@ -16,7 +16,13 @@ if (output) fs.mkdirSync(output, { recursive: true });
 const router = `export function useRouter(){return {push:url=>{window.__navigation=url},refresh:()=>{window.__refreshed=true}}}`;
 const actions = `export async function emitOrderFromWorkspace(input){window.__calls.push(input);await new Promise(r=>setTimeout(r,100));return {manufacturingOrderId:'synthetic-of'}}
 export async function decideOrderRequest(id,decision,reason){window.__decisions.push({id,decision,reason});return {order_id:'synthetic-order'}}
-export async function cancelOrder(){} export async function updateOrderStatus(){}`;
+export async function cancelOrder(){} export async function updateOrderStatus(){}
+export async function getOrderMaterialsEditor(productId,variantId){return {products:[{id:productId,name:'Lady Plus',is_active:true}],variants:[],compositions:[],supplies:[{id:'supply',code:'MAT',name:'Resina',unit_of_measure:'kg',is_active:true}],productId,variantId:variantId||'',recipe:null,options:[]}}
+export async function createProductCompositionAction(input){window.__materials=input;return {id:'new-materials'}}
+export async function publishProductCompositionAction(id){window.__published=id}
+export async function createSupplyAction(){} export async function createConfigurableOptionAction(){} export async function updateConfigurableOptionAction(){}
+export async function getOrderWorkflow(){return {...window.__data,recipes:[{id:'new-materials',name:'Materiales',product_id:window.__materials.productId,variant_id:window.__materials.variantId,version:2,status:'published'}]}}
+`;
 await build({
   stdin: {
     contents: `import React from 'react';import {createRoot} from 'react-dom/client';import {OrderWorkspace} from './src/components/administracion/OrderWorkspace';window.__calls=[];window.__decisions=[];createRoot(document.getElementById('app')).render(React.createElement(OrderWorkspace,{data:window.__data}));`,
@@ -55,7 +61,9 @@ await build({
           resolveDir: process.cwd(),
         }));
         b.onResolve({ filter: /^@\// }, (args) => ({
-          path: path.resolve("src", args.path.slice(2) + ".ts"),
+          path: [".ts", ".tsx"]
+            .map((ext) => path.resolve("src", args.path.slice(2) + ext))
+            .find((p) => fs.existsSync(p)),
         }));
       },
     },
@@ -139,7 +147,7 @@ try {
   );
   assert.ok(
     await page.$eval("form", (e) =>
-      e.innerText.includes("Falta definir cómo se fabrica"),
+      e.innerText.includes("Falta cargar los materiales de"),
     ),
   );
   assert.equal(
@@ -164,18 +172,80 @@ try {
   };
   scenario = {
     ...data,
-    recipes: [{...recipe, status:"draft", name:"FSLP1 — LADYPLUS 4J", technical_notes:"Pendiente de revisar la descripción"}],
-    lines: [{...data.lines[0], product_id:data.products[0].id}],
+    recipes: [
+      {
+        ...recipe,
+        status: "draft",
+        name: "FSLP1 — LADYPLUS 4J",
+        technical_notes: "Pendiente de revisar la descripción",
+      },
+    ],
+    lines: [{ ...data.lines[0], product_id: data.products[0].id }],
   };
   await page.reload();
-  await page.waitForSelector('details summary');
-  await page.click('details summary');
-  const imported = await page.$eval('a[href*="recipe="]', e=>({text:e.textContent,href:e.getAttribute('href')}));
-  assert.ok(imported.text.includes('FSLP1'));
-  assert.ok(imported.href.includes('recipe='+recipe.id));
-  assert.equal(await page.$eval('button[type="submit"]',b=>b.disabled),true);
-  assert.equal(await page.evaluate(()=>window.__calls.length),0);
-  console.log('PASS: imported draft is visible by source code with a review link and cannot issue an OF.');
+  await page.waitForSelector('button[type="submit"]');
+  assert.equal(
+    await page.$eval('button[type="submit"]', (b) => b.disabled),
+    true,
+  );
+  assert.equal(await page.evaluate(() => window.__calls.length), 0);
+  const completeButton = await page.evaluateHandle(() =>
+    [...document.querySelectorAll("button")].find((b) =>
+      b.textContent.includes("Completar materiales"),
+    ),
+  );
+  await completeButton.asElement().click();
+  await page.waitForSelector('[aria-label="Materiales de fabricación"]');
+  assert.equal(
+    await page.evaluate(() => !!document.querySelector("form form")),
+    false,
+  );
+  const addButton = await page.evaluateHandle(() =>
+    [...document.querySelectorAll("button")].find((b) =>
+      b.textContent.includes("+ Agregar material"),
+    ),
+  );
+  await addButton.asElement().click();
+  await page.select(
+    '[aria-label="Materiales de fabricación"] select',
+    "supply",
+  );
+  await page.$eval(
+    '[aria-label="Materiales de fabricación"] input[type="number"]',
+    (e) => {
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value",
+      ).set;
+      setter.call(e, "2.5");
+      e.dispatchEvent(new Event("input", { bubbles: true }));
+    },
+  );
+  const saveButton = await page.evaluateHandle(() =>
+    [...document.querySelectorAll("button")].find((b) =>
+      b.textContent.includes("Guardar materiales"),
+    ),
+  );
+  await saveButton.asElement().click();
+  await page.waitForFunction(
+    () =>
+      window.__published === "new-materials" &&
+      !document.querySelector('[aria-label="Materiales de fabricación"]'),
+  );
+  assert.equal(
+    await page.evaluate(() => window.__materials.items[0].quantity),
+    2.5,
+  );
+  await page.click('input[type="checkbox"]');
+  await page.click('button[type="submit"]');
+  await page.waitForFunction(() => window.__calls.length === 1);
+  assert.equal(
+    await page.evaluate(() => window.__calls[0].lines[0].bomId),
+    "new-materials",
+  );
+  console.log(
+    "PASS: drafts cannot issue; materials are completed inside the order and selected automatically after saving.",
+  );
   scenario = {
     ...data,
     recipes: [recipe],

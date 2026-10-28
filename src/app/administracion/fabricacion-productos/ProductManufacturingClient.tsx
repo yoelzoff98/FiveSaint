@@ -47,7 +47,11 @@ export function ProductManufacturingClient({
   variantId,
   recipe,
   options,
+  embedded = false,
+  onSaved,
 }: {
+  embedded?: boolean;
+  onSaved?: () => Promise<void>;
   products: Product[];
   variants: Variant[];
   compositions: Composition[];
@@ -87,6 +91,7 @@ export function ProductManufacturingClient({
   const [savedDraft, setSavedDraft] = useState<{
     id: string;
     content: string;
+    published?: boolean;
   } | null>(null);
   const product = products.find((p) => p.id === productId);
   useEffect(() => {
@@ -145,10 +150,9 @@ export function ProductManufacturingClient({
         const draft = await createProductCompositionAction({
           productId,
           variantId: variantId || null,
-          name: (recipe?.name || `Receta ${product?.name || "producto"}`).slice(
-            0,
-            200,
-          ),
+          name: (
+            recipe?.name || `Materiales ${product?.name || "producto"}`
+          ).slice(0, 200),
           technicalNotes: notes,
           wastePercentage: waste,
           items: lines,
@@ -156,65 +160,76 @@ export function ProductManufacturingClient({
         id = draft.id;
         setSavedDraft({ id: draft.id, content });
       }
-      await publishProductCompositionAction(id!);
+      if (!(savedDraft?.content === content && savedDraft.published)) {
+        await publishProductCompositionAction(id!);
+        setSavedDraft({ id: id!, content, published: true });
+      }
       setDirty(false);
       setMessage(
-        "Receta guardada y lista para fabricar. Las órdenes anteriores conservan sus datos.",
+        "Materiales guardados y listos para fabricar. Las órdenes anteriores conservan sus datos.",
       );
-      router.refresh();
+      if (onSaved) await onSaved();
+      else router.refresh();
     } catch (cause) {
       setError(
         cause instanceof Error
           ? cause.message
-          : "No se pudo guardar la receta.",
+          : "No se pudieron guardar los materiales.",
       );
     } finally {
       setBusy(false);
     }
   }
   return (
-    <div className="grid lg:grid-cols-[260px_1fr] gap-5">
-      <section className="bg-white border rounded-xl p-4 space-y-3 self-start">
-        <label className="block text-sm font-medium">
-          Buscar producto
-          <input
-            className={`${field} mt-2`}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Nombre del producto"
-          />
-        </label>
-        <div className="max-h-[60vh] overflow-auto space-y-1">
-          {products
-            .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
-            .map((p) => (
-              <button
-                disabled={busy}
-                type="button"
-                key={p.id}
-                onClick={() => navigate(p.id)}
-                aria-pressed={productId === p.id}
-                className={`block w-full text-left rounded-lg p-3 text-sm ${productId === p.id ? "bg-cyan-50 text-cyan-900 border border-cyan-300" : "hover:bg-stone-50"}`}
-              >
-                <span className="font-medium block">
-                  {p.name}
-                  {!p.is_active ? " (Inactivo)" : ""}
-                </span>
-                <span className="text-xs text-stone-500">
-                  {(productStatuses || compositions).some(
-                    (c) => c.product_id === p.id && c.status === "published",
-                  )
-                    ? "Con receta"
-                    : (productStatuses || compositions).some(
-                          (c) => c.product_id === p.id && c.status === "draft",
-                        )
-                      ? "Composiciones pendientes de revisión"
-                      : "Sin receta activa"}
-                </span>
-              </button>
-            ))}
-        </div>
-      </section>
+    <div
+      className={embedded ? "space-y-4" : "grid lg:grid-cols-[260px_1fr] gap-5"}
+    >
+      {!embedded && (
+        <section className="bg-white border rounded-xl p-4 space-y-3 self-start">
+          <label className="block text-sm font-medium">
+            Buscar producto
+            <input
+              className={`${field} mt-2`}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Nombre del producto"
+            />
+          </label>
+          <div className="max-h-[60vh] overflow-auto space-y-1">
+            {products
+              .filter((p) =>
+                p.name.toLowerCase().includes(search.toLowerCase()),
+              )
+              .map((p) => (
+                <button
+                  disabled={busy}
+                  type="button"
+                  key={p.id}
+                  onClick={() => navigate(p.id)}
+                  aria-pressed={productId === p.id}
+                  className={`block w-full text-left rounded-lg p-3 text-sm ${productId === p.id ? "bg-cyan-50 text-cyan-900 border border-cyan-300" : "hover:bg-stone-50"}`}
+                >
+                  <span className="font-medium block">
+                    {p.name}
+                    {!p.is_active ? " (Inactivo)" : ""}
+                  </span>
+                  <span className="text-xs text-stone-500">
+                    {(productStatuses || compositions).some(
+                      (c) => c.product_id === p.id && c.status === "published",
+                    )
+                      ? "Materiales listos"
+                      : (productStatuses || compositions).some(
+                            (c) =>
+                              c.product_id === p.id && c.status === "draft",
+                          )
+                        ? "Composiciones pendientes de revisión"
+                        : "Faltan materiales"}
+                  </span>
+                </button>
+              ))}
+          </div>
+        </section>
+      )}
       {!product ? (
         <div className="bg-white border rounded-xl p-10 text-center text-stone-500">
           Seleccioná un producto para ver o completar su fabricación.
@@ -226,23 +241,27 @@ export function ProductManufacturingClient({
             className="bg-white border rounded-xl p-5 space-y-5"
           >
             <div>
-              <h2 className="text-xl font-semibold">{product.name}</h2>
+              <h2 className="text-xl font-semibold">
+                {product.name}
+                {embedded && variantId
+                  ? ` · ${variants.find((v) => v.id === variantId)?.name || "Presentación seleccionada"}`
+                  : ""}
+              </h2>
               <p className="text-sm text-stone-500">
-                Componentes necesarios para fabricar una unidad.
+                Cargá los materiales para una unidad. En cada pedido calculamos
+                las cantidades automáticamente.
               </p>
             </div>
-            {variants.some((v) => v.product_id === productId) && (
+            {!embedded && variants.some((v) => v.product_id === productId) && (
               <label className="block text-sm font-medium">
                 Presentación del producto
                 <select
                   disabled={busy}
                   value={variantId}
-                  onChange={(e) =>
-                    navigate(productId, e.target.value, recipe?.id)
-                  }
+                  onChange={(e) => navigate(productId, e.target.value)}
                   className={`${field} mt-1`}
                 >
-                  <option value="">Receta base</option>
+                  <option value="">Materiales generales del producto</option>
                   {variants
                     .filter((v) => v.product_id === productId)
                     .map((v) => (
@@ -254,48 +273,61 @@ export function ProductManufacturingClient({
                 </select>
               </label>
             )}
-            <label className="block text-sm font-medium">
-              Composición / código de artículo
-              <select
-                className={`${field} mt-1`}
-                disabled={busy}
-                value={recipe?.id || ""}
-                onChange={(e) => navigate(productId, variantId, e.target.value)}
-              >
-                <option value="">Elegí una composición o creá una nueva</option>
-                {compositions
-                  .filter(
-                    (c) => c.product_id === productId && c.status !== "retired",
-                  )
-                  .map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name} ·{" "}
-                      {c.status === "published"
-                        ? "Activa"
-                        : c.technical_notes?.includes(
-                              "Pendiente de revisar la descripción",
-                            )
-                          ? "Pendiente de revisar la descripción"
-                          : "Pendiente de validar presentación"}
+            {!embedded && (
+              <details className="text-sm">
+                <summary className="cursor-pointer text-stone-500">
+                  Recuperar materiales importados (opcional)
+                </summary>
+                <label className="block text-sm font-medium">
+                  Composición / código de artículo
+                  <select
+                    className={`${field} mt-1`}
+                    disabled={busy}
+                    value={recipe?.id || ""}
+                    onChange={(e) =>
+                      navigate(productId, variantId, e.target.value)
+                    }
+                  >
+                    <option value="">
+                      Elegí una composición o creá una nueva
                     </option>
-                  ))}
-              </select>
-              <span className="block text-xs text-stone-500 mt-1">
-                Comprobá medidas, jets y equipamiento. Una composición importada
-                no se aplica automáticamente a todas las presentaciones.
-              </span>
-            </label>
+                    {compositions
+                      .filter(
+                        (c) =>
+                          c.product_id === productId && c.status !== "retired",
+                      )
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ·{" "}
+                          {c.status === "published"
+                            ? "Activa"
+                            : c.technical_notes?.includes(
+                                  "Pendiente de revisar la descripción",
+                                )
+                              ? "Pendiente de revisar la descripción"
+                              : "Pendiente de validar presentación"}
+                        </option>
+                      ))}
+                  </select>
+                  <span className="block text-xs text-stone-500 mt-1">
+                    Comprobá medidas, jets y equipamiento. Una composición
+                    importada no se aplica automáticamente a todas las
+                    presentaciones.
+                  </span>
+                </label>
+              </details>
+            )}
             {!recipe && (
               <p className="bg-amber-50 p-3 rounded text-sm">
-                Todavía no tiene una receta. Agregá los componentes y guardá
-                para poder fabricar.
+                Todavía no tiene materiales definidos. Agregalos y guardá para
+                poder fabricar.
               </p>
             )}
             {recipe && (
               <p className="text-sm text-stone-500">
                 {recipe.status === "published"
-                  ? "Receta activa para fabricación."
-                  : "Receta pendiente de guardar y activar."}{" "}
+                  ? "Materiales listos para fabricar."
+                  : "Revisá los materiales y guardá para fabricar."}{" "}
                 Los cambios se aplican a nuevas órdenes.
               </p>
             )}
@@ -322,7 +354,7 @@ export function ProductManufacturingClient({
                   className="grid sm:grid-cols-[1fr_100px_auto] gap-2 border-b pb-3"
                 >
                   <label className="text-xs text-stone-600">
-                    Componente
+                    Material
                     <select
                       required
                       className={`${field} mt-1`}
@@ -331,7 +363,7 @@ export function ProductManufacturingClient({
                         update(index, { supplyId: e.target.value })
                       }
                     >
-                      <option value="">Seleccionar componente</option>
+                      <option value="">Seleccionar material</option>
                       {supplies
                         .filter((s) => s.is_active || s.id === line.supplyId)
                         .map((s) => (
@@ -343,7 +375,7 @@ export function ProductManufacturingClient({
                     </select>
                   </label>
                   <label className="text-xs text-stone-600">
-                    Cantidad
+                    Cantidad por unidad
                     <input
                       required
                       type="number"
@@ -392,7 +424,7 @@ export function ProductManufacturingClient({
                   setDirty(true);
                 }}
               >
-                + Agregar componente
+                + Agregar material
               </button>
               <label className="block font-medium text-sm pt-3">
                 Instrucciones para fábrica
@@ -433,7 +465,7 @@ export function ProductManufacturingClient({
               disabled={busy || adding || !lines.length}
               className="bg-cyan-700 text-white rounded-lg px-5 py-2 disabled:opacity-50"
             >
-              {busy ? "Guardando…" : "Guardar receta"}
+              {busy ? "Guardando…" : "Guardar materiales"}
             </button>
           </form>
           <details className="bg-white border rounded-xl p-4">
@@ -501,12 +533,14 @@ export function ProductManufacturingClient({
               </button>
             </form>
           </details>
-          <ProductOptions
-            key={JSON.stringify(options)}
-            productId={productId}
-            options={options}
-            supplies={supplies}
-          />
+          {!embedded && (
+            <ProductOptions
+              key={JSON.stringify(options)}
+              productId={productId}
+              options={options}
+              supplies={supplies}
+            />
+          )}
         </section>
       )}
     </div>
