@@ -12,6 +12,7 @@ import {
   type SupplyItem,
 } from "@/lib/manufacturing-calculations";
 import { matchingRecipes, type WorkflowData } from "@/lib/order-workflow";
+import { readAdministrationWorkflowCounts } from "@/lib/administration-workflow-counts";
 
 function one<T>(value: T | T[] | null) {
   return Array.isArray(value) ? value[0] : value;
@@ -403,12 +404,12 @@ export async function getAdministrationWorkflowCounts(): Promise<{
   production: number;
 }> {
   await requireAdministrationUser();
-  const { data, error } = await createSupabaseAdminClient().rpc(
-    "administration_workflow_counts",
-  );
-  if (error)
+  try {
+    return await readAdministrationWorkflowCounts(createSupabaseAdminClient());
+  } catch (error) {
+    console.error("Error al calcular pendientes de Administración:", error);
     throw new Error(
-      "No se pudieron calcular los pendientes. Verificá la migración del flujo de fabricación.",
+      "No se pudieron calcular los pendientes de Administración.",
     );
-  return data;
+  }
 }
